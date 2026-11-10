@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Snowcraft</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0506">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Anuphan:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* =========================================================
+   Snowcraft — หน้าแรกของคอมมูนิตี้
+   ธีม: แดง-ดำ เรืองแสงแดง + หิมะตก (ตั้งใจใช้ธีมมืดอย่างเดียว)
+   เลย์เอาต์: แถบหัว → หัวเว็บใหญ่ (หิมะตก) → ประกาศแอดมิน → ปุ่มหมวด → ฟีดโพสต์
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --bg: #0a0506;          /* ดำอมแดง */
+  --panel: #150a0c;       /* พื้นการ์ด */
+  --panel-2: #211014;     /* ช่องกรอก / ปุ่มรอง */
+  --line: #3b1a20;        /* เส้นขอบ แดงเข้ม */
+  --fg: #f6eced;          /* ตัวอักษรหลัก */
+  --muted: #b3898f;       /* ตัวอักษรรอง */
+  --ice: #ff2e46;         /* เรืองแสงหลัก สีแดง (ชื่อตัวแปรเดิมเก็บไว้ ไม่ต้องไล่แก้ทั้งไฟล์) */
+  --aurora: #8c0a1e;      /* แดงเลือดหมู สีรอง */
+  --danger: #ff6b86;
+  --gold: #ffd36e;        /* สีประกาศ */
+  --f-display: "Chakra Petch", "Anuphan", system-ui, sans-serif;
+  --f-body: "Anuphan", "Noto Sans Thai", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap {
+  max-width: 820px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+h2.sec { margin: 0; font: 700 19px var(--f-display); letter-spacing: .02em; display: flex; align-items: center; gap: 8px; }
+h2.sec small { font: 500 12px var(--f-mono); color: var(--muted); }
+
+/* ---------- แถบหัว ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: rgba(10,5,6,.86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 10px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 9px; font: 700 18px/1 var(--f-display); letter-spacing: .04em; }
+.brand canvas { width: 28px; height: 28px; image-rendering: pixelated; border-radius: 3px; box-shadow: 0 0 14px rgba(255,46,70,.5); }
+.top .sp { flex: 1; }
+.btn-main { border: 1px solid var(--ice); background: rgba(255,46,70,.12); padding: 8px 14px; border-radius: 6px; font-weight: 600; transition: box-shadow .2s, background .2s; }
+.btn-main:hover { background: rgba(255,46,70,.22); box-shadow: 0 0 18px rgba(255,46,70,.45); }
+.btn-main:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.btn-ghost { background: transparent; border: 1px solid var(--line); padding: 8px 14px; border-radius: 6px; }
+.btn-ghost:hover { border-color: var(--muted); }
+
+/* ---------- หัวเว็บใหญ่ + หิมะตก ---------- */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line);
+  background: radial-gradient(700px 320px at 50% 110%, rgba(255,46,70,.14), transparent 70%),
+              radial-gradient(500px 220px at 85% -40px, rgba(140,10,30,.35), transparent 70%); }
+#snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero .wrap { position: relative; padding-block: 48px 40px; display: grid; gap: 14px; justify-items: start; }
+.eyebrow { font: 500 12px var(--f-mono); color: var(--ice); letter-spacing: .18em; text-transform: uppercase; }
+.hero h1 {
+  margin: 0; font: 700 clamp(44px, 13vw, 92px)/.95 var(--f-display); letter-spacing: .02em;
+  width: min(100%, 560px); line-height: 0;
+}
+/* โลโก้: ไฟล์พื้นโปร่งใสแล้ว (ตัดพื้นดำออก) + เรืองแสงแดงรอบตัวอักษร */
+.hero .logo { width: 100%; height: auto; filter: drop-shadow(0 0 14px rgba(255,46,70,.55)) drop-shadow(0 0 40px rgba(255,46,70,.3)); }
+.mini-logo { height: 30px; width: auto; filter: drop-shadow(0 0 6px rgba(255,46,70,.6)); }
+.hero p { margin: 0; color: #e2c9cc; max-width: 46ch; font-size: 16px; }
+.hero .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 500 12.5px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.stats b { color: var(--fg); font-weight: 500; }
+
+main.wrap { display: grid; gap: 28px; padding-block: 24px 40px; }
+
+/* ---------- กล่องแจ้งสถานะ ---------- */
+.note { border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 13.5px; background: rgba(22,10,12,.6); }
+
+/* ---------- ประกาศแอดมิน ---------- */
+.news { display: grid; gap: 10px; }
+.news-head { display: flex; align-items: center; gap: 10px; }
+.news-head .sp { flex: 1; }
+.news-item { border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); background: linear-gradient(90deg, rgba(255,211,110,.08), transparent 60%), var(--panel);
+  border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; }
+.news-item h3 { margin: 0; font: 700 16px var(--f-display); color: var(--gold); overflow-wrap: anywhere; }
+.news-item p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #ead9db; }
+.news-item .meta { display: flex; gap: 10px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.news-item .meta .sp { flex: 1; }
+
+/* ---------- ปุ่มหมวด ---------- */
+.cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 620px) { .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cat {
+  --c: var(--ice);
+  text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px;
+  display: grid; gap: 6px; transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.cat:hover { border-color: var(--c); box-shadow: 0 0 20px color-mix(in srgb, var(--c) 30%, transparent); }
+.cat[aria-pressed="true"] { border-color: var(--c); box-shadow: 0 0 20px color-mix(in srgb, var(--c) 40%, transparent); background: color-mix(in srgb, var(--c) 8%, var(--panel)); }
+.cat canvas { width: 32px; height: 32px; image-rendering: pixelated; border-radius: 3px; }
+.cat b { font: 700 15px var(--f-display); }
+.cat span { font-size: 12.5px; color: var(--muted); }
+.cat em { font: 500 11.5px var(--f-mono); font-style: normal; color: var(--c); }
+
+/* ---------- ฟอร์ม ---------- */
+.form { background: var(--panel); border: 1px solid var(--ice); border-radius: 10px; padding: 16px; display: grid; gap: 12px; box-shadow: 0 0 26px rgba(255,46,70,.15); }
+.form.gold { border-color: var(--gold); box-shadow: 0 0 26px rgba(255,211,110,.12); }
+.form h3 { margin: 0; font: 700 17px var(--f-display); }
+label { display: grid; gap: 5px; font-size: 13px; color: var(--muted); min-width: 0; }
+input, select, textarea { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; width: 100%; min-width: 0; }
+input:focus, select:focus, textarea:focus { border-color: var(--ice); outline: none; box-shadow: 0 0 0 3px rgba(255,46,70,.18); }
+textarea { resize: vertical; min-height: 90px; }
+.actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+/* ---------- ฟีดโพสต์ ---------- */
+.feed-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.feed-head .sp { flex: 1; }
+.tabs { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tabs button { background: var(--panel); border: 0; padding: 6px 14px; font-size: 13.5px; color: var(--muted); }
+.tabs button[aria-pressed="true"] { background: rgba(255,46,70,.14); color: var(--fg); box-shadow: inset 0 -2px 0 var(--ice); }
+.clear { background: none; border: 0; color: var(--ice); font-size: 13px; padding: 0; text-decoration: underline; }
+.feed { display: grid; gap: 12px; }
+.card { --c: var(--ice); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; transition: border-color .2s, box-shadow .2s; }
+.card:hover { border-color: color-mix(in srgb, var(--c) 55%, var(--line)); box-shadow: 0 0 20px color-mix(in srgb, var(--c) 16%, transparent); }
+.c-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 11.5px; padding: 1px 8px; border-radius: 4px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); }
+.hot { font-size: 11.5px; color: #ffb36b; }
+.c-title { margin: 0; font: 700 17px/1.3 var(--f-display); overflow-wrap: anywhere; }
+.c-body { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #ead9db; }
+.c-link { justify-self: start; font-size: 13.5px; color: var(--ice); text-decoration: none; border-bottom: 1px dashed currentColor; overflow-wrap: anywhere; }
+.c-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; }
+.who { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); min-width: 0; flex: 1; }
+.who img { width: 22px; height: 22px; border-radius: 50%; }
+.who .nm { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.act { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.act:hover { border-color: var(--muted); }
+.act.on { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 10px rgba(255,107,134,.3); }
+.act.del { color: var(--muted); }
+.act.del.arm { color: var(--danger); border-color: var(--danger); }
+.act:disabled { opacity: .5; cursor: not-allowed; }
+.cmts { display: grid; gap: 8px; }
+.cmt { display: grid; grid-template-columns: 22px minmax(0,1fr) auto; gap: 8px; font-size: 13.5px; }
+.cmt img { width: 22px; height: 22px; border-radius: 50%; }
+.cmt .t { overflow-wrap: anywhere; white-space: pre-wrap; }
+.cmt .t b { font-weight: 600; margin-right: 6px; }
+.cmt .t small { color: var(--muted); margin-left: 6px; }
+.cmt .x { background: none; border: 0; color: var(--muted); font-size: 15px; padding: 2px 4px; }
+.cform { display: flex; gap: 8px; }
+.cform input { flex: 1; }
+.empty { text-align: center; padding: 30px 16px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); display: grid; gap: 6px; }
+.empty strong { color: var(--fg); font: 700 16px var(--f-display); }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--panel-2); border: 1px solid var(--ice); padding: 8px 14px; border-radius: 8px; box-shadow: 0 0 20px rgba(255,46,70,.35); font-size: 14px; z-index: 20; max-width: calc(100% - 32px); }
+footer { color: var(--muted); font-size: 12.5px; padding-block: 12px 30px; border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* =========================================================
+   เพิ่มสำหรับเว็บจริง: ล็อกอิน / ใบสมัคร / หน้าแอดมิน
+   ========================================================= */
+/* ป้ายโหมดตัวอย่าง (ยังไม่เชื่อม Firebase) */
+.demo-bar { background: repeating-linear-gradient(135deg, #3a1a00 0 12px, #2a1200 12px 24px); color: var(--gold); font-size: 13px; text-align: center; padding: 6px 12px; border-bottom: 1px solid #5a3a10; }
+
+/* ปุ่มล็อกอิน / ชิปผู้ใช้ในแถบหัว */
+.me { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.me .nm { font-size: 13.5px; max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; flex: none; object-fit: cover; background: var(--panel-2); border: 1px solid var(--line);
+  display: inline-grid; place-items: center; font: 700 13px var(--f-display); color: var(--ice); }
+.avatar.sm { width: 22px; height: 22px; font-size: 11px; }
+.link-btn { background: none; border: 0; color: var(--muted); font-size: 13px; padding: 4px; text-decoration: underline; }
+.admin-link { color: var(--gold); font-size: 13px; text-decoration: none; border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+
+/* ใบสมัคร */
+.apply { display: grid; gap: 12px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+.req { color: var(--ice); }
+.status-box { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 14px; display: grid; gap: 8px; }
+.pill { justify-self: start; font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.pill.pending { color: var(--gold); }
+.pill.approved { color: #6dffa8; }
+.pill.rejected { color: var(--danger); }
+
+/* หน้าแอดมิน */
+.app-card { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--st, var(--gold)); border-radius: 10px; padding: 14px; display: grid; gap: 10px; }
+.app-card.approved { --st: #6dffa8; }
+.app-card.rejected { --st: var(--danger); }
+.app-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.app-head h3 { margin: 0; font: 700 17px var(--f-display); overflow-wrap: anywhere; flex: 1; min-width: 0; }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; font-size: 14px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.app-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.app-actions input { flex: 1; min-width: 160px; width: auto; }
+.btn-ok { border: 1px solid #6dffa8; color: #6dffa8; background: rgba(109,255,168,.08); padding: 7px 12px; border-radius: 6px; font-weight: 600; }
+.btn-no { border: 1px solid var(--danger); color: var(--danger); background: rgba(255,107,134,.08); padding: 7px 12px; border-radius: 6px; font-weight: 600; }
+.count { font: 500 12px var(--f-mono); margin-left: 4px; opacity: .8; }
+.uid-box { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.uid-box code { font: 500 12.5px var(--f-mono); background: var(--panel-2); border: 1px solid var(--line); padding: 6px 8px; border-radius: 6px; overflow-wrap: anywhere; user-select: all; }
+.gate { display: grid; gap: 12px; justify-items: start; padding-block: 30px; }
+.gate h1 { margin: 0; font: 700 26px var(--f-display); }
+
+/* ---------- พื้นฐานสำหรับเว็บจริง (บน Claude มีให้อยู่แล้ว ใส่ซ้ำได้ไม่เสียหาย) ---------- */
+[hidden] { display: none !important; }
+body { margin: 0; }
+img { max-width: 100%; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+/* แถบหัวบนจอมือถือแคบ: ซ่อนชื่อ เหลือรูปโปรไฟล์ ปุ่มไม่ตัดบรรทัด */
+.link-btn, .admin-link { white-space: nowrap; }
+.top .brand { flex: none; }
+.me { flex-shrink: 1; justify-content: flex-end; }
+@media (max-width: 480px) { .me .nm { display: none; } .brand span { display: none; } }
+
+/* เมนูแอดมิน: เต็มความกว้าง แบ่งช่องเท่ากัน */
+.admin-menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.admin-menu button { padding: 10px 6px; font-size: 14px; }
+
+/* ---------- สิ่งที่ควรทำเบื้องต้น: ขั้นตอนมีเลขลำดับ ---------- */
+.basics { display: grid; gap: 12px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: st; }
+.steps li { counter-increment: st; position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px 12px 56px; display: grid; gap: 4px; justify-items: start; }
+.steps li::before { content: counter(st); position: absolute; left: 14px; top: 12px; width: 28px; height: 28px; border-radius: 6px;
+  display: grid; place-items: center; font: 700 15px var(--f-display); color: var(--fg); background: rgba(255,46,70,.18);
+  border: 1px solid var(--ice); box-shadow: 0 0 12px rgba(255,46,70,.35); }
+.steps b { font-weight: 600; }
+.steps span { color: #ead9db; font-size: 14px; }
+.steps .warn { color: var(--gold); font-weight: 600; border-left: 2px solid var(--gold); padding-left: 8px; margin-top: 2px; }
+.step-btn { margin-top: 4px; font-size: 13px; color: var(--ice); background: rgba(255,46,70,.08); border: 1px solid color-mix(in srgb, var(--ice) 50%, transparent);
+  border-radius: 6px; padding: 4px 10px; text-decoration: none; }
+.basics-foot { margin: 0; color: var(--muted); font-size: 14px; }
+.basics-foot .link-btn { color: var(--ice); font-size: 14px; padding: 0; }
+.basics-foot b { color: var(--fg); }
+label.check { display: flex; align-items: flex-start; gap: 8px; color: var(--fg); font-size: 14px; }
+label.check input { width: 18px; height: 18px; flex: none; margin-top: 3px; accent-color: var(--ice); }
+
+/* =========================================================
+   ลูกเล่นเล็กๆ (ปิดเองถ้าเครื่องตั้งค่าลดการเคลื่อนไหว)
+   ========================================================= */
+/* โลโก้: เรืองแสงหายใจช้าๆ + แสงวาบพาดผ่านเหมือนน้ำแข็งสะท้อนไฟ ทุก 7 วินาที */
+.hero h1 { position: relative; }
+.hero h1::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.75) 50%, transparent 60%) no-repeat;
+  background-size: 250% 100%; background-position: 150% 0;
+  -webkit-mask: url(logo.webp) center / 100% 100% no-repeat; mask: url(logo.webp) center / 100% 100% no-repeat;
+  animation: shine 7s ease-in-out 1.2s infinite;
+}
+@keyframes shine { 0%, 70% { background-position: 150% 0; } 85%, 100% { background-position: -60% 0; } }
+.hero .logo { animation: breathe 4.5s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255,46,70,.45)) drop-shadow(0 0 34px rgba(255,46,70,.22)); }
+  50%      { filter: drop-shadow(0 0 18px rgba(255,46,70,.7)) drop-shadow(0 0 52px rgba(255,46,70,.38)); }
+}
+
+/* หัวข้อแต่ละส่วน: เส้นเรืองแดง + น้ำแข็งย้อยด้านใต้ */
+h2.sec { position: relative; padding-bottom: 14px; }
+h2.sec::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 9px;
+  background:
+    linear-gradient(90deg, var(--ice), rgba(255,46,70,.25) 55%, transparent) top / 100% 2px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='8'%3E%3Cpath d='M0 0h46L41 0 39 6 37 0 25 0 23 8 21 0 12 0 10.5 4 9 0z' fill='%23ff2e46' fill-opacity='.55'/%3E%3C/svg%3E") left 2px / 46px 8px repeat-x;
+  -webkit-mask: linear-gradient(90deg, #000 30%, transparent); mask: linear-gradient(90deg, #000 30%, transparent);
+  filter: drop-shadow(0 0 4px rgba(255,46,70,.6));
+}
+
+/* ไอคอนหมวด: ลอยขึ้นนิดๆ ตอนชี้/แตะ */
+.cat canvas { transition: transform .2s; }
+.cat:hover canvas, .cat:focus-visible canvas { transform: translateY(-3px) scale(1.06); }
+
+/* ลอยขึ้นตอนเลื่อนถึง (เฉพาะของที่ยังไม่อยู่บนจอตอนเปิดหน้า) */
+.rise { opacity: 0; transform: translateY(14px); }
+.rise.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1::after, .hero .logo { animation: none; }
+  .rise { opacity: 1; transform: none; }
+}
+
+/* =========================================================
+   ฟอร์มสมัครโรล (ทีละหน้า)
+   ========================================================= */
+.wizard { scroll-margin-top: 70px; }
+.f-card { gap: 16px; }
+.f-progress { display: grid; grid-auto-flow: column; gap: 6px; }
+.f-progress span { height: 5px; border-radius: 3px; background: var(--line); }
+.f-progress span.done { background: color-mix(in srgb, var(--ice) 55%, var(--line)); }
+.f-progress span.now { background: var(--ice); box-shadow: 0 0 10px rgba(255,46,70,.6); }
+.f-head { display: grid; gap: 2px; }
+.f-head small { font: 500 12px var(--f-mono); color: var(--ice); letter-spacing: .08em; }
+.f-head h3 { margin: 0; font: 700 20px var(--f-display); }
+/* ข้อความแนะนำ (เนื้อเรื่อง/เงื่อนไข) */
+.f-info { display: grid; gap: 8px; background: rgba(10,5,6,.55); border: 1px solid var(--line); border-radius: 8px; padding: 14px; max-width: 100%; }
+.f-info h4 { margin: 8px 0 0; font: 700 15px var(--f-display); color: var(--ice); }
+.f-info h4:first-child { margin-top: 0; }
+.f-info p { margin: 0; color: #ead9db; font-size: 14.5px; line-height: 1.75; }
+.f-info ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+.f-info li { position: relative; padding-left: 20px; color: #ead9db; font-size: 14.5px; }
+.f-info li::before { content: "✦"; position: absolute; left: 0; color: var(--ice); font-size: 12px; top: 2px; }
+.f-strong { font-weight: 700; color: var(--fg) !important; }
+.f-warn { color: var(--gold) !important; font-weight: 600; border-left: 2px solid var(--gold); padding-left: 8px; }
+.f-warn.sm { font-size: 13px; }
+/* แต่ละคำถาม */
+.f-field { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); transition: border-color .2s; }
+.f-field.bad { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(255,107,134,.15); }
+.f-field.bad .f-label::after { content: " · ยังไม่ได้ตอบ"; color: var(--danger); font-size: 12.5px; font-weight: 500; }
+.f-label { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.f-hint { font-size: 13px; color: var(--muted); margin-top: -4px; }
+.f-opts { display: grid; gap: 6px; }
+.f-opt { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; color: var(--fg); font-size: 14.5px; }
+.f-opt:has(input:checked) { border-color: var(--ice); background: rgba(255,46,70,.1); }
+.f-opt input { width: 18px; height: 18px; flex: none; accent-color: var(--ice); }
+.f-img { max-width: min(100%, 260px); border-radius: 8px; border: 1px solid var(--line); }
+.f-imgrow { display: flex; gap: 10px; align-items: center; }
+.f-file { cursor: pointer; display: inline-block; }
+.f-nav { justify-content: space-between; }
+.f-nav .btn-main:only-child { margin-left: auto; }
+/* หน้าแอดมิน: คำตอบพับได้ + โควต้าทวีป */
+.f-answers { display: grid; gap: 6px; }
+.f-answers details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: rgba(10,5,6,.4); }
+.f-answers summary { cursor: pointer; font-weight: 600; color: var(--ice); }
+.f-answers .kv { margin-top: 8px; grid-template-columns: minmax(0, 1fr); }
+.f-answers .kv dt { margin-top: 6px; font-size: 13px; }
+.f-key { color: #6dffa8; font-size: 12.5px; }
+.quota { display: flex; flex-wrap: wrap; gap: 8px; }
+.q-chip { display: grid; gap: 1px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 12.5px; }
+.q-chip b { font-size: 13px; }
+.q-chip span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.q-chip.full { border-color: #6dffa8; }
+.q-chip.full span { color: #6dffa8; }
+
+/* =========================================================
+   เมนูแก้เว็บ (หน้าแอดมิน)
+   ========================================================= */
+.ed-box { display: grid; gap: 10px; }
+.ed-group { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.ed-group > summary { cursor: pointer; padding: 12px 14px; font: 700 15px var(--f-display); list-style: none; display: flex; gap: 8px; align-items: center; }
+.ed-group > summary::before { content: "▸"; color: var(--ice); transition: transform .15s; }
+.ed-group[open] > summary::before { transform: rotate(90deg); }
+.ed-group .ed-group { background: rgba(10,5,6,.45); }
+.ed-body { display: grid; gap: 12px; padding: 0 14px 14px; }
+.ed-l { display: grid; gap: 5px; font-size: 13px; color: var(--muted); min-width: 0; }
+.ed-l textarea { font-size: 14px; line-height: 1.6; }
+.ed-card { display: grid; gap: 10px; border: 1px solid var(--line); border-left: 3px solid var(--ice); border-radius: 8px; padding: 12px; background: var(--panel); }
+.ed-q { border-left-color: var(--aurora); }
+.ed-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ed-head > b, .ed-head > .hint { flex: 1; min-width: 0; }
+.ed-tools { display: flex; gap: 6px; }
+.ed-tools .act { min-width: 34px; }
+.ed-reset { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-top: 6px; }
+/* แถบบันทึกติดล่างจอ */
+.ed-bar { position: sticky; bottom: 0; z-index: 4; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin-inline: -4px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); border-radius: 10px 10px 0 0;
+  background: rgba(21,10,12,.96); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+.ed-bar #edState { flex: 1; min-width: 140px; font-size: 13px; color: var(--muted); }
+.ed-bar.dirty { border-color: var(--gold); box-shadow: 0 0 18px rgba(255,211,110,.18); }
+.ed-bar.dirty #edState { color: var(--gold); }
+
+/* ---------- ตัวช่วยในเมนูแก้เว็บ ---------- */
+.ed-guide { border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); background: linear-gradient(135deg, rgba(255,211,110,.07), transparent 60%), var(--panel);
+  border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; }
+.ed-guide.mini { padding: 6px 12px; justify-items: start; }
+.ed-guide ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 14px; color: #ead9db; }
+.ed-guide ol b { color: var(--gold); }
+.ed-tips { margin: 0; padding: 8px 0 0; list-style: none; display: grid; gap: 4px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--muted); }
+.ed-tips li::before { content: "💡 "; }
+.ed-desc { margin: 0; font-size: 13px; color: var(--muted); background: rgba(10,5,6,.45); border-left: 2px solid var(--ice); padding: 6px 10px; border-radius: 0 6px 6px 0; }
+.ed-fmt { display: flex; flex-wrap: wrap; gap: 6px; }
+.ed-fmt-b { font-size: 12.5px; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg); }
+.ed-fmt-b:hover { border-color: var(--ice); }
+.ed-prev-t { margin-left: auto; color: var(--ice); }
+.ed-prev { border: 1px dashed var(--ice); border-radius: 8px; padding: 4px; }
+.ed-prev::before { content: "ตัวอย่างบนหน้าเว็บ"; display: block; font-size: 11.5px; color: var(--ice); padding: 2px 8px 4px; }
+</style>
+</head>
+<body>
+
+<!-- ===== แถบหัว ===== -->
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><img src="logo.webp" alt="Snowcraft" class="mini-logo"><span id="adminTag" hidden style="color:var(--gold);font-size:14px">ADMIN</span></div>
+    <div class="sp"></div>
+    <div class="me" id="me"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ===== ประตู: ยังไม่ล็อกอิน / ไม่ใช่แอดมิน ===== -->
+  <section class="gate" id="gate"></section>
+
+  <!-- ===== ส่วนแอดมิน (โชว์เมื่อเป็นแอดมินเท่านั้น) ===== -->
+  <div id="adminArea" hidden style="display:grid;gap:20px">
+    <!-- เมนูแอดมิน: เลือกดูทีละส่วน -->
+    <nav class="tabs admin-menu" role="group" aria-label="เมนูแอดมิน" id="menu">
+      <button type="button" data-sec="secApps" aria-pressed="true">📝 ใบสมัคร</button>
+      <button type="button" data-sec="secNews" aria-pressed="false">📢 ประกาศ</button>
+      <button type="button" data-sec="secEdit" aria-pressed="false">✏️ แก้เว็บ</button>
+      <button type="button" data-sec="secAdmins" aria-pressed="false">👑 แอดมิน</button>
+    </nav>
+
+    <!-- ใบสมัคร -->
+    <section style="display:grid;gap:12px" id="secApps" aria-labelledby="appTitle">
+      <div class="feed-head">
+        <h2 class="sec" id="appTitle">ใบสมัครโปรเจกต์</h2>
+        <div class="sp"></div>
+        <div class="tabs" role="group" aria-label="กรองสถานะ" id="appTabs"></div>
+      </div>
+      <div class="quota" id="quota" aria-label="จำนวนต่อทวีป"></div>
+      <div class="feed" id="appList"></div>
+    </section>
+
+    <!-- ประกาศ -->
+    <section class="news" id="secNews" hidden aria-labelledby="newsTitle">
+      <div class="news-head">
+        <h2 class="sec" id="newsTitle">📢 ประกาศ</h2>
+        <div class="sp"></div>
+        <button class="btn-ghost" id="openNews" type="button">+ เขียนประกาศ</button>
+      </div>
+      <form class="form gold" id="newsForm" hidden>
+        <h3>เขียนประกาศ</h3>
+        <label for="n-title">หัวข้อ <input id="n-title" maxlength="80" required></label>
+        <label for="n-body">รายละเอียด <textarea id="n-body" maxlength="1500" required></textarea></label>
+        <div class="actions">
+          <button class="btn-ghost" type="button" id="cancelNews">ยกเลิก</button>
+          <button class="btn-main" type="submit" id="submitNews">ประกาศ</button>
+        </div>
+      </form>
+      <div id="newsList" style="display:grid;gap:10px"></div>
+    </section>
+
+    <!-- แก้เว็บ: แก้เนื้อหาทุกส่วนของหน้าเว็บ (ตัวแก้อยู่ใน editor.js) -->
+    <section style="display:grid;gap:12px" id="secEdit" hidden aria-labelledby="edTitle">
+      <h2 class="sec" id="edTitle">✏️ แก้เว็บ</h2>
+      <p class="hint">แก้แล้วกด “บันทึก” หน้าเว็บของทุกคนจะเปลี่ยนตามทันที · <a class="c-link" href="index.html" target="_blank" rel="noopener">เปิดหน้าเว็บดู ↗</a></p>
+      <div id="edBox" class="ed-box"></div>
+      <div class="ed-bar" id="edBar">
+        <span id="edState">ยังไม่มีการแก้</span>
+        <button class="btn-ghost" type="button" id="edUndo">ยกเลิกที่แก้</button>
+        <button class="btn-main" type="button" id="edSave">บันทึก</button>
+      </div>
+    </section>
+
+    <!-- จัดการแอดมิน: ทุกแอดมินเห็นรายชื่อ เฉพาะเจ้าของเว็บเพิ่ม/ลบได้ -->
+    <section style="display:grid;gap:12px" id="secAdmins" hidden aria-labelledby="admTitle">
+      <h2 class="sec" id="admTitle">👑 จัดการแอดมิน</h2>
+      <p class="hint" id="admHint"></p>
+      <form class="form gold" id="admForm" hidden>
+        <h3>เพิ่มแอดมิน</h3>
+        <div class="grid2">
+          <label for="ad-email"><span>อีเมล Google ของคนนั้น <span class="req">*</span></span><input id="ad-email" type="email" maxlength="120" required placeholder="name@gmail.com"></label>
+          <label for="ad-label">ชื่อเล่น / หน้าที่<input id="ad-label" maxlength="60" placeholder="เช่น ดูแลใบสมัคร"></label>
+        </div>
+        <div class="actions"><button class="btn-main" type="submit" id="ad-send">เพิ่มเป็นแอดมิน</button></div>
+      </form>
+      <div class="feed" id="admList"></div>
+    </section>
+  </div>
+
+  <footer>หน้าแอดมิน Snowcraft · เห็นข้อมูลได้เฉพาะบัญชีที่อยู่ในรายชื่อแอดมิน</footer>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script>/* =========================================================
+   core.js — ส่วนกลางที่ทั้ง index.html และ admin.html ใช้ร่วมกัน
+   (ไฟล์นี้ถูกฝังเข้าไปในแต่ละหน้าตอน build — แก้ที่ src/core.js เท่านั้น)
+
+   มี 2 โหมด:
+   - โหมดจริง: config.js มีค่า Firebase ครบ → ใช้ล็อกอิน Google + ฐานข้อมูล Firestore
+   - โหมดตัวอย่าง: ยังไม่ได้ใส่ config → ใช้ข้อมูลตัวอย่างในหน่วยความจำ (รีเฟรชแล้วหาย)
+     ไว้ดูหน้าตาก่อนตั้งค่าจริง
+   ========================================================= */
+
+/* ---------- หมวดหมู่ (เปลี่ยนชื่อ/สีได้ที่นี่ที่เดียว) ----------
+   join = ปุ่มสมัครโปรเจกต์ (เปิดฟอร์มสมัคร ไม่ใช่หมวดโพสต์) */
+const CATS = {
+  join:    { name: "สมัครโปรเจกต์", desc: "ส่งใบสมัครเข้าร่วม", c: "#ff2e46" },
+  discord: { name: "ลิงก์ดิสคอร์ด", desc: "กดเพื่อเข้าเซิร์ฟดิสคอร์ด", c: "#ff7a8a" },
+  basics:  { name: "ที่ควรรู้เบื้องต้น", desc: "ขั้นตอนก่อนสมัคร", c: "#e9dcdc" },
+  ask:     { name: "สอบถาม", desc: "ติดตรงไหนถามได้", c: "#ff8a3d" },
+};
+/* อีเมลเจ้าของเว็บ = แอดมินสูงสุด (เพิ่ม/ลบแอดมินคนอื่นได้คนเดียว)
+   ต้องตรงกับใน firestore.rules ด้วย */
+const OWNER_EMAIL = "pat75874689537@gmail.com";
+
+/* ลิงก์เชิญเข้าดิสคอร์ด Snowcraft (ปุ่มหมวด "ลิงก์ดิสคอร์ด" และปุ่มในหัวเว็บใช้ลิงก์นี้) */
+let DISCORD_URL = "https://discord.gg/ZM55SV7ZfY"; // ค่าจริงมาจาก CONTENT.discordUrl (แก้ได้ในเมนูแก้เว็บ)
+
+/* หมวดที่โพสต์โพสต์ได้ (join = ฟอร์มสมัคร, discord = ลิงก์ออกไปดิสคอร์ด จึงไม่ใช่หมวดโพสต์)
+   และหมวดที่เฉพาะแอดมินโพสต์ได้ */
+const POST_CATS = ["ask"]; // "ที่ควรรู้เบื้องต้น" เป็นหน้าข้อมูลตายตัว (อยู่ใน index.body.html) ไม่ใช่โพสต์
+const ADMIN_ONLY_CATS = ["discord", "basics"];
+
+/* ตัวเลือกในใบสมัคร */
+const STATUS = { pending: "รอตรวจ", approved: "ผ่าน", rejected: "ไม่ผ่าน" };
+
+/* ---------- ตัวช่วยเล็กๆ ---------- */
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+let toastT;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 2800); }
+
+/* เวลาแบบไทย เช่น "5 นาทีที่แล้ว" */
+function ago(ms) {
+  const s = Math.max(1, Math.round((Date.now() - ms) / 1000));
+  if (s < 60) return "เมื่อกี้";
+  if (s < 3600) return Math.floor(s / 60) + " นาทีที่แล้ว";
+  if (s < 86400) return Math.floor(s / 3600) + " ชม.ที่แล้ว";
+  if (s < 86400 * 7) return Math.floor(s / 86400) + " วันที่แล้ว";
+  return new Date(ms).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
+}
+
+/* รูปโปรไฟล์: ใช้รูป Google ถ้ามี ไม่มีก็เป็นวงกลมตัวอักษรแรกของชื่อ */
+function avatar(name, photo, small) {
+  if (photo) { const i = el("img", "avatar" + (small ? " sm" : "")); i.src = photo; i.alt = ""; i.referrerPolicy = "no-referrer"; return i; }
+  return el("span", "avatar" + (small ? " sm" : ""), (name || "?").trim().charAt(0).toUpperCase());
+}
+
+/* ปุ่มลบ 2 จังหวะ: กดครั้งแรกถามยืนยัน ครั้งที่สอง (ใน 3 วิ) ลบจริง */
+function armDelete(btn, run, label = "ลบ") {
+  btn.textContent = label;
+  btn.onclick = () => {
+    if (!btn.classList.contains("arm")) { btn.classList.add("arm"); btn.textContent = "ยืนยัน?"; setTimeout(() => { btn.classList.remove("arm"); btn.textContent = label; }, 3000); return; }
+    run();
+  };
+}
+
+/* ไอคอนพิกเซล 8x8 สมมาตร สร้างจากข้อความ (ใช้ในปุ่มหมวด) */
+function hash(str) { let h = 2166136261; for (const ch of str) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function mix(a, b, t) { const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const [A, B] = [p(a), p(b)];
+  return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join(""); }
+function drawIcon(canvas, seed, color) {
+  const ctx = canvas.getContext("2d"); let s = hash(seed) || 1;
+  const rnd = () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1000) / 1000; };
+  const shades = ["#0a0506", color, mix(color, "#ffffff", .5), mix(color, "#000000", .45)];
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 4; x++) {
+    const r = rnd(); ctx.fillStyle = shades[r < .28 ? 0 : r < .62 ? 1 : r < .8 ? 2 : 3];
+    ctx.fillRect(x, y, 1, 1); ctx.fillRect(7 - x, y, 1, 1);
+  }
+}
+
+/* ---------- ไอคอนพิกเซลประจำหมวด 12x12 ----------
+   . = ใส  1 = สีหมวด  2 = สีหมวดสว่าง  3 = สีหมวดเข้ม  4 = ขาว */
+const PIXEL_ICONS = {
+  join: [ // ใบสมัคร + ติ๊กถูก
+    "............",
+    ".33333333...",
+    ".34444443...",
+    ".34111143...",
+    ".34444443...",
+    ".34111143.4.",
+    ".3444444344.",
+    ".341114344..",
+    ".34444.44...",
+    ".3411144....",
+    ".34444443...",
+    ".33333333...",
+  ],
+  discord: [ // ฟองแชต
+    "............",
+    "..33333333..",
+    ".3111111113.",
+    "31222222213.",
+    "31244124213.",
+    "31244124213.",
+    "31222222213.",
+    "31224444213.",
+    ".3111111113.",
+    "..33311333..",
+    "....313.....",
+    "....33......",
+  ],
+  basics: [ // หนังสือเปิด
+    "............",
+    ".3333..3333.",
+    "344443344443",
+    "343343343343",
+    "344443344443",
+    "343343343343",
+    "344443344443",
+    "343343343343",
+    "344443344443",
+    "322223322223",
+    ".3333113333.",
+    "............",
+  ],
+  ask: [ // เครื่องหมายคำถาม
+    "............",
+    "...333333...",
+    "..32111123..",
+    ".3213333123.",
+    ".323....323.",
+    "........323.",
+    "......3213..",
+    ".....3213...",
+    ".....323....",
+    ".....333....",
+    ".....323....",
+    ".....333....",
+  ],
+};
+function drawPixelIcon(canvas, key, color) {
+  const rows = PIXEL_ICONS[key]; if (!rows) return drawIcon(canvas, key, color);
+  canvas.width = 12; canvas.height = 12;
+  const ctx = canvas.getContext("2d");
+  const pal = { "1": color, "2": mix(color, "#ffffff", .5), "3": mix(color, "#000000", .55), "4": "#f6eced" };
+  rows.forEach((row, y) => [...row].forEach((ch, x) => { if (pal[ch]) { ctx.fillStyle = pal[ch]; ctx.fillRect(x, y, 1, 1); } }));
+}
+
+/* ---------- ลูกเล่น: การ์ด/ส่วนต่างๆ ค่อยๆ ลอยขึ้นตอนเลื่อนถึง ----------
+   ของที่อยู่บนจอตั้งแต่แรกจะไม่ถูกซ่อน (เห็นครบทันทีที่เปิดหน้า)
+   ถ้าเครื่องตั้งค่าลดการเคลื่อนไหว จะไม่ทำงานเลย */
+function revealOnScroll(selector) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver((ents) => ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.01 });
+  const watch = () => document.querySelectorAll(selector).forEach((n) => {
+    if (n.dataset.rv) return; n.dataset.rv = "1";
+    if (n.getBoundingClientRect().top < innerHeight) return; // อยู่บนจอแล้ว ไม่ต้องซ่อน
+    n.classList.add("rise"); io.observe(n);
+  });
+  watch(); new MutationObserver(watch).observe(document.body, { childList: true, subtree: true });
+  setTimeout(() => document.querySelectorAll(".rise:not(.in)").forEach((n) => n.getBoundingClientRect().top < innerHeight && n.classList.add("in")), 2500);
+}
+
+/* หิมะตก (ปิดการเคลื่อนไหวเองถ้าเครื่องตั้งค่าลดการเคลื่อนไหว) */
+function startSnow(cv) {
+  if (!cv) return;
+  const ctx = cv.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W, H, flakes = [];
+  function size() {
+    const r = cv.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    flakes = Array.from({ length: Math.round(W * H / 9000) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + .5, v: Math.random() * .5 + .25, w: Math.random() * 6.28 }));
+  }
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (const f of flakes) {
+      if (!still) { f.y += f.v; f.w += .01; f.x += Math.sin(f.w) * .3; if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; } }
+      ctx.globalAlpha = .35 + f.r / 4; ctx.fillStyle = f.r > 1.6 ? "#ff6b7d" : "#f6eced";
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.29); ctx.fill();
+    }
+    if (!still) requestAnimationFrame(frame);
+  }
+  size(); addEventListener("resize", () => { size(); if (still) frame(); }); frame();
+}
+
+/* แปลงรหัสข้อผิดพลาดเป็นข้อความไทย */
+function errText(e) {
+  const c = e?.code || "";
+  if (c.includes("permission-denied")) return "ไม่มีสิทธิ์ทำสิ่งนี้";
+  if (c.includes("unauthorized-domain")) return "โดเมนเว็บนี้ยังไม่ได้เพิ่มใน Firebase (ดูขั้นตอนที่ 8 ในคู่มือ)";
+  if (c.includes("network") || c.includes("unavailable")) return "เน็ตหลุด ลองใหม่อีกครั้ง";
+  return "ทำไม่สำเร็จ ลองใหม่อีกครั้ง";
+}
+
+/* =========================================================
+   ชั้นข้อมูล — หน้าเว็บเรียกใช้ผ่าน Data / Auth เท่านั้น
+   ทั้งโหมดจริงและโหมดตัวอย่างมีคำสั่งชุดเดียวกัน:
+     Data.watch(ชื่อคอลเลกชัน, {orderBy, dir, limit}, callback)  ฟังข้อมูลสด
+     Data.watchDoc(ชื่อคอลเลกชัน, id, callback)                    ฟังเอกสารเดียว
+     Data.get / add / set / update / del
+     Auth.onChange(cb) / login() / logout() / isAdmin(uid)
+   ========================================================= */
+const CFG = window.SNOW_CONFIG || null;
+const LIVE = !!(CFG && CFG.apiKey && !/^ใส่/.test(CFG.apiKey));
+let Data, Auth;
+
+async function initBackend() {
+  if (LIVE) await initFirebase(); else initDemo();
+  if (!LIVE) { const bar = el("div", "demo-bar", "โหมดตัวอย่าง: ยังไม่ได้เชื่อม Firebase ข้อมูลที่เห็นเป็นตัวอย่าง รีเฟรชแล้วหาย"); document.body.prepend(bar); }
+}
+
+/* ---------- โหมดจริง: Firebase (โหลดจาก gstatic ของ Google) ---------- */
+async function initFirebase() {
+  const base = "https://www.gstatic.com/firebasejs/10.12.2/";
+  const [appMod, authMod, fs] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
+  const app = appMod.initializeApp(CFG);
+  const auth = authMod.getAuth(app);
+  const db = fs.getFirestore(app);
+  const rows = (s) => s.docs.map((d) => ({ id: d.id, ...d.data() }));
+  Data = {
+    watch(col, o, cb, err) {
+      const parts = [];
+      if (o.orderBy) parts.push(fs.orderBy(o.orderBy, o.dir || "asc"));
+      if (o.limit) parts.push(fs.limit(o.limit));
+      return fs.onSnapshot(fs.query(fs.collection(db, col), ...parts), (s) => cb(rows(s)), err);
+    },
+    watchDoc(col, id, cb, err) { return fs.onSnapshot(fs.doc(db, col, id), (d) => cb(d.exists() ? { id: d.id, ...d.data() } : null), err); },
+    async get(col, id) { const d = await fs.getDoc(fs.doc(db, col, id)); return d.exists() ? { id: d.id, ...d.data() } : null; },
+    add: (col, data) => fs.addDoc(fs.collection(db, col), data),
+    set: (col, id, data) => fs.setDoc(fs.doc(db, col, id), data),
+    update: (col, id, patch) => fs.updateDoc(fs.doc(db, col, id), patch),
+    del: (col, id) => fs.deleteDoc(fs.doc(db, col, id)),
+  };
+  Auth = {
+    onChange(cb) { authMod.onAuthStateChanged(auth, (u) => cb(u ? { uid: u.uid, email: (u.email || "").toLowerCase(), name: u.displayName || "สมาชิก", photo: u.photoURL || "" } : null)); },
+    async login() {
+      const p = new authMod.GoogleAuthProvider();
+      try { await authMod.signInWithPopup(auth, p); }
+      catch (e) {
+        // บางเบราว์เซอร์มือถือบล็อกป๊อปอัป → เปลี่ยนไปใช้แบบเปลี่ยนหน้าแทน
+        if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") return authMod.signInWithRedirect(auth, p);
+        if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") throw e;
+      }
+    },
+    logout: () => authMod.signOut(auth),
+    // แอดมิน = อีเมลเจ้าของเว็บ หรืออีเมลที่อยู่ในคอลเลกชัน admins (เจ้าของเว็บเพิ่มจากหน้าแอดมิน)
+    async isAdmin(u) {
+      if (!u?.email) return false;
+      if (u.email === OWNER_EMAIL) return true;
+      try { return !!(await Data.get("admins", u.email)); } catch { return false; }
+    },
+  };
+}
+
+/* ---------- โหมดตัวอย่าง: ข้อมูลในหน่วยความจำ ---------- */
+function initDemo() {
+  const now = Date.now(), H = 3600000;
+  const store = {
+    news: [{ id: "n1", title: "ยินดีต้อนรับสู่ Snowcraft (ตัวอย่าง)", body: "นี่คือประกาศตัวอย่าง ข่าวสารจริงจะขึ้นตรงนี้", createdAt: now - 2 * H }],
+    posts: [
+      { id: "p1", title: "กฎเบื้องต้น (ตัวอย่าง)", body: "1. เคารพกัน\n2. ห้ามโปรแกรมโกง\n3. สงสัยอะไรถามในหมวดสอบถาม", link: "", cat: "basics", author: "x1", authorName: "ทีมงานตัวอย่าง", authorPhoto: "", createdAt: now - 5 * H },
+      { id: "p2", title: "สมัครแล้วรอนานไหม (ตัวอย่าง)", body: "ส่งใบสมัครไปเมื่อวาน ประมาณกี่วันรู้ผลครับ", link: "", cat: "ask", author: "x2", authorName: "สมาชิกตัวอย่าง", authorPhoto: "", createdAt: now - 1 * H },
+    ],
+    comments: [{ id: "c1", post: "p2", text: "ปกติ 1-2 วันครับ", author: "x1", authorName: "ทีมงานตัวอย่าง", authorPhoto: "", createdAt: now - .5 * H }],
+    likes: [{ id: "p1__x2", post: "p1", user: "x2" }],
+    applications: [ // ใบสมัครตัวอย่าง (รูปแบบเดียวกับฟอร์มจริงใน form.js)
+      { id: "x3", uid: "x3", name: "ผู้สมัครตัวอย่าง A", photo: "", status: "pending", note: "", createdAt: now - 3 * H, charImg: "",
+        discord: "@snowfox", xbox: "SnowFoxTH", role: "นักเรียน", charName: "ฮานาเอะ ยูกิ / 17", continent: "เอเชีย (จำนวน 30 คน)",
+        answers: { ocName: "ฟ็อกซ์ / 16", discord: "@snowfox", xbox: "SnowFoxTH", role: "นักเรียน", icName: "ฮานาเอะ ยูกิ / 17", gender: "หญิง", continent: "เอเชีย (จำนวน 30 คน)",
+          history: "(ตัวอย่าง) ประสบอุบัติเหตุรถชนตอนอายุ 9 ขวบ ครอบครัวยอมรับความช่วยเหลือจาก P.E.P", schedule: "ทำได้", noLeave: "โอเค", swearing: "รับได้", headChange: "รับได้", addons: "รับได้",
+          spec: "มือถือ RAM 8", qIC: "ในบทบาท", qOC: "นอกบทบาท", qMG: "เอาข้อมูลนอกโรลมาใช้ในโรล", qBK: "แทงข้างหลัง/หักหลัง", qRDM: "ฆ่ามั่วไม่มีเหตุผล", qPG: "บังคับให้อีกฝ่ายทำตาม", qStory: "P.E.P", message: "ฝากตัวด้วยค่ะ", ackRead: true } },
+      { id: "x4", uid: "x4", name: "ผู้สมัครตัวอย่าง B", photo: "", status: "approved", note: "ยินดีต้อนรับ", createdAt: now - 30 * H, charImg: "",
+        discord: "@rednight", xbox: "RedNight99", role: "นักเรียน", charName: "เรย์ / 18", continent: "แอนตาร์กติกา (จำนวน 2 คน)",
+        answers: { ocName: "ไนท์ / 18", icName: "เรย์ / 18", gender: "ชาย", continent: "แอนตาร์กติกา (จำนวน 2 คน)", history: "(ตัวอย่าง)", qStory: "เป๊ป", message: "-" } },
+    ],
+    admins: [{ id: "admin2@example.com", email: "admin2@example.com", label: "แอดมินตัวอย่าง ดูแลใบสมัคร", addedAt: now - 48 * H }],
+  };
+  // เนื้อหาเว็บ (site) ในโหมดตัวอย่างจำไว้ในเครื่อง จะได้ลองแก้ในหน้าแอดมินแล้วเปิดหน้าเว็บดูผลได้
+  const SITE_KEY = "snowcraft-demo-site";
+  try { store.site = JSON.parse(localStorage.getItem(SITE_KEY) || "[]"); } catch { store.site = []; }
+  const saveSite = () => { try { localStorage.setItem(SITE_KEY, JSON.stringify(store.site)); } catch {} };
+  addEventListener("storage", (e) => { if (e.key === SITE_KEY) { try { store.site = JSON.parse(e.newValue || "[]"); emit(); } catch {} } });
+  const subs = new Set();
+  const emit = () => subs.forEach((f) => f());
+  const listOf = (col, o) => {
+    let r = [...(store[col] || [])];
+    if (o.orderBy) { const k = o.orderBy, d = o.dir === "desc" ? -1 : 1; r.sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * d); }
+    return o.limit ? r.slice(0, o.limit) : r;
+  };
+  const sub = (f) => { subs.add(f); setTimeout(f); return () => subs.delete(f); };
+  Data = {
+    watch: (col, o, cb) => sub(() => cb(listOf(col, o))),
+    watchDoc: (col, id, cb) => sub(() => cb((store[col] || []).find((x) => x.id === id) || null)),
+    get: async (col, id) => (store[col] || []).find((x) => x.id === id) || null,
+    add: async (col, d) => { (store[col] ||= []).push({ id: "d" + Math.random().toString(36).slice(2, 9), ...d }); emit(); },
+    set: async (col, id, d) => { store[col] = (store[col] || []).filter((x) => x.id !== id); store[col].push({ id, ...structuredClone(d) }); if (col === "site") saveSite(); emit(); },
+    update: async (col, id, p) => { const x = (store[col] || []).find((x) => x.id === id); if (x) Object.assign(x, p); emit(); },
+    del: async (col, id) => { store[col] = (store[col] || []).filter((x) => x.id !== id); emit(); },
+  };
+  let cur = null; const ls = [];
+  const tell = () => ls.forEach((f) => f(cur));
+  Auth = {
+    onChange(cb) { ls.push(cb); setTimeout(() => cb(cur)); },
+    async login() { cur = { uid: "demo", email: OWNER_EMAIL, name: "ภัทร (ตัวอย่าง)", photo: "" }; tell(); },
+    async logout() { cur = null; tell(); },
+    // โหมดตัวอย่าง: ล็อกอินเป็นเจ้าของเว็บเสมอ จะได้ลองหน้าแอดมินได้ทุกเมนู
+    isAdmin: async (u) => !!u && (u.email === OWNER_EMAIL || store.admins.some((a) => a.id === u.email)),
+  };
+}
+
+/* ---------- ส่วนหัว: ปุ่มล็อกอิน / ชื่อผู้ใช้ / ลิงก์หน้าแอดมิน ---------- */
+function renderMe(box, me, isAdmin, opts = {}) {
+  box.textContent = "";
+  if (!me) {
+    const b = el("button", "btn-main", "ล็อกอินด้วย Google"); b.type = "button";
+    b.onclick = () => Auth.login().catch((e) => toast(errText(e)));
+    box.append(b); return;
+  }
+  if (isAdmin && opts.adminLink) { const a = el("a", "admin-link", "หน้าแอดมิน"); a.href = opts.adminLink; box.append(a); }
+  if (opts.homeLink) { const a = el("a", "admin-link", "← หน้าเว็บ"); a.href = opts.homeLink; box.append(a); }
+  box.append(avatar(me.name, me.photo), el("span", "nm", me.name));
+  const out = el("button", "link-btn", "ออกจากระบบ"); out.type = "button"; out.onclick = () => Auth.logout();
+  box.append(out);
+}
+
+/* =========================================================
+   content.js — เนื้อหาเว็บที่แอดมินแก้ได้จากเมนู "✏️ แก้เว็บ"
+   (ถูกต่อท้าย core.js ตอน build — แก้ที่ไฟล์นี้)
+
+   - DEFAULT_CONTENT = ค่าเริ่มต้น (ใช้ตอนยังไม่เคยบันทึก หรือกด "คืนค่าเริ่มต้น")
+   - เนื้อหาจริงเก็บในฐานข้อมูลที่ site/content (ทุกคนอ่านได้ แอดมินเขียนได้)
+   - คำตอบที่ถูกของคำถามทดสอบเก็บแยกที่ site/private (แอดมินเท่านั้นที่อ่านได้)
+
+   รูปแบบข้อความยาว (เนื้อเรื่อง/คำอธิบาย) พิมพ์ทีละบรรทัด:
+     # หัวข้อ        - รายการ (มี ✦ นำหน้า)
+     ! ตัวสีทอง      * ตัวหนา
+     บรรทัดอื่น = ย่อหน้าธรรมดา · เว้นบรรทัดว่างเพื่อขึ้นย่อหน้าใหม่
+   ========================================================= */
+const DEFAULT_CONTENT = {
+  hero: {
+    eyebrow: "community · minecraft bedrock",
+    text: "บ้านของชาว Snowcraft ที่นี่มีทั้งข่าวสาร ช่องทางสมัครเข้าโปรเจกต์ ลิงก์ดิสคอร์ด และพื้นที่ถามตอบ",
+  },
+  discordUrl: "https://discord.gg/ZM55SV7ZfY",
+  footer: "Snowcraft community · ลิงก์ในโพสต์มาจากสมาชิก ตรวจสอบก่อนกดทุกครั้ง",
+  cats: {
+    join:    { name: "สมัครโปรเจกต์", desc: "ส่งใบสมัครเข้าร่วม" },
+    discord: { name: "ลิงก์ดิสคอร์ด", desc: "กดเพื่อเข้าเซิร์ฟดิสคอร์ด" },
+    basics:  { name: "ที่ควรรู้เบื้องต้น", desc: "ขั้นตอนก่อนสมัคร" },
+    ask:     { name: "สอบถาม", desc: "ติดตรงไหนถามได้" },
+  },
+  basics: {
+    title: "สิ่งที่ควรทำเบื้องต้น",
+    // button: "" ไม่มีปุ่ม · "form" ปุ่มไปฟอร์ม · "discord" ปุ่มเปิดดิสคอร์ด
+    steps: [
+      { title: "อ่านเนื้อเรื่องสตอรี่ของโปรเจกต์", text: "อยู่ในหน้าแรกของแบบฟอร์มสมัคร", button: "form" },
+      { title: "อ่านให้ครบ จบทุกบรรทัด แล้วกรอกแบบฟอร์ม", text: "หากผ่าน แอดมินจะแจ้งให้ทราบ", button: "form" },
+      { title: "กรอกเสร็จแล้ว “แคปภาพหน้าจอ”", text: "ส่งที่ห้องส่งฟอร์มในดิสคอร์ด แล้วรอแอดมินตรวจ\n! ทางแอดมินตรวจฟอร์มเป็นรอบ งดเร่งทุกกรณี", button: "" },
+      { title: "รอผลการตรวจ", text: "เมื่อตรวจเสร็จ จะแจ้งในห้องแจ้งคนผ่านแบบฟอร์ม หรือผ่านเว็บนี้", button: "" },
+      { title: "อ่านกฎในดิสคอร์ด และเตรียมตัวให้พร้อม", text: "หากเป็นบทบาทพิเศษ จะมีการสัมภาษณ์ที่เข้มขึ้น", button: "discord" },
+      { title: "พร้อมแล้ว นัดสัมภาษณ์ได้ทันที", text: "มาให้ตรงเวลาที่นัด และมาก่อน 5 นาทีนะคะ แอดมินจะแท็กเรียกทุกครั้ง", button: "" },
+    ],
+    foot: "มีข้อสงสัยตรงไหน ถามในหมวดสอบถาม หรือทักหาแอดมินส้มส้ม พร้อมตอบเสมอค่ะ",
+  },
+  apply: {
+    open: true,
+    closedText: "ตอนนี้ยังไม่เปิดรับสมัคร รอประกาศรอบใหม่ในดิสคอร์ดนะคะ",
+  },
+  /* ฟอร์มสมัคร
+     ชนิดคำถาม (type): text สั้น · textarea ยาว · radio เลือก 1 ข้อ · image รูป · check ติ๊กยืนยัน
+     top = ใช้ข้อนี้เป็นข้อมูลหลักของใบสมัคร (charName ชื่อตัวละคร · role บทบาท · continent ทวีป · discord · xbox)
+     ทวีป: ใส่ "(จำนวน N คน)" ท้ายตัวเลือก หน้าแอดมินจะนับโควต้าให้ */
+  form: {
+    title: "ฟอร์มสมัครโรล Snowcraft",
+    sections: [
+      {
+        id: "intro", title: "เนื้อเรื่องและเงื่อนไข",
+        info: `# เนื้อเรื่อง (รบกวนอ่านด้วยนะคะ!!)
+ตลอดช่วงระยะเวลา 10 ปีที่ผ่านมา มนุษยชาติต้องเผชิญหน้ากับความเสี่ยงในการล่มสลายทางเผ่าพันธุ์หลายต่อหลายครั้ง แต่ด้วยความร่วมมือจากหลายองค์กร เราก็จับมือก้าวผ่านมันมาได้เสมอ และฉันเองก็หวังว่าในครั้งนี้ เราก็จะผ่านมันไปได้เหมือนกัน Planet eater หรือที่พวกคุณส่วนใหญ่รู้จักในชื่อ "ปรสิต เดรัจฉาน" พวกมันได้แฝงตัวเข้ามา แทรกซึม และอาศัยอยู่ภายในโลกของพวกเราเป็นเวลานาน พวกมันไม่เหมือนภัยธรรมชาติ พวกมันไม่มีสัญญาณเตือนล่วงหน้า ไม่เหมือนกับไฟป่าที่จะสามารถใช้น้ำดับได้ ไม่ได้คล้ายกับน้ำท่วมที่แค่เพียงอพยพก็จะปลอดภัย แต่พวกมันคือการสั่นคลอนของเผ่าพันธุ์มนุษย์อย่างแท้จริง
+
+เราไม่สามารถกำจัดมันได้เพียงแค่การใช้ลูกกระสุน ราดน้ำมัน หรือจุดไฟเผามัน วิทยาการของมนุษย์ใช้ไม่ได้ผลกับพวกมันอีกแล้ว จึงทำให้หลาย ๆ องค์กรต้องร่วมมือกัน เพื่อกำจัดพวกมันทิ้ง เพราะไม่อย่างนั้น เผ่าพันธุ์มนุษย์ของเราอาจถึงคราวล่มสลาย พวกเราจึงก่อตั้งองค์กร P.E.P (เป๊ป) เพื่อกำจัดและปราบปรามสิ่งที่พวกเรารู้จักกันในชื่อ "ปรสิต" พวกเขาคือความหวังของมนุษยชาติ และพวกเขามีวิทยาการที่ล้ำหน้า พวกเขารู้วิธีกำจัดมัน รู้ว่าต้องทำยังไงเพื่อรักษาเผ่าพันธุ์มนุษย์เอาไว้ และเป๊ปเองก็รู้ว่าจะใช้ประโยชน์จากพวกมันได้ยังไง. . . .
+
+# อุปกรณ์ / แอปพลิเคชัน
+- คอมพิวเตอร์ หรือ โน้ตบุ๊กที่สามารถรองรับแอดออน และ Mod Minecraft ได้จำนวนหนึ่ง
+- โทรศัพท์มือถือ RAM 8 ขึ้นไป
+- มีไอดีมายคราฟ Minecraft Bedrock
+- Discord เพื่อใช้สื่อสารในการเล่นและพูดคุย และไมโครโฟนที่สามารถพูดคุยได้ชัดเจน ไม่แตก หรือช็อต
+
+# การรับมือ / ความพร้อม
+- อายุมากกว่า 15 ปีขึ้นไป (หากน้อยกว่านั้นจะพิจารณา)
+- สามารถแยก OC / IC ได้อย่างดี
+- มีพื้นฐานการเข้าสังคมแบบมีมารยาท
+- จิตใจแข็งแรง มีจิตใจที่มั่นคง สามารถรับแรงกดดันจากสิ่งต่าง ๆ
+- มีความรับผิดชอบ และตรงต่อเวลา กระทำผิดและยอมรับ ไม่ปิดบังหากโดนจับได้
+
+# การแสดงบทบาท
+- มีคาแรกเตอร์ตัวละครที่ชัดเจน และสามารถคีพคาแรกเตอร์ได้อย่างเหมาะสม
+- เข้าใจแนวทางเนื้อเรื่องของโปรเจกต์ได้อย่างครบถ้วน และพร้อมเข้าร่วม ไม่ว่าจะไปในแนวทางไหน
+- มีจินตนาการในการสร้างสรรค์ หรือคิดสตอรี่อย่างเหมาะสม
+
+กรุณาอ่านทุกอย่างในแบบฟอร์มให้ครบถ้วน หากเกิดปัญหา ทางเราจะช่วยสุดความสามารถ แต่หากไม่สามารถแก้ไขได้ ทางโปรเจกต์จะไม่ขอรับผิดชอบใด ๆ ทั้งสิ้น และกรุณาตัดสินใจให้ดีก่อนสมัครไวรัสของทางเรา เพราะหากมีการถอนตัวภายหลัง จะทำให้ผู้อื่นที่รอเล่นเสียสิทธิ์ในการเล่น ขอบคุณค่ะ
+
+# สิ่งที่จำเป็นต้องรู้
+- โรลเราเล่น 1 เดือน แบ่งเป็น 2 พาร์ต
+- ทางเราจะเก็บเงินค่าเซิร์ฟ 30 บาท
+- สกิน เฉพาะหัว 1 จ่าย 10 บาท
+* รวมเป็น 40 บาท
+
+# ช่องที่ใส่แอดออน
+- รองเท้า → เป็นเสื้อ
+- กางเกง → เป็นหัว
+
+# บทบาทที่รับ
+- นักเรียน จำนวน 40 คน
+
+# อาวุธที่มีให้ในโรล
+- อาวุธขวาน
+- ดาบคาตานะ
+- อาวุธมีดสั้นคู่
+(ทุกอาวุธมีสกิล มีอนิเมชัน)
+* และสามารถสั่งทำอาวุธของตัวเองได้ แต่ต้องเป็นร้านของโปรเจกต์ของเราเท่านั้น`,
+        fields: [
+          { key: "ackRead", type: "check", label: "ฉันอ่านเนื้อเรื่องและเงื่อนไขทั้งหมดครบทุกบรรทัดแล้ว", required: true },
+        ],
+      },
+      {
+        id: "basic", title: "ข้อมูลพื้นฐาน", info: "",
+        fields: [
+          { key: "ocName", type: "text", label: "ชื่อ / อายุ OC", hint: "ex. มิว / 12", required: true },
+          { key: "discord", type: "text", label: "ชื่อดิสคอร์ด", hint: "ex. @whxsqz._", required: true, top: "discord" },
+          { key: "xbox", type: "text", label: "ID XBOX", hint: "ex. DX88", required: true, top: "xbox" },
+        ],
+      },
+      {
+        id: "char", title: "สร้างตัวละคร",
+        info: `สถานที่ในโรลของเราจัดตั้งอยู่ที่ประเทศญี่ปุ่น เพราะงั้น 90% จะเป็นคนญี่ปุ่น อีก 10% สัญชาติอื่น
+
+# อายุของตัวละคร บทบาทนักเรียน
+- นักเรียนอายุ 17 - 18 ปี
+
+# ส่วนสูงของบทบาทนักเรียน
+- เพศหญิง 160+
+- เพศชาย 165+
+
+# ประวัติตัวละครให้เชื่อมโยงกับเนื้อเรื่องที่กำหนด
+ตัวละครทุกคนต้องเกิดอุบัติเหตุ หรือสิ่งที่ทำให้ต้องการการรักษาเร่งด่วน และผู้ปกครองทุกคนทราบว่ามีองค์กร P.E.P และทราบเพียงแค่ว่าองค์กร P.E.P สร้างขึ้นเพื่อกำจัดและปราบปรามปรสิต แต่จะไม่รู้ว่าจริง ๆ แล้วองค์กรนี้ต้องการทดลองการนำปรสิตไปใส่ไว้ในร่างกายของมนุษย์ เลยเลือกยื่นมือให้ความช่วยเหลือกับครอบครัวที่ลูกหลานกำลังจะตาย หรือต้องการความช่วยเหลือ แต่ข้อตกลงของเรื่องนี้คือ เมื่อถึงอายุที่องค์กรกำหนด (16-18) ทุกครอบครัวที่ได้รับการช่วยเหลือจากองค์กร P.E.P จะต้องส่งลูกหลานที่ได้รับการช่วยเหลือมาเรียนที่โรงเรียนแห่งนี้
+! หมายเหตุ: ไม่มีใครรู้ว่ามีปรสิตในร่างกายของพวกคุณ ไม่ว่าจะเป็นตัวคุณ หรือผู้ปกครอง ยกเว้นองค์กร P.E.P`,
+        fields: [
+          { key: "role", type: "radio", label: "บทบาทที่สมัคร", required: true, top: "role", options: ["นักเรียน", "บทบาทพิเศษ (สัมภาษณ์เข้มขึ้น)"] },
+          { key: "icName", type: "text", label: "ชื่อ / อายุ IC", hint: "ex. มาริโทริน มาโย (จิว) / 17", required: true, top: "charName" },
+          { key: "gender", type: "radio", label: "เพศ", required: true, options: ["หญิง", "ชาย", "lgbtq+"] },
+          { key: "continent", type: "radio", label: "ทวีปที่เล่น", hint: "แอนตาร์กติกา: ผมขาว มีเพียงแค่ทวีปนี้เท่านั้น!!", required: true, top: "continent",
+            options: ["เอเชีย (จำนวน 30 คน)", "อเมริกาเหนือ (จำนวน 2 คน)", "อเมริกาใต้ (จำนวน 2 คน)", "ยุโรป (จำนวน 2 คน)", "แอฟริกา (จำนวน 2 คน)", "แอนตาร์กติกา (จำนวน 2 คน)"] },
+          { key: "charImg", type: "image", label: "รูปตัวละครที่เล่น", hint: "รูป 1 รูป ระบบจะย่อขนาดให้อัตโนมัติ" },
+          { key: "history", type: "textarea", label: "ประวัติตัวละคร", hint: "ตั้งแต่เด็ก - ปัจจุบันกำลังจะเข้าเรียนที่ P.E.P", required: true },
+        ],
+      },
+      {
+        id: "general", title: "คำถามทั่วไป", info: "",
+        fields: [
+          { key: "schedule", type: "radio", required: true, options: ["ทำได้", "ทำไม่ได้"], label: "เวลาโรล: 19:30 - 22:00 น. · วันที่โรลเพลย์: จันทร์, พุธ, ศุกร์ และเสาร์ · โรล 4 วัน สามารถลาโรลได้ 2 วันต่อสัปดาห์" },
+          { key: "noLeave", type: "radio", required: true, options: ["โอเค", "ไม่โอเค"], label: "หากคุณไม่มีการแจ้งลาจนเกินกำหนด จะทำการปลดไวรัส คุณโอเคไหม" },
+          { key: "swearing", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "มีการใช้คำหยาบ ด่า 80% คุณรับได้ไหม" },
+          { key: "headChange", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "หากต้องการเปลี่ยนหัว (ตัวละครใหม่) จำเป็นต้องมีสตอรี่รองรับ หากเปลี่ยนเพราะเบื่อและไม่มีสตอรี่ จะไม่ให้เปลี่ยน คุณรับได้ไหม" },
+          { key: "addons", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "ภายในเซิร์ฟมีแอดออนเยอะ (แอดออนตกแต่ง, แอดออนอาหาร, แอดออน EMOTES ท่าทาง, พลังและอาวุธ, อื่นๆ)" },
+          { key: "spec", type: "text", label: "สเปกมือถือและคอม", required: true },
+        ],
+      },
+      {
+        id: "terms", title: "คำถามเกี่ยวกับศัพท์ในโรลเพลย์", info: "",
+        fields: [
+          { key: "qIC", type: "text", label: "IC คืออะไร", required: true },
+          { key: "qOC", type: "text", label: "OC คืออะไร", required: true },
+          { key: "qMG", type: "text", label: "MG คืออะไร", required: true },
+          { key: "qBK", type: "text", label: "BK คืออะไร", required: true },
+          { key: "qRDM", type: "text", label: "RDM คืออะไร", required: true },
+          { key: "qPG", type: "text", label: "PG คืออะไร", required: true },
+          { key: "qStory", type: "text", label: "จากเนื้อเรื่อง องค์กรที่ส่งตัวละครมาเรียนชื่อว่าอะไร", required: true },
+          { key: "message", type: "textarea", label: "มีอะไรจะบอกพวกเราไหม", required: true },
+        ],
+      },
+    ],
+  },
+};
+/* คำตอบที่ถูกของคำถามทดสอบ (เก็บแยก ไม่ให้คนนอกเห็น) */
+const DEFAULT_PRIVATE = { answers: { qStory: "P.E.P (เป๊ป)" } };
+
+/* ความยาวสูงสุดของคำตอบแต่ละชนิด */
+const TYPE_MAX = { text: 300, textarea: 4000, radio: 200, check: 0, image: 0 };
+
+let CONTENT = structuredClone(DEFAULT_CONTENT);
+
+/* เติมส่วนที่ขาดจากค่าเริ่มต้น (เผื่อเนื้อหาที่บันทึกไว้เป็นรุ่นเก่า) */
+function mergeContent(saved) {
+  const c = structuredClone(DEFAULT_CONTENT);
+  if (!saved || typeof saved !== "object") return c;
+  for (const k of Object.keys(c)) if (saved[k] !== undefined) {
+    if (k === "cats") for (const ck of Object.keys(c.cats)) c.cats[ck] = { ...c.cats[ck], ...(saved.cats?.[ck] || {}) };
+    else if (c[k] && typeof c[k] === "object" && !Array.isArray(c[k]) && k !== "form") c[k] = { ...c[k], ...saved[k] };
+    else c[k] = saved[k];
+  }
+  return c;
+}
+
+/* ใช้เนื้อหาใหม่กับทั้งเว็บ: ชื่อหมวด, ลิงก์ดิสคอร์ด, ฟอร์ม */
+function applyContent(c) {
+  CONTENT = c;
+  for (const k of Object.keys(CATS)) if (c.cats[k]) Object.assign(CATS[k], c.cats[k]);
+  DISCORD_URL = c.discordUrl || DEFAULT_CONTENT.discordUrl;
+  setForm(c.form);
+}
+
+/* ---------- แปลงข้อความ (# - ! *) เป็นส่วนประกอบหน้าเว็บ ---------- */
+function parseRich(text) {
+  const out = []; let para = [], list = null;
+  const flush = () => { if (para.length) { out.push({ p: para.join("\n") }); para = []; } list = null; };
+  for (const raw of String(text || "").split("\n")) {
+    const line = raw.trim();
+    if (!line) { flush(); continue; }
+    const m = line.match(/^([#\-!*•✦])\s*(.*)$/);
+    if (m && m[2]) {
+      if (para.length) { out.push({ p: para.join("\n") }); para = []; }
+      if (m[1] === "#") { list = null; out.push({ h: m[2] }); }
+      else if (m[1] === "!") { list = null; out.push({ warn: m[2] }); }
+      else if (m[1] === "*") { list = null; out.push({ strong: m[2] }); }
+      else { if (!list) { list = { ul: [] }; out.push(list); } list.ul.push(m[2]); }
+    } else { list = null; para.push(line); }
+  }
+  flush();
+  return out;
+}
+
+/* =========================================================
+   form.js — แบบฟอร์มสมัครโรล (ใช้ทั้งหน้าเว็บและหน้าแอดมิน)
+   (ถูกต่อท้าย core.js ตอน build — แก้ที่ไฟล์นี้)
+
+   ★ แก้คำถาม/ข้อความในฟอร์มได้ที่ FORM ด้านล่างที่เดียว
+     หน้าเว็บจะสร้างฟอร์มตามนี้ และหน้าแอดมินจะแสดงคำตอบตามนี้
+
+   ชนิดช่อง (type):
+     text = ช่องพิมพ์สั้น · textarea = ช่องพิมพ์ยาว · radio = เลือก 1 ข้อ
+     image = อัปรูป (ย่อให้เล็กลงอัตโนมัติก่อนส่ง) · check = ช่องติ๊กยืนยัน
+   ช่องที่มี top: "ชื่อ" จะเก็บแยกไว้ด้านบนของใบสมัครด้วย (แอดมินกรอง/นับได้)
+
+   ข้อความแนะนำ (info) เขียนเป็นรายการ:
+     { h: "หัวข้อ" } · { p: "ย่อหน้า" } · { ul: ["ข้อ1","ข้อ2"] } · { strong: "ตัวหนา" } · { warn: "ตัวสีทอง" }
+   ========================================================= */
+/* ฟอร์มปัจจุบัน (มาจาก CONTENT.form ใน content.js — แอดมินแก้ได้จากเมนู "✏️ แก้เว็บ") */
+let FORM = DEFAULT_CONTENT.form, FORM_FIELDS = [];
+function setForm(f) {
+  FORM = f && Array.isArray(f.sections) ? f : DEFAULT_CONTENT.form;
+  FORM_FIELDS = FORM.sections.flatMap((s) => (s.fields || []).map((x) => ({ ...x, section: s.title })));
+}
+setForm(FORM);
+const fieldMax = (f) => TYPE_MAX[f.type] ?? 300;
+
+/* ---------- วาดข้อความแนะนำ (info) ---------- */
+function renderInfo(info) {
+  const box = el("div", "f-info");
+  const blocks = typeof info === "string" ? parseRich(info) : info || [];
+  for (const b of blocks) {
+    if (b.h) box.append(el("h4", null, b.h));
+    if (b.p) box.append(el("p", null, b.p));
+    if (b.strong) box.append(el("p", "f-strong", b.strong));
+    if (b.warn) box.append(el("p", "f-warn", b.warn));
+    if (b.ul) { const u = el("ul"); b.ul.forEach((t) => u.append(el("li", null, t))); box.append(u); }
+  }
+  return box;
+}
+
+/* ---------- ย่อรูปในเครื่องก่อนส่ง (ด้านยาวสุด 640px, JPEG) ----------
+   เก็บเป็นข้อความรูปในฐานข้อมูลได้เลย ไม่ต้องใช้ที่เก็บไฟล์แยก (ฟรี) */
+function shrinkImage(file, maxSide = 640) {
+  return new Promise((ok, bad) => {
+    if (!/^image\//.test(file.type)) return bad(new Error("ไฟล์นี้ไม่ใช่รูป"));
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      let q = .82, out = c.toDataURL("image/jpeg", q);
+      while (out.length > 350000 && q > .4) { q -= .1; out = c.toDataURL("image/jpeg", q); }
+      out.length > 380000 ? bad(new Error("รูปใหญ่เกินไป")) : ok(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); bad(new Error("เปิดรูปไม่ได้")); };
+    img.src = url;
+  });
+}
+
+/* =========================================================
+   ฟอร์มทีละหน้า (หน้าเว็บ)
+   - กรอกแล้วจำไว้ในเครื่อง (ปิดเว็บแล้วกลับมากรอกต่อได้)
+   - ไม่ล็อกอินก็อ่าน/กรอกได้ ตอนกดส่งจะให้ล็อกอิน
+   ========================================================= */
+const DRAFT_KEY = "snowcraft-form-draft";
+function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"); } catch { return {}; } }
+function saveDraft(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch {} }
+function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+
+function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
+  const st = { step: 0, ans: loadDraft() };
+  const wrap = el("div", "wizard");
+  const sections = FORM.sections, last = sections.length - 1;
+
+  function fieldEl(f) {
+    const box = el("div", "f-field"); box.dataset.key = f.key;
+    const lab = el("div", "f-label"); lab.append(f.label); if (f.required) lab.append(el("span", "req", " *"));
+    box.append(lab);
+    if (f.hint) box.append(el("div", "f-hint", f.hint));
+    const id = "fq-" + f.key, v = st.ans[f.key];
+    if (f.type === "text" || f.type === "textarea") {
+      const inp = el(f.type === "text" ? "input" : "textarea"); inp.id = id; inp.maxLength = fieldMax(f);
+      inp.placeholder = "คำตอบของคุณ"; inp.value = v || "";
+      inp.oninput = () => { st.ans[f.key] = inp.value; saveDraft(st.ans); box.classList.remove("bad"); };
+      box.append(inp);
+    } else if (f.type === "radio") {
+      const g = el("div", "f-opts"); g.setAttribute("role", "radiogroup");
+      (f.options || []).forEach((o, i) => {
+        const l = el("label", "f-opt"); const r = el("input"); r.type = "radio"; r.name = id; r.id = id + "-" + i; r.value = o; r.checked = v === o;
+        r.onchange = () => { st.ans[f.key] = o; saveDraft(st.ans); box.classList.remove("bad"); };
+        l.append(r, el("span", null, o)); g.append(l);
+      });
+      box.append(g);
+    } else if (f.type === "check") {
+      const l = el("label", "check"); const c = el("input"); c.type = "checkbox"; c.id = id; c.checked = !!v;
+      c.onchange = () => { st.ans[f.key] = c.checked; saveDraft(st.ans); box.classList.remove("bad"); };
+      l.append(c, el("span", null, "ยืนยัน")); box.append(l);
+    } else if (f.type === "image") {
+      const prev = el("img", "f-img"); prev.alt = "รูปตัวละคร"; prev.hidden = !v; if (v) prev.src = v;
+      const pick = el("label", "btn-ghost f-file"); pick.htmlFor = id; pick.textContent = v ? "เปลี่ยนรูป" : "⬆ เลือกรูป";
+      const inp = el("input"); inp.type = "file"; inp.id = id; inp.accept = "image/*"; inp.hidden = true;
+      const rm = el("button", "link-btn", "ลบรูป"); rm.type = "button"; rm.hidden = !v;
+      inp.onchange = async () => {
+        const file = inp.files[0]; if (!file) return;
+        pick.textContent = "กำลังย่อรูป…";
+        try { const d = await shrinkImage(file); st.ans[f.key] = d; prev.src = d; prev.hidden = false; rm.hidden = false; saveDraft(st.ans); }
+        catch (e) { toast(e.message || "ใช้รูปนี้ไม่ได้"); }
+        pick.textContent = st.ans[f.key] ? "เปลี่ยนรูป" : "⬆ เลือกรูป"; inp.value = "";
+      };
+      rm.onclick = () => { delete st.ans[f.key]; saveDraft(st.ans); prev.hidden = true; rm.hidden = true; pick.textContent = "⬆ เลือกรูป"; };
+      const row = el("div", "f-imgrow"); row.append(pick, rm);
+      box.append(prev, row, inp);
+    }
+    return box;
+  }
+
+  function missing(sec) {
+    return (sec.fields || []).filter((f) => {
+      if (!f.required) return false;
+      const v = st.ans[f.key];
+      return f.type === "check" ? !v : !(typeof v === "string" && v.trim());
+    });
+  }
+
+  function render() {
+    wrap.textContent = "";
+    const sec = sections[st.step];
+    // แถบความคืบหน้า
+    const bar = el("div", "f-progress");
+    sections.forEach((s, i) => { const d = el("span", i < st.step ? "done" : i === st.step ? "now" : ""); d.title = s.title; bar.append(d); });
+    const head = el("div", "f-head");
+    head.append(el("small", null, `ส่วนที่ ${st.step + 1} / ${sections.length}`), el("h3", null, sec.title));
+    const card = el("div", "form f-card"); card.append(bar, head);
+    if (sec.info && String(sec.info).trim()) card.append(renderInfo(sec.info));
+    (sec.fields || []).forEach((f) => card.append(fieldEl(f)));
+
+    const nav = el("div", "actions f-nav");
+    if (st.step > 0) { const b = el("button", "btn-ghost", "← กลับ"); b.type = "button"; b.onclick = () => go(st.step - 1); nav.append(b); }
+    const next = el("button", "btn-main", st.step === last ? (isLoggedIn() ? "ส่งใบสมัคร" : "ล็อกอินแล้วส่งใบสมัคร") : "ถัดไป →"); next.type = "button";
+    next.onclick = async () => {
+      const miss = missing(sec);
+      if (miss.length) {
+        miss.forEach((f) => card.querySelector(`[data-key="${f.key}"]`)?.classList.add("bad"));
+        card.querySelector(".bad")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return toast(`ยังไม่ได้ตอบ ${miss.length} ข้อ`);
+      }
+      if (st.step < last) return go(st.step + 1);
+      if (!isLoggedIn()) return onLogin();
+      next.disabled = true; next.textContent = "กำลังส่ง…";
+      try { await onSubmit({ ...st.ans }); clearDraft(); }
+      catch (e) { toast(errText(e)); next.disabled = false; next.textContent = "ส่งใบสมัคร"; }
+    };
+    nav.append(next);
+    card.append(nav);
+    wrap.append(card);
+  }
+  function go(i) { st.step = i; render(); wrap.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  render();
+  wrap.refresh = render; // เรียกใหม่เมื่อสถานะล็อกอินเปลี่ยน (ปุ่มส่งเปลี่ยนข้อความ)
+  return wrap;
+}
+
+/* แปลงคำตอบเป็นข้อมูลที่ส่งเข้าฐานข้อมูล */
+function packApplication(me, ans) {
+  const doc = { uid: me.uid, name: me.name, photo: me.photo || "", status: "pending", note: "", createdAt: Date.now(), answers: {}, charImg: "" };
+  for (const f of FORM_FIELDS) {
+    const v = ans[f.key];
+    if (f.type === "image") { doc.charImg = typeof v === "string" ? v : ""; continue; }
+    const val = f.type === "check" ? !!v : String(v ?? "").trim().slice(0, fieldMax(f));
+    doc.answers[f.key] = val;
+    if (f.top) doc[f.top] = String(val).slice(0, 80);
+  }
+  for (const k of ["discord", "xbox", "role", "charName", "continent"]) doc[k] ??= "";
+  return doc;
+}
+
+/* ---------- แสดงคำตอบทั้งหมด (หน้าแอดมิน) ----------
+   keys = คำตอบที่ถูกของคำถามทดสอบ (จาก site/private)
+   คำตอบของคำถามที่ถูกลบออกจากฟอร์มไปแล้ว จะแสดงในหมวด "คำตอบจากฟอร์มรุ่นเก่า" */
+function renderAnswers(a, keys = {}) {
+  const box = el("div", "f-answers"), used = new Set();
+  const addRow = (dl, label, value, key) => {
+    dl.append(el("dt", null, label));
+    const dd = el("dd"); dd.textContent = value === true ? "✓" : value || "—";
+    if (key && keys[key]) dd.append(el("span", "f-key", " · คำตอบที่ถูก: " + keys[key]));
+    dl.append(dd);
+  };
+  for (const sec of FORM.sections) {
+    const fields = (sec.fields || []).filter((f) => f.type !== "check");
+    (sec.fields || []).forEach((f) => used.add(f.key));
+    if (!fields.length) continue;
+    const det = el("details"); if (sec.id === "char") det.open = true;
+    det.append(el("summary", null, sec.title));
+    const dl = el("dl", "kv");
+    for (const f of fields) {
+      if (f.type === "image") {
+        dl.append(el("dt", null, f.label)); const dd = el("dd");
+        if (a.charImg) { const im = el("img", "f-img"); im.src = a.charImg; im.alt = "รูปตัวละคร"; dd.append(im); } else dd.textContent = "— ไม่ได้แนบรูป —";
+        dl.append(dd);
+      } else addRow(dl, f.label, a.answers?.[f.key], f.key);
+    }
+    det.append(dl); box.append(det);
+  }
+  const extra = Object.keys(a.answers || {}).filter((k) => !used.has(k));
+  if (extra.length) {
+    const det = el("details"); det.append(el("summary", null, "คำตอบจากฟอร์มรุ่นเก่า"));
+    const dl = el("dl", "kv"); extra.forEach((k) => addRow(dl, k, a.answers[k], k)); det.append(dl); box.append(det);
+  }
+  return box;
+}
+</script>
+<script>/* =========================================================
+   editor.js — เมนู "✏️ แก้เว็บ" ในหน้าแอดมิน (ฝังเฉพาะใน admin.html)
+
+   หลักการ:
+   - ED = สำเนาเนื้อหาที่กำลังแก้ (ยังไม่บันทึก)
+   - พิมพ์แก้ → แก้ใน ED ทันที (ไม่วาดหน้าใหม่ ช่องพิมพ์ไม่หลุด)
+   - เพิ่ม/ลบ/สลับลำดับ → วาดหน้าใหม่
+   - กด "บันทึก" → เขียนลง site/content (+ คำตอบที่ถูกลง site/private)
+     หน้าเว็บของทุกคนเปลี่ยนตามทันที
+   ========================================================= */
+let ED = null, EDP = null, edDirty = false;
+const edOpen = new Set(["gen"]); // หมวดที่เปิดค้างไว้ (จำไว้ตอนวาดใหม่)
+
+const TYPE_NAMES = { text: "พิมพ์สั้นๆ (เช่น ชื่อ, ID)", textarea: "พิมพ์ยาว (เช่น ประวัติ, เหตุผล)", radio: "ให้เลือก 1 ข้อ", image: "อัปรูป (มีได้ช่องเดียว)", check: "ติ๊กยืนยัน (เช่น อ่านแล้ว)" };
+const TOP_NAMES = { "": "ไม่ต้อง", charName: "ชื่อตัวละคร", role: "บทบาท", continent: "ทวีป (นับจำนวนคนให้ด้วย)", discord: "ชื่อดิสคอร์ด", xbox: "ID XBOX" };
+const BTN_NAMES = { "": "ไม่มีปุ่ม", form: "มีปุ่ม “ไปที่แบบฟอร์ม”", discord: "มีปุ่ม “เปิดดิสคอร์ด”" };
+const RICH_HELP = "กดปุ่มด้านบนเพื่อจัดรูปแบบบรรทัดที่เคอร์เซอร์อยู่ · เว้นบรรทัดว่าง 1 บรรทัด = ขึ้นย่อหน้าใหม่";
+
+function edLoad(content, priv) {
+  if (edDirty) return; // กำลังแก้อยู่ ไม่เอาของใหม่มาทับ
+  ED = structuredClone(content); EDP = structuredClone(priv || DEFAULT_PRIVATE); EDP.answers ||= {};
+  renderEditor();
+}
+function markDirty() { edDirty = true; $("edBar").classList.add("dirty"); $("edState").textContent = "มีการแก้ที่ยังไม่บันทึก"; }
+const newKey = () => "q" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+
+/* ---------- ช่องกรอกเล็กๆ ที่ผูกกับค่าใน ED ---------- */
+function edInput(label, get, set, { long = false, help = "", max = 300, rows = 4, id, rich = false, placeholder = "" } = {}) {
+  const lab = el(rich ? "div" : "label", "ed-l"); if (id && !rich) lab.htmlFor = id;
+  const title = el(rich ? "label" : "span", null, label); if (rich && id) title.htmlFor = id; lab.append(title);
+  const inp = el(long ? "textarea" : "input"); if (id) inp.id = id; inp.maxLength = max; inp.value = get() ?? "";
+  if (long) inp.rows = rows; if (placeholder) inp.placeholder = placeholder;
+  let prev = null;
+  inp.oninput = () => { set(inp.value); markDirty(); if (prev && !prev.hidden) drawPrev(); };
+  const drawPrev = () => { prev.textContent = ""; prev.append(inp.value.trim() ? renderInfo(inp.value) : el("p", "hint", "(ยังว่างอยู่)")); };
+  if (rich) {
+    // แถบปุ่มจัดรูปแบบ: ใส่/เอาออก สัญลักษณ์หน้าบรรทัดที่เคอร์เซอร์อยู่
+    const bar = el("div", "ed-fmt");
+    const fmt = (sym, text, title) => {
+      const b = el("button", "ed-fmt-b", text); b.type = "button"; b.title = title;
+      b.onmousedown = (e) => e.preventDefault(); // ไม่ให้ช่องพิมพ์หลุดโฟกัส
+      b.onclick = () => {
+        const v = inp.value, pos = inp.selectionStart ?? v.length;
+        const a = v.lastIndexOf("\n", pos - 1) + 1, z = v.indexOf("\n", pos) === -1 ? v.length : v.indexOf("\n", pos);
+        let line = v.slice(a, z).replace(/^[#\-!*•✦]\s*/, "");
+        const had = v.slice(a, z).startsWith(sym + " ");
+        line = had || !sym ? line : sym + " " + line;
+        inp.value = v.slice(0, a) + line + v.slice(z); inp.focus();
+        const c = a + line.length; inp.setSelectionRange(c, c); inp.oninput();
+      };
+      return b;
+    };
+    bar.append(fmt("#", "หัวข้อ", "ทำบรรทัดนี้เป็นหัวข้อสีแดง"), fmt("-", "✦ รายการ", "ทำบรรทัดนี้เป็นข้อย่อย"),
+      fmt("*", "ตัวหนา", "ทำบรรทัดนี้เป็นตัวหนา"), fmt("!", "สีทอง", "ทำบรรทัดนี้เป็นข้อความเตือนสีทอง"), fmt("", "ธรรมดา", "ล้างรูปแบบบรรทัดนี้"));
+    const tog = el("button", "ed-fmt-b ed-prev-t", "👁 ดูตัวอย่าง"); tog.type = "button";
+    prev = el("div", "ed-prev"); prev.hidden = true;
+    tog.onclick = () => { prev.hidden = !prev.hidden; tog.textContent = prev.hidden ? "👁 ดูตัวอย่าง" : "✕ ปิดตัวอย่าง"; if (!prev.hidden) drawPrev(); };
+    bar.append(tog); lab.append(bar, inp, prev);
+  } else lab.append(inp);
+  if (help) lab.append(el("small", "f-hint", help));
+  return lab;
+}
+function edSelect(label, opts, get, set, onChange) {
+  const lab = el("label", "ed-l"); lab.append(el("span", null, label));
+  const s = el("select"); for (const [v, t] of Object.entries(opts)) s.append(new Option(t, v)); s.value = get() || "";
+  s.onchange = () => { set(s.value); markDirty(); onChange && onChange(); };
+  lab.append(s); return lab;
+}
+function edCheck(label, get, set) {
+  const lab = el("label", "check"); const c = el("input"); c.type = "checkbox"; c.checked = !!get();
+  c.onchange = () => { set(c.checked); markDirty(); }; lab.append(c, el("span", null, label)); return lab;
+}
+/* ปุ่ม ↑ ↓ ลบ สำหรับรายการ */
+function edTools(arr, i, what) {
+  const t = el("div", "ed-tools");
+  const mk = (txt, title, fn, dis) => { const b = el("button", "act", txt); b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.disabled = !!dis; b.onclick = fn; return b; };
+  t.append(
+    mk("↑", "เลื่อนขึ้น", () => { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; markDirty(); renderEditor(); }, i === 0),
+    mk("↓", "เลื่อนลง", () => { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; markDirty(); renderEditor(); }, i === arr.length - 1),
+  );
+  const del = el("button", "act del"); del.type = "button";
+  armDelete(del, () => { arr.splice(i, 1); markDirty(); renderEditor(); }, "ลบ" + what);
+  t.append(del); return t;
+}
+function edGroup(id, title, build, desc = "") {
+  const d = el("details", "ed-group"); d.open = edOpen.has(id);
+  d.ontoggle = () => (d.open ? edOpen.add(id) : edOpen.delete(id));
+  d.append(el("summary", null, title));
+  const body = el("div", "ed-body"); if (desc) body.append(el("p", "ed-desc", desc)); build(body); d.append(body); return d;
+}
+
+/* =========================================================
+   วาดตัวแก้ทั้งหมด
+   ========================================================= */
+function renderEditor() {
+  const box = $("edBox"); if (!box || !ED) return;
+  const y = scrollY; box.textContent = "";
+  box.append(edGuide());
+
+  // 1) ทั่วไป
+  box.append(edGroup("gen", "⚙️ ทั่วไป · เปิด/ปิดรับสมัคร · หัวเว็บ", (b) => {
+    b.append(
+      edCheck("เปิดรับสมัคร (ปิดไว้ = ฟอร์มหายไป ขึ้นข้อความด้านล่างแทน)", () => ED.apply.open, (v) => (ED.apply.open = v)),
+      edInput("ข้อความตอนปิดรับสมัคร", () => ED.apply.closedText, (v) => (ED.apply.closedText = v), { long: true, rows: 2, max: 300, id: "ed-closed" }),
+      edInput("ข้อความเล็กเหนือโลโก้", () => ED.hero.eyebrow, (v) => (ED.hero.eyebrow = v), { max: 60, id: "ed-eyebrow" }),
+      edInput("ข้อความแนะนำใต้โลโก้", () => ED.hero.text, (v) => (ED.hero.text = v), { long: true, rows: 3, max: 400, id: "ed-hero" }),
+      edInput("ลิงก์เชิญดิสคอร์ด", () => ED.discordUrl, (v) => (ED.discordUrl = v.trim()), { max: 200, id: "ed-discord", help: "ต้องขึ้นต้นด้วย https://" }),
+      edInput("ข้อความท้ายเว็บ", () => ED.footer, (v) => (ED.footer = v), { max: 200, id: "ed-footer", help: "ตัวหนังสือเล็กๆ ล่างสุดของหน้าเว็บ" }),
+    );
+  }, "สวิตช์เปิด/ปิดรับสมัคร และข้อความส่วนบนสุดของหน้าเว็บ (ใต้โลโก้)"));
+
+  // 2) ปุ่มหมวด
+  box.append(edGroup("cats", "🗂 ปุ่มหมวด (ชื่อ + คำอธิบาย)", (b) => {
+    for (const k of Object.keys(CATS)) {
+      const row = el("div", "grid2");
+      row.append(
+        edInput("ชื่อปุ่ม", () => ED.cats[k].name, (v) => (ED.cats[k].name = v), { max: 40, id: "ed-cat-" + k }),
+        edInput("คำอธิบาย", () => ED.cats[k].desc, (v) => (ED.cats[k].desc = v), { max: 60, id: "ed-catd-" + k }),
+      );
+      b.append(row);
+    }
+  }, "ปุ่มสี่เหลี่ยม 4 ปุ่มในส่วน “หมวดหมู่” ของหน้าเว็บ · เปลี่ยนได้แค่ข้อความ (สีและไอคอนคงเดิม)"));
+
+  // 3) สิ่งที่ควรทำเบื้องต้น
+  box.append(edGroup("basics", "📘 สิ่งที่ควรทำเบื้องต้น", (b) => {
+    b.append(edInput("หัวข้อส่วนนี้", () => ED.basics.title, (v) => (ED.basics.title = v), { max: 80, id: "ed-btitle" }));
+    ED.basics.steps.forEach((st, i) => {
+      const card = el("div", "ed-card");
+      const head = el("div", "ed-head"); head.append(el("b", null, "ขั้นที่ " + (i + 1)), edTools(ED.basics.steps, i, "ขั้นนี้"));
+      card.append(head,
+        edInput("หัวข้อขั้นตอน", () => st.title, (v) => (st.title = v), { max: 120, id: `ed-st-${i}` }),
+        edInput("รายละเอียด (เว้นว่างได้)", () => st.text, (v) => (st.text = v), { long: true, rows: 3, max: 800, rich: true, id: `ed-stx-${i}` }),
+        edSelect("ปุ่มท้ายขั้นนี้", BTN_NAMES, () => st.button, (v) => (st.button = v)));
+      b.append(card);
+    });
+    const add = el("button", "btn-ghost", "+ เพิ่มขั้นตอน"); add.type = "button";
+    add.onclick = () => { ED.basics.steps.push({ title: "ขั้นตอนใหม่", text: "", button: "" }); markDirty(); renderEditor(); };
+    b.append(add, edInput("ข้อความท้ายส่วน", () => ED.basics.foot, (v) => (ED.basics.foot = v), { long: true, rows: 2, max: 300, id: "ed-bfoot", help: "จะมีลิงก์ “ถามในหมวดสอบถาม” ต่อท้ายให้อัตโนมัติ" }));
+  }, "รายการขั้นตอนที่มีเลข 1, 2, 3… บนหน้าเว็บ · เลขเรียงให้อัตโนมัติตามลำดับ"));
+
+  // 4) ฟอร์มสมัคร
+  box.append(edGroup("form", "📝 ฟอร์มสมัคร (เนื้อเรื่อง · คำถาม)", (b) => {
+    b.append(el("p", "ed-desc", "ฟอร์มแบ่งเป็น “ส่วน” (ผู้สมัครกรอกทีละหน้า) แต่ละส่วนมีเนื้อเรื่อง/คำอธิบาย และคำถามของตัวเอง · ใบสมัครที่ส่งมาแล้วไม่หาย ถ้าลบคำถามไป คำตอบเดิมจะไปอยู่ในหมวด “คำตอบจากฟอร์มรุ่นเก่า”"));
+    ED.form.sections.forEach((sec, si) => {
+      sec.fields ||= [];
+      b.append(edGroup("sec-" + sec.id, `ส่วนที่ ${si + 1}: ${sec.title}`, (sb) => {
+        const head = el("div", "ed-head"); head.append(el("span", "hint", sec.fields.length + " คำถาม"), edTools(ED.form.sections, si, "ส่วนนี้"));
+        sb.append(head,
+          edInput("ชื่อส่วน", () => sec.title, (v) => (sec.title = v), { max: 80, id: `ed-sec-${si}` }),
+          edInput("เนื้อเรื่อง / คำอธิบายบนสุดของหน้านี้ (เว้นว่างได้)", () => sec.info, (v) => (sec.info = v), { long: true, rows: 6, max: 20000, help: RICH_HELP, id: `ed-info-${si}`, rich: true }));
+        sec.fields.forEach((f, fi) => sb.append(edField(sec, f, fi)));
+        const add = el("button", "btn-ghost", "+ เพิ่มคำถาม"); add.type = "button";
+        add.onclick = () => { sec.fields.push({ key: newKey(), type: "text", label: "คำถามใหม่", required: true }); markDirty(); renderEditor(); };
+        sb.append(add);
+      }));
+    });
+    const addSec = el("button", "btn-ghost", "+ เพิ่มส่วนใหม่"); addSec.type = "button";
+    addSec.onclick = () => { const id = "s" + Date.now().toString(36); ED.form.sections.push({ id, title: "ส่วนใหม่", info: "", fields: [] }); edOpen.add("sec-" + id); markDirty(); renderEditor(); };
+    b.append(addSec);
+  }));
+
+  // 5) คืนค่าเริ่มต้น
+  const reset = el("button", "act del"); reset.type = "button";
+  armDelete(reset, () => { ED = structuredClone(DEFAULT_CONTENT); EDP = structuredClone(DEFAULT_PRIVATE); markDirty(); renderEditor(); toast("คืนค่าเริ่มต้นแล้ว (ยังไม่บันทึก)"); }, "คืนค่าเริ่มต้นทั้งหมด");
+  const rr = el("div", "ed-reset"); rr.append(reset, el("small", "f-hint", "กดแล้วยังไม่หาย จนกว่าจะกด “บันทึก”")); box.append(rr);
+  scrollTo(0, y);
+}
+
+/* ---------- การ์ดวิธีใช้ (ซ่อนได้ กดดูใหม่ได้) ---------- */
+function edGuide() {
+  let hide = false; try { hide = localStorage.getItem("snowcraft-ed-guide") === "hide"; } catch {}
+  const g = el("div", "ed-guide" + (hide ? " mini" : ""));
+  const toggle = el("button", "link-btn", hide ? "❔ วิธีใช้เมนูนี้" : "ซ่อนวิธีใช้"); toggle.type = "button";
+  toggle.onclick = () => { try { localStorage.setItem("snowcraft-ed-guide", hide ? "show" : "hide"); } catch {} renderEditor(); };
+  if (hide) { g.append(toggle); return g; }
+  const ol = el("ol");
+  [["กดเปิดหมวด", "ที่อยากแก้ (แตะที่หัวข้อสีขาวด้านล่าง)"],
+   ["พิมพ์แก้ในช่อง", "แก้ได้ทุกช่อง · ข้อความยาวมีปุ่มจัดรูปแบบ และ 👁 ดูตัวอย่างได้"],
+   ["กด “บันทึก”", "ที่แถบด้านล่างจอ · แถบสีทอง = ยังไม่ได้บันทึก"],
+   ["เปิดหน้าเว็บดูผล", "เปลี่ยนให้ทุกคนเห็นทันทีหลังบันทึก"]].forEach(([b, t]) => { const li = el("li"); li.append(el("b", null, b + " "), t); ol.append(li); });
+  const tips = el("ul", "ed-tips");
+  ["แก้ผิด? กด “ยกเลิกที่แก้” ก่อนบันทึก จะกลับเป็นเหมือนเดิม",
+   "↑ ↓ = ย้ายลำดับ · ปุ่มลบต้องกด 2 ครั้ง (กันกดพลาด)",
+   "ขึ้นโปรเจกต์ใหม่: ปิดรับสมัคร → แก้เนื้อเรื่อง/คำถาม → บันทึก → เปิดรับสมัคร"].forEach((t) => tips.append(el("li", null, t)));
+  const head = el("div", "ed-head"); head.append(el("b", null, "📖 วิธีใช้ 4 ขั้น"), toggle);
+  g.append(head, ol, tips); return g;
+}
+
+/* ---------- การ์ดแก้คำถาม 1 ข้อ ---------- */
+function edField(sec, f, fi) {
+  const card = el("div", "ed-card ed-q");
+  const head = el("div", "ed-head"); head.append(el("b", null, "ข้อ " + (fi + 1) + " · " + (TYPE_NAMES[f.type] || f.type)), edTools(sec.fields, fi, "ข้อนี้"));
+  card.append(head,
+    edInput("คำถามที่ผู้สมัครเห็น", () => f.label, (v) => (f.label = v), { long: true, rows: 2, max: 400, id: `ed-q-${f.key}` }),
+    edInput("ตัวอักษรเล็กใต้คำถาม (เว้นว่างได้)", () => f.hint, (v) => (f.hint = v), { max: 200, id: `ed-h-${f.key}`, placeholder: "เช่น ex. มิว / 12" }));
+  const row = el("div", "grid2");
+  row.append(
+    edSelect("ผู้สมัครตอบแบบไหน", TYPE_NAMES, () => f.type, (v) => { f.type = v; if (v === "radio" && !f.options?.length) f.options = ["ตัวเลือก 1", "ตัวเลือก 2"]; }, renderEditor),
+    edSelect("โชว์บนหัวใบสมัคร (หน้าตรวจ)", TOP_NAMES, () => f.top, (v) => { if (v) f.top = v; else delete f.top; }),
+  );
+  card.append(row);
+  if (f.type === "radio") card.append(edInput("ตัวเลือก (บรรทัดละ 1 ตัวเลือก)", () => (f.options || []).join("\n"),
+    (v) => (f.options = v.split("\n").map((x) => x.trim()).filter(Boolean)), { long: true, rows: 4, max: 2000, id: `ed-o-${f.key}`, help: "ขึ้นบรรทัดใหม่ = ตัวเลือกใหม่ · ถ้าตั้งเป็น “ทวีป” แล้วเขียน (จำนวน 2 คน) ท้ายตัวเลือก หน้าตรวจจะนับให้ว่าเต็มหรือยัง" }));
+  if (f.type === "text" || f.type === "textarea") card.append(edInput("เฉลย (เห็นเฉพาะแอดมินตอนตรวจ · เว้นว่างได้)",
+    () => EDP.answers[f.key], (v) => { if (v.trim()) EDP.answers[f.key] = v; else delete EDP.answers[f.key]; }, { max: 200, id: `ed-a-${f.key}` }));
+  card.append(edCheck("บังคับตอบ (ข้ามไม่ได้)", () => f.required, (v) => (f.required = v)));
+  return card;
+}
+
+/* ---------- ตรวจก่อนบันทึก ---------- */
+function edCheckAll() {
+  if (!/^https:\/\//i.test(ED.discordUrl || "")) return "ลิงก์ดิสคอร์ดต้องขึ้นต้นด้วย https://";
+  if (!ED.form.sections.length) return "ฟอร์มต้องมีอย่างน้อย 1 ส่วน";
+  const tops = {};
+  for (const s of ED.form.sections) {
+    if (!s.title.trim()) return "มีส่วนที่ยังไม่มีชื่อ";
+    for (const f of s.fields) {
+      if (!f.label.trim()) return `ส่วน “${s.title}” มีคำถามที่ยังว่าง`;
+      if (f.type === "radio" && (f.options || []).length < 2) return `คำถาม “${f.label.slice(0, 30)}” ต้องมีตัวเลือกอย่างน้อย 2 ข้อ`;
+      if (f.top) { if (tops[f.top]) return `มีคำถามตั้งเป็น “${TOP_NAMES[f.top]}” ซ้ำกัน 2 ข้อ`; tops[f.top] = 1; }
+    }
+  }
+  if (ED.form.sections.flatMap((s) => s.fields).filter((f) => f.type === "image").length > 1) return "ฟอร์มมีช่องอัปรูปได้แค่ 1 ช่อง";
+  if (JSON.stringify(ED).length > 800000) return "เนื้อหายาวเกินไป ลองย่อเนื้อเรื่องลงหน่อย";
+  return "";
+}
+
+async function edSave() {
+  const err = edCheckAll(); if (err) return toast(err);
+  const btn = $("edSave"); btn.disabled = true; btn.textContent = "กำลังบันทึก…";
+  try {
+    // ลบคำตอบที่ถูกของคำถามที่ไม่มีแล้ว
+    const keys = new Set(ED.form.sections.flatMap((s) => s.fields.map((f) => f.key)));
+    for (const k of Object.keys(EDP.answers)) if (!keys.has(k)) delete EDP.answers[k];
+    await Data.set("site", "content", { ...ED, updatedAt: Date.now(), updatedBy: me.email || me.uid });
+    await Data.set("site", "private", { answers: EDP.answers });
+    edDirty = false; $("edBar").classList.remove("dirty"); $("edState").textContent = "บันทึกแล้ว หน้าเว็บเปลี่ยนตามแล้ว";
+    toast("บันทึกแล้ว ✓");
+  } catch (e) { toast(errText(e)); }
+  btn.disabled = false; btn.textContent = "บันทึก";
+}
+function edDiscard() {
+  edDirty = false; $("edBar").classList.remove("dirty"); $("edState").textContent = "ยังไม่มีการแก้";
+  edLoad(CONTENT, SITE_PRIVATE);
+}
+</script>
+<script>
+/* =========================================================
+   admin.html — หน้าตรวจใบสมัคร + จัดการประกาศ
+   ความปลอดภัยจริงอยู่ที่ firestore.rules (คนที่ไม่ใช่แอดมินอ่านใบสมัครคนอื่นไม่ได้
+   ต่อให้เปิดหน้านี้ก็ตาม)
+   ========================================================= */
+const A = { apps: [], news: [], admins: [], tab: "pending", notes: {} };
+let SITE_PRIVATE = structuredClone(DEFAULT_PRIVATE); // คำตอบที่ถูกของคำถามทดสอบ
+let me = null, unsubs = [];
+
+/* ---------- ประตูหน้า: ล็อกอิน / ไม่ใช่แอดมิน ---------- */
+function renderGate(state) {
+  const g = $("gate"); g.textContent = ""; g.hidden = state === "admin";
+  $("adminArea").hidden = state !== "admin";
+  $("adminTag").hidden = state !== "admin";
+  document.querySelector("footer").hidden = state !== "admin";
+  if (state === "admin") return;
+  if (state === "loading") { g.append(el("p", "hint", "กำลังโหลด…")); return; }
+  if (state === "out") {
+    const b = el("button", "btn-main", "ล็อกอินด้วย Google"); b.type = "button"; b.onclick = () => Auth.login().catch((e) => toast(errText(e)));
+    const back0 = el("a", "admin-link", "← กลับหน้าเว็บ"); back0.href = "index.html";
+    g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่ หรือต้องล็อกอินก่อน"), back0);
+    return;
+  }
+  // ล็อกอินแล้วแต่ไม่ใช่แอดมิน → แสดงเหมือนหน้าไม่มีอยู่ (ไม่บอกว่ามีหน้าแอดมิน)
+  const back = el("a", "admin-link", "← กลับหน้าเว็บ"); back.href = "index.html";
+  g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่"), back);
+}
+
+/* ---------- แท็บสถานะ ---------- */
+function renderTabs() {
+  const t = $("appTabs"); t.textContent = "";
+  for (const [k, label] of [["pending", "รอตรวจ"], ["approved", "ผ่าน"], ["rejected", "ไม่ผ่าน"], ["all", "ทั้งหมด"]]) {
+    const n = k === "all" ? A.apps.length : A.apps.filter((a) => a.status === k).length;
+    const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", String(A.tab === k));
+    b.append(label, el("span", "count", String(n)));
+    b.onclick = () => { A.tab = k; renderApps(); };
+    t.append(b);
+  }
+}
+
+/* ---------- รายการใบสมัคร ---------- */
+/* ---------- สรุปจำนวนต่อทวีป (นับเฉพาะ รอตรวจ + ผ่าน) เทียบโควต้าในฟอร์ม ---------- */
+function renderQuota() {
+  const box = $("quota"); if (!box) return; box.textContent = "";
+  const f = FORM_FIELDS.find((x) => x.key === "continent"); if (!f) return;
+  for (const opt of f.options) {
+    const cap = +(opt.match(/(\d+)\s*คน/) || [])[1] || 0;
+    const name = opt.replace(/\s*\(.*\)\s*$/, "");
+    const live = A.apps.filter((a) => a.continent === opt);
+    const ok = live.filter((a) => a.status === "approved").length, wait = live.filter((a) => a.status === "pending").length;
+    const chip = el("div", "q-chip" + (cap && ok >= cap ? " full" : ""));
+    chip.append(el("b", null, name), el("span", null, `ผ่าน ${ok}/${cap || "?"} · รอ ${wait}`));
+    box.append(chip);
+  }
+}
+
+function renderApps() {
+  renderTabs(); renderQuota();
+  const box = $("appList"); box.textContent = "";
+  const list = A.apps.filter((a) => A.tab === "all" || a.status === A.tab);
+  if (!list.length) {
+    const e = el("div", "empty"); e.append(el("strong", null, A.tab === "pending" ? "ไม่มีใบสมัครรอตรวจ" : "ไม่มีใบสมัครในแท็บนี้"), el("span", null, "ใบสมัครใหม่จะขึ้นที่นี่ทันทีที่มีคนส่ง"));
+    box.append(e); return;
+  }
+  for (const a of list) {
+    const c = el("article", "app-card " + a.status);
+    const head = el("div", "app-head");
+    head.append(avatar(a.name, a.photo), el("h3", null, (a.charName || "ไม่มีชื่อตัวละคร") + " · " + (a.role || "-")), el("span", "pill " + a.status, STATUS[a.status] || a.status));
+    const kv = el("dl", "kv");
+    const row = (k, v) => { if (v) kv.append(el("dt", null, k), el("dd", null, v)); };
+    row("บัญชี Google", a.name); row("ดิสคอร์ด", a.discord); row("ID XBOX", a.xbox); row("ทวีป", a.continent);
+    row("ส่งเมื่อ", ago(a.createdAt)); row("ข้อความถึงผู้สมัคร", a.note);
+
+    // ปุ่มตัดสิน + ช่องข้อความถึงผู้สมัคร (ผู้สมัครจะเห็นข้อความนี้ที่หน้าเว็บ)
+    const act = el("div", "app-actions");
+    const note = el("input"); note.id = "note-" + a.id; note.maxLength = 300; note.placeholder = "ข้อความถึงผู้สมัคร (ไม่บังคับ)";
+    note.value = A.notes[a.id] ?? a.note ?? ""; note.oninput = () => (A.notes[a.id] = note.value);
+    const ok = el("button", "btn-ok", "✓ ผ่าน"); ok.type = "button"; ok.onclick = () => decide(a, "approved", note.value);
+    const no = el("button", "btn-no", "✕ ไม่ผ่าน"); no.type = "button"; no.onclick = () => decide(a, "rejected", note.value);
+    const del = el("button", "act del"); del.type = "button";
+    armDelete(del, () => Data.del("applications", a.id).then(() => toast("ลบใบสมัครแล้ว (คนนี้สมัครใหม่ได้)"), (e) => toast(errText(e))), "ลบ");
+    act.append(note, ok, no, del);
+    if (a.status !== "pending") { const back = el("button", "act", "↺ กลับเป็นรอตรวจ"); back.type = "button"; back.onclick = () => decide(a, "pending", note.value); act.append(back); }
+    c.append(head, kv, renderAnswers(a, SITE_PRIVATE.answers || {}), act); box.append(c);
+  }
+}
+
+async function decide(a, status, note) {
+  try { await Data.update("applications", a.id, { status, note: note.trim(), reviewedBy: me.uid, reviewedAt: Date.now() }); delete A.notes[a.id]; toast("บันทึกแล้ว: " + STATUS[status]); }
+  catch (e) { toast(errText(e)); }
+}
+
+/* ---------- ประกาศ ---------- */
+function renderNews() {
+  const box = $("newsList"); box.textContent = "";
+  if (!A.news.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีประกาศ"), el("span", null, "กด “+ เขียนประกาศ” เพื่อแจ้งข่าวถึงทุกคน")); box.append(e); return; }
+  for (const n of A.news) {
+    const it = el("article", "news-item"); const meta = el("div", "meta"); meta.append(el("span", null, ago(n.createdAt)), el("span", "sp"));
+    const d = el("button", "act del"); d.type = "button"; armDelete(d, () => Data.del("news", n.id).then(() => toast("ลบประกาศแล้ว"), (e) => toast(errText(e))));
+    meta.append(d); it.append(el("h3", null, n.title), el("p", null, n.body), meta); box.append(it);
+  }
+}
+$("openNews").onclick = () => ($("newsForm").hidden = !$("newsForm").hidden);
+$("cancelNews").onclick = () => ($("newsForm").hidden = true);
+$("newsForm").onsubmit = async (ev) => {
+  ev.preventDefault();
+  const title = $("n-title").value.trim(), body = $("n-body").value.trim(); if (!title || !body) return;
+  const btn = $("submitNews"); btn.disabled = true;
+  try { await Data.add("news", { title, body, author: me.uid, createdAt: Date.now() }); $("newsForm").reset(); $("newsForm").hidden = true; toast("ประกาศแล้ว"); }
+  catch (e) { toast(errText(e)); }
+  btn.disabled = false;
+};
+
+/* ---------- เมนูแอดมิน ---------- */
+document.querySelectorAll("#menu button").forEach((b) => (b.onclick = () => {
+  document.querySelectorAll("#menu button").forEach((x) => { x.setAttribute("aria-pressed", String(x === b)); $(x.dataset.sec).hidden = x !== b; });
+}));
+
+/* ---------- จัดการแอดมิน ----------
+   เจ้าของเว็บ (OWNER_EMAIL) อยู่บนสุดเสมอ ลบไม่ได้
+   แอดมินคนอื่นดูรายชื่อได้ แต่เพิ่ม/ลบได้เฉพาะเจ้าของเว็บ (บังคับซ้ำใน firestore.rules) */
+const isOwnerMe = () => me?.email === OWNER_EMAIL;
+function renderAdmins() {
+  const owner = isOwnerMe();
+  $("admForm").hidden = !owner;
+  $("admHint").textContent = owner
+    ? "เพิ่มอีเมล Google ของทีมงาน แล้วให้เขาล็อกอินด้วยอีเมลนั้นที่หน้าแอดมิน ลบออกเมื่อไรก็หมดสิทธิ์ทันที"
+    : "เฉพาะเจ้าของเว็บเพิ่มหรือลบแอดมินได้";
+  const box = $("admList"); box.textContent = "";
+  const rows = [{ id: OWNER_EMAIL, email: OWNER_EMAIL, label: "เจ้าของเว็บ", owner: true }, ...A.admins.filter((a) => a.id !== OWNER_EMAIL)];
+  for (const a of rows) {
+    const c = el("article", "app-card approved"); if (a.owner) c.style.setProperty("--st", "var(--gold)");
+    const head = el("div", "app-head");
+    head.append(avatar(a.email), el("h3", null, a.email));
+    head.append(el("span", "pill " + (a.owner ? "pending" : "approved"), a.owner ? "เจ้าของเว็บ" : "แอดมิน"));
+    c.append(head);
+    const kv = el("dl", "kv");
+    if (a.label && !a.owner) kv.append(el("dt", null, "หน้าที่"), el("dd", null, a.label));
+    if (a.addedAt) kv.append(el("dt", null, "เพิ่มเมื่อ"), el("dd", null, ago(a.addedAt)));
+    if (kv.childNodes.length) c.append(kv);
+    if (owner && !a.owner) {
+      const act = el("div", "app-actions"); const del = el("button", "btn-no"); del.type = "button";
+      armDelete(del, () => Data.del("admins", a.id).then(() => toast("ถอดสิทธิ์แอดมินแล้ว"), (e) => toast(errText(e))), "ถอดสิทธิ์แอดมิน");
+      act.append(del); c.append(act);
+    }
+    box.append(c);
+  }
+  if (rows.length === 1) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีแอดมินคนอื่น"), el("span", null, owner ? "เพิ่มอีเมลทีมงานได้จากฟอร์มด้านบน" : "")); box.append(e); }
+}
+$("admForm").onsubmit = async (ev) => {
+  ev.preventDefault();
+  const email = $("ad-email").value.trim().toLowerCase(), label = $("ad-label").value.trim();
+  if (!/^[^\s@\/]+@[^\s@\/]+\.[^\s@\/]+$/.test(email)) return toast("อีเมลไม่ถูกต้อง");
+  if (email === OWNER_EMAIL || A.admins.some((a) => a.id === email)) return toast("อีเมลนี้เป็นแอดมินอยู่แล้ว");
+  const btn = $("ad-send"); btn.disabled = true;
+  try { await Data.set("admins", email, { email, label, addedAt: Date.now() }); $("admForm").reset(); toast("เพิ่มแอดมินแล้ว"); }
+  catch (e) { toast(errText(e)); }
+  btn.disabled = false;
+};
+
+/* ---------- ปุ่มของเมนูแก้เว็บ ---------- */
+$("edSave").onclick = edSave;
+$("edUndo").onclick = edDiscard;
+addEventListener("beforeunload", (e) => { if (edDirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- เริ่มต้น ---------- */
+renderMe($("me"), null, false); renderGate("loading");
+(async () => {
+  try { await initBackend(); } catch (e) { toast("โหลดระบบไม่สำเร็จ ตรวจ config.js / อินเทอร์เน็ต"); console.error(e); return; }
+  Auth.onChange(async (u) => {
+    me = u; unsubs.forEach((f) => f()); unsubs = [];
+    renderMe($("me"), me, false, { homeLink: "index.html" });
+    if (!me) return renderGate("out");
+    renderGate("loading");
+    const admin = await Auth.isAdmin(me);
+    if (!admin) return renderGate("no");
+    renderGate("admin");
+    const oops = (e) => { console.error(e); toast(errText(e)); };
+    unsubs.push(Data.watch("applications", { orderBy: "createdAt", dir: "desc", limit: 500 }, (r) => { A.apps = r; renderApps(); }, oops));
+    unsubs.push(Data.watch("news", { orderBy: "createdAt", dir: "desc", limit: 30 }, (r) => { A.news = r; renderNews(); }, oops));
+    // เนื้อหาเว็บ (ฟอร์ม/ข้อความ) + คำตอบที่ถูก → ใช้ทั้งแสดงใบสมัครและเมนูแก้เว็บ
+    unsubs.push(Data.watchDoc("site", "content", (d) => { applyContent(mergeContent(d)); renderApps(); edLoad(CONTENT, SITE_PRIVATE);
+      if (d?.updatedAt) $("edState").textContent = edDirty ? $("edState").textContent : "แก้ล่าสุด " + ago(d.updatedAt) + (d.updatedBy ? " โดย " + d.updatedBy : ""); }, oops));
+    unsubs.push(Data.watchDoc("site", "private", (d) => { SITE_PRIVATE = d || structuredClone(DEFAULT_PRIVATE); SITE_PRIVATE.answers ||= {}; renderApps(); if (!edDirty) edLoad(CONTENT, SITE_PRIVATE); }, oops));
+    unsubs.push(Data.watch("admins", { orderBy: "addedAt", dir: "asc", limit: 100 }, (r) => { A.admins = r; renderAdmins(); }, oops));
+  });
+})();
+</script>
+</body>
+</html>
