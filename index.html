@@ -385,6 +385,81 @@ h2.sec::after {
 .ed-prev-t { margin-left: auto; color: var(--ice); }
 .ed-prev { border: 1px dashed var(--ice); border-radius: 8px; padding: 4px; }
 .ed-prev::before { content: "ตัวอย่างบนหน้าเว็บ"; display: block; font-size: 11.5px; color: var(--ice); padding: 2px 8px 4px; }
+
+/* =========================================================
+   ตกแต่งเพิ่ม (v14): หมอกแดง · ป้ายสถานะ · แถบข่าว · การ์ดจุดเด่น · ท้ายเว็บ
+   ทุกการเคลื่อนไหวปิดเองถ้าเครื่องตั้งค่าลดการเคลื่อนไหว
+   ========================================================= */
+/* หมอกแดงลอยช้าๆ หลังโลโก้ */
+.hero .fog { position: absolute; inset: -20% -10%; pointer-events: none; opacity: .9;
+  background:
+    radial-gradient(40% 35% at 25% 70%, rgba(255,46,70,.20), transparent 70%),
+    radial-gradient(35% 30% at 75% 35%, rgba(140,10,30,.35), transparent 70%),
+    radial-gradient(50% 30% at 50% 105%, rgba(255,46,70,.28), transparent 70%);
+  animation: fogDrift 18s ease-in-out infinite alternate; }
+@keyframes fogDrift { from { transform: translate3d(-3%, 0, 0) scale(1); } to { transform: translate3d(3%, -2%, 0) scale(1.06); } }
+/* เส้นแสงพื้นใต้หัวเว็บ */
+.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--ice) 30%, #fff 50%, var(--ice) 70%, transparent);
+  box-shadow: 0 0 18px 2px rgba(255,46,70,.6); opacity: .85; }
+
+/* ป้ายสถานะ "เปิดรับสมัครแล้ว" มีจุดกะพริบ */
+.badge-live { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 10px; border-radius: 999px;
+  border: 1px solid rgba(109,255,168,.45); background: rgba(109,255,168,.08); color: #b8ffd3; font-size: 13px; font-weight: 600; }
+.badge-live i { width: 9px; height: 9px; border-radius: 50%; background: #6dffa8; box-shadow: 0 0 0 0 rgba(109,255,168,.7); animation: livePulse 1.8s infinite; }
+.badge-live.off { border-color: var(--line); background: rgba(255,255,255,.04); color: var(--muted); }
+.badge-live.off i { background: var(--muted); animation: none; }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(109,255,168,.6); } 70% { box-shadow: 0 0 0 9px rgba(109,255,168,0); } 100% { box-shadow: 0 0 0 0 rgba(109,255,168,0); } }
+
+/* ปุ่มหลักในหัวเว็บ: ใหญ่ขึ้น + แสงวาบพาดผ่าน */
+.hero .cta .btn-main { position: relative; overflow: hidden; padding: 11px 20px; font-size: 15.5px;
+  background: linear-gradient(135deg, rgba(255,46,70,.35), rgba(140,10,30,.35)); box-shadow: 0 0 22px rgba(255,46,70,.35); }
+.hero .cta .btn-main::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); animation: btnShine 4s ease-in-out 1.5s infinite; }
+@keyframes btnShine { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+.hero .cta .btn-ghost { padding: 11px 16px; font-size: 15px; }
+
+/* แถบข่าวล่าสุดเลื่อน */
+.ticker { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); overflow: hidden;
+  background: linear-gradient(90deg, rgba(255,211,110,.12), rgba(255,46,70,.10)); border-bottom: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
+  padding-block: 7px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); font-size: 13.5px; }
+.tk-tag { flex: none; color: var(--gold); font-weight: 700; }
+.tk-track { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.tk-move { display: inline-block; padding-left: 100%; animation: tick 28s linear infinite; }
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+/* การ์ดจุดเด่น */
+.feats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.feat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 720px) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.feat { --c: var(--ice); position: relative; display: grid; gap: 6px; align-content: start; padding: 16px 14px; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 10%, var(--panel)), var(--panel) 60%);
+  border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); transition: transform .25s, box-shadow .25s, border-color .25s; }
+.feat::before { content: ""; position: absolute; right: -30px; top: -30px; width: 90px; height: 90px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--c) 35%, transparent), transparent 70%); pointer-events: none; }
+.feat:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--c) 55%, transparent); }
+.feat canvas { width: 36px; height: 36px; image-rendering: pixelated; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c) 60%, transparent)); }
+.feat h3, .feat p { min-width: 0; overflow-wrap: anywhere; }
+.feat h3 { margin: 4px 0 0; font: 700 15.5px var(--f-display); }
+.feat p { margin: 0; font-size: 13px; color: #d9c2c5; line-height: 1.6; }
+
+/* การ์ด/ปุ่มหมวด: ยกตัวเวลาชี้ */
+.cat, .news-item, .steps li { transition: transform .25s, box-shadow .25s, border-color .2s; }
+.cat:hover, .steps li:hover { transform: translateY(-2px); }
+
+/* ท้ายเว็บ */
+.site-foot { display: grid; justify-items: center; gap: 10px; text-align: center; padding-block: 26px 34px; border-top: 1px solid var(--line);
+  background: radial-gradient(60% 80% at 50% 0%, rgba(255,46,70,.10), transparent 70%); }
+.site-foot p { margin: 0; color: var(--muted); font-size: 12.5px; max-width: 52ch; }
+.site-foot small { color: color-mix(in srgb, var(--muted) 70%, transparent); font: 500 11.5px var(--f-mono); }
+.foot-logo { height: 46px; width: auto; filter: drop-shadow(0 0 10px rgba(255,46,70,.5)); }
+.foot-dc { text-decoration: none; color: var(--fg); font-size: 13.5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .fog, .badge-live i, .hero .cta .btn-main::after, .tk-move { animation: none; }
+  .tk-move { padding-left: 0; }
+  .feat:hover, .cat:hover, .steps li:hover { transform: none; }
+}
 </style>
 </head>
 <body>
@@ -398,10 +473,18 @@ h2.sec::after {
   </div>
 </header>
 
+<!-- ===== แถบข่าวล่าสุดเลื่อนได้ (โผล่เมื่อมีประกาศ) ===== -->
+<a class="ticker" id="ticker" href="#newsTitle" hidden>
+  <span class="tk-tag">📢 ล่าสุด</span>
+  <span class="tk-track"><span class="tk-move" id="tkText"></span></span>
+</a>
+
 <!-- ===== หัวเว็บใหญ่ ===== -->
 <section class="hero">
+  <div class="fog" aria-hidden="true"></div>
   <canvas id="snow" aria-hidden="true"></canvas>
   <div class="wrap">
+    <div class="badge-live" id="heroBadge"><i></i><span>เปิดรับสมัครแล้ว</span></div>
     <div class="eyebrow" id="heroEyebrow">community · minecraft bedrock</div>
     <h1><img src="logo.webp" alt="Snowcraft" class="logo" width="1200" height="525"></h1>
     <p id="heroText">บ้านของชาว Snowcraft ที่นี่มีทั้งข่าวสาร ช่องทางสมัครเข้าโปรเจกต์ ลิงก์ดิสคอร์ด และพื้นที่ถามตอบ</p>
@@ -415,6 +498,12 @@ h2.sec::after {
 </section>
 
 <main class="wrap">
+  <!-- ===== จุดเด่น (แก้ได้ในเมนูแก้เว็บ) ===== -->
+  <section class="feats" aria-labelledby="featTitle">
+    <h2 class="sec" id="featTitle">ทำไมต้อง Snowcraft</h2>
+    <div class="feat-grid" id="featGrid"></div>
+  </section>
+
   <!-- ===== ประกาศแอดมิน ===== -->
   <section class="news" aria-labelledby="newsTitle">
     <h2 class="sec" id="newsTitle">📢 ประกาศ</h2>
@@ -469,7 +558,12 @@ h2.sec::after {
     <div class="feed" id="feed"></div>
   </section>
 
-  <footer id="siteFooter">Snowcraft community · ลิงก์ในโพสต์มาจากสมาชิก ตรวจสอบก่อนกดทุกครั้ง</footer>
+  <footer class="site-foot">
+    <img src="logo.webp" alt="Snowcraft" class="foot-logo">
+    <a class="btn-ghost foot-dc" id="footDiscord" href="#" target="_blank" rel="noopener noreferrer">เข้าดิสคอร์ด Snowcraft ↗</a>
+    <p id="siteFooter">Snowcraft community · ลิงก์ในโพสต์มาจากสมาชิก ตรวจสอบก่อนกดทุกครั้ง</p>
+    <small id="footYear"></small>
+  </footer>
 </main>
 
 <div class="toast" id="toast" hidden></div>
@@ -613,6 +707,62 @@ const PIXEL_ICONS = {
     ".....323....",
     ".....333....",
   ],
+  sword: [ // ดาบ
+    "..........44",
+    ".........442",
+    "........442.",
+    ".......442..",
+    "......442...",
+    ".33..442....",
+    "..3342......",
+    "...33.......",
+    "..133.......",
+    ".11..3......",
+    "11..........",
+    "1...........",
+  ],
+  phone: [ // มือถือ
+    "...333333...",
+    "..31111113..",
+    "..34444443..",
+    "..34222243..",
+    "..34222243..",
+    "..34222243..",
+    "..34222243..",
+    "..34444443..",
+    "..31111113..",
+    "..31144113..",
+    "..31111113..",
+    "...333333...",
+  ],
+  people: [ // คน 2 คน
+    "............",
+    "..222...11..",
+    ".24442.1441.",
+    ".24442.1441.",
+    "..222...11..",
+    "............",
+    ".2222..1111.",
+    "222222111111",
+    "222222111111",
+    "222222111111",
+    "333333333333",
+    "............",
+  ],
+  snow: [ // เกล็ดหิมะ
+    ".....44.....",
+    "..4..44..4..",
+    "...4.44.4...",
+    "....4444....",
+    ".4..2442..4.",
+    "444442244444",
+    "444442244444",
+    ".4..2442..4.",
+    "....4444....",
+    "...4.44.4...",
+    "..4..44..4..",
+    ".....44.....",
+  ],
 };
 function drawPixelIcon(canvas, key, color) {
   const rows = PIXEL_ICONS[key]; if (!rows) return drawIcon(canvas, key, color);
@@ -645,16 +795,32 @@ function startSnow(cv) {
   function size() {
     const r = cv.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
     W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
-    flakes = Array.from({ length: Math.round(W * H / 9000) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + .5, v: Math.random() * .5 + .25, w: Math.random() * 6.28 }));
+    // 3 ชั้นความลึก: ไกล (เล็ก ช้า จาง) · กลาง · ใกล้ (ใหญ่ เร็ว เบลอ) + ประกายไฟแดงลอยขึ้นบ้าง
+    const n = Math.round(W * H / 7000);
+    flakes = Array.from({ length: n }, (_, i) => {
+      const z = i % 7 === 0 ? 2 : i % 3 === 0 ? 1 : 0;
+      const ember = i % 17 === 0;
+      return { x: Math.random() * W, y: Math.random() * H, z, ember,
+        r: [0.7, 1.4, 2.6][z] + Math.random() * .6, v: ember ? -(Math.random() * .4 + .2) : [0.25, 0.5, 0.95][z] + Math.random() * .25, w: Math.random() * 6.28 };
+    });
   }
   function frame() {
     ctx.clearRect(0, 0, W, H);
     for (const f of flakes) {
-      if (!still) { f.y += f.v; f.w += .01; f.x += Math.sin(f.w) * .3; if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; } }
-      ctx.globalAlpha = .35 + f.r / 4; ctx.fillStyle = f.r > 1.6 ? "#ff6b7d" : "#f6eced";
+      if (!still) {
+        f.y += f.v; f.w += .012; f.x += Math.sin(f.w) * (.2 + f.z * .2);
+        if (f.y > H + 6) { f.y = -6; f.x = Math.random() * W; }
+        if (f.y < -6) { f.y = H + 6; f.x = Math.random() * W; }
+      }
+      if (f.ember) { // ประกายไฟ: แดงสด เรืองแสง กะพริบ
+        ctx.globalAlpha = .5 + Math.sin(f.w * 6) * .35; ctx.fillStyle = "#ff4d63"; ctx.shadowColor = "#ff2e46"; ctx.shadowBlur = 8;
+      } else {
+        ctx.globalAlpha = [0.35, 0.6, 0.45][f.z]; ctx.fillStyle = "#f6eced"; ctx.shadowColor = "#fff"; ctx.shadowBlur = f.z === 2 ? 6 : 0;
+      }
       ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.29); ctx.fill();
     }
-    if (!still) requestAnimationFrame(frame);
+    ctx.shadowBlur = 0;
+    if (!still && !document.hidden) requestAnimationFrame(frame); else if (!still) setTimeout(frame, 500);
   }
   size(); addEventListener("resize", () => { size(); if (still) frame(); }); frame();
 }
@@ -817,6 +983,18 @@ const DEFAULT_CONTENT = {
     eyebrow: "community · minecraft bedrock",
     text: "บ้านของชาว Snowcraft ที่นี่มีทั้งข่าวสาร ช่องทางสมัครเข้าโปรเจกต์ ลิงก์ดิสคอร์ด และพื้นที่ถามตอบ",
   },
+  // ข้อความสถานะในหัวเว็บ (ข้างจุดกะพริบ) ตอนเปิด/ปิดรับสมัคร
+  badge: { open: "เปิดรับสมัครแล้ว", closed: "ปิดรับสมัครชั่วคราว" },
+  // การ์ด "จุดเด่น" ใต้หัวเว็บ · icon เลือกจาก FEATURE_ICONS
+  features: {
+    title: "ทำไมต้อง Snowcraft",
+    items: [
+      { icon: "basics", title: "เนื้อเรื่องเข้มข้น", text: "โลกที่ปรสิตแฝงตัว องค์กร P.E.P และความลับที่ซ่อนอยู่ในร่างกายของคุณ" },
+      { icon: "sword", title: "อาวุธพร้อมสกิล", text: "ขวาน · คาตานะ · มีดสั้นคู่ ทุกอาวุธมีสกิลและแอนิเมชัน" },
+      { icon: "people", title: "รับนักเรียน 40 คน", text: "โรล 1 เดือน แบ่ง 2 พาร์ต · จันทร์ พุธ ศุกร์ เสาร์ 19:30–22:00" },
+      { icon: "phone", title: "เล่นบนมือถือได้", text: "Minecraft Bedrock · มือถือ RAM 8 ขึ้นไป หรือคอมพิวเตอร์" },
+    ],
+  },
   discordUrl: "https://discord.gg/ZM55SV7ZfY",
   footer: "Snowcraft community · ลิงก์ในโพสต์มาจากสมาชิก ตรวจสอบก่อนกดทุกครั้ง",
   cats: {
@@ -958,6 +1136,10 @@ const DEFAULT_CONTENT = {
     ],
   },
 };
+/* ไอคอนที่เลือกได้ในการ์ดจุดเด่น (ชื่อในเมนูแก้เว็บ) */
+const FEATURE_ICONS = { basics: "หนังสือ", sword: "ดาบ", people: "ผู้คน", phone: "มือถือ", snow: "เกล็ดหิมะ", join: "ใบสมัคร", discord: "แชต", ask: "เครื่องหมายคำถาม" };
+const FEATURE_COLORS = ["#ff2e46", "#ff8a3d", "#ff7a8a", "#e9dcdc"];
+
 /* คำตอบที่ถูกของคำถามทดสอบ (เก็บแยก ไม่ให้คนนอกเห็น) */
 const DEFAULT_PRIVATE = { answers: { qStory: "P.E.P (เป๊ป)" } };
 
@@ -1225,6 +1407,10 @@ let me = null, isAdmin = false, unApp = null;
 
 /* ---------- ประกาศ (อ่านอย่างเดียว แอดมินจัดการในหน้าแอดมิน) ---------- */
 function renderNews() {
+  // แถบข่าวเลื่อนด้านบน: แสดงหัวข้อประกาศล่าสุด
+  const tk = $("ticker"), latest = S.news[0];
+  tk.hidden = !latest;
+  if (latest) { const t = "  " + latest.title + "  ✦  " + latest.body.replace(/\s+/g, " ").slice(0, 90) + "  "; $("tkText").textContent = t + "        " + t; }
   const box = $("newsList"); box.textContent = "";
   if (!S.news.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีประกาศ"), el("span", null, "ข่าวสารล่าสุดจะขึ้นที่นี่")); box.append(e); return; }
   for (const n of S.news.slice(0, 3)) {
@@ -1266,7 +1452,21 @@ function buildCats() {
 function renderContent() {
   const c = CONTENT;
   $("heroEyebrow").textContent = c.hero.eyebrow; $("heroText").textContent = c.hero.text;
-  $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL;
+  $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL; $("footDiscord").href = DISCORD_URL;
+  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft";
+  // ป้ายสถานะรับสมัคร (จุดกะพริบ)
+  const bd = $("heroBadge"); bd.classList.toggle("off", !c.apply.open);
+  bd.querySelector("span").textContent = c.apply.open ? c.badge.open : c.badge.closed;
+  // การ์ดจุดเด่น
+  $("featTitle").textContent = c.features.title;
+  const fg = $("featGrid"); fg.textContent = "";
+  (c.features.items || []).forEach((f, i) => {
+    const col = FEATURE_COLORS[i % FEATURE_COLORS.length];
+    const card = el("article", "feat"); card.style.setProperty("--c", col);
+    const ic = el("canvas"); ic.setAttribute("aria-hidden", "true"); drawPixelIcon(ic, f.icon, col);
+    card.append(ic, el("h3", null, f.title), el("p", null, f.text)); fg.append(card);
+  });
+  fg.closest("section").hidden = !(c.features.items || []).length;
   $("basicsTitle").textContent = c.basics.title; $("basicsFoot").textContent = c.basics.foot;
   const ol = $("stepsList"); ol.textContent = "";
   for (const st of c.basics.steps || []) {
@@ -1448,7 +1648,7 @@ function fillCatSelect() {
    เริ่มต้น
    ========================================================= */
 startSnow($("snow"));
-revealOnScroll(".news-item, .cat, .steps li, .card, .status-box");
+revealOnScroll(".feat, .news-item, .cat, .steps li, .card, .status-box");
 renderContent();
 document.querySelectorAll("[data-ask]").forEach((b) => (b.onclick = () => { S.filter = "ask"; renderFeed(); $("feedSec").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 $("heroApply").onclick = () => $("applySec").scrollIntoView({ behavior: "smooth", block: "start" });
