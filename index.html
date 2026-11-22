@@ -2225,11 +2225,12 @@ function infoThumb(cat, cls) { // รูปปกย่อ หรือไอค
 }
 function renderInfoBanner() {
   const c = CONTENT.info, b = $("infoBanner");
-  b.hidden = !c.show || !S.info.length;
+  b.hidden = !c.show; // แสดงตลอด (ยังไม่มีหมวดก็กดเข้าไปได้ ขึ้น "ทีมงานกำลังเตรียมข้อมูล")
   document.querySelectorAll('[data-nav="info"]').forEach((a) => (a.hidden = !c.show)); // ปิดการ์ด = ซ่อนเมนู "ข้อมูล" ด้วย
   $("ibTitle").textContent = c.title; $("ibText").textContent = c.text;
   const t = $("ibThumbs"); t.textContent = "";
   S.info.slice(0, 4).forEach((cat) => { const f = infoThumb(cat, "ib-thumb"); f.append(el("span", null, cat.title)); t.append(f); });
+  t.hidden = !S.info.length; // ยังไม่มีหมวด = ไม่โชว์แถวรูปปก
 }
 function openLightbox(src, cap) {
   $("lbImg").src = src; $("lbImg").alt = cap || ""; $("lbCap").textContent = cap || "";

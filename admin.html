@@ -1958,7 +1958,7 @@ function renderEditor() {
   // 3.4) การ์ดข้อมูลใน SS บนหน้าแรก
   box.append(edGroup("info", "📚 การ์ด “ข้อมูลใน SS” บนหน้าแรก", (b) => {
     b.append(
-      edCheck("แสดงการ์ดนี้บนหน้าแรก (ซ่อนเองถ้ายังไม่มีหมวด)", () => ED.info.show, (v) => (ED.info.show = v)),
+      edCheck("แสดงการ์ดนี้บนหน้าแรก (และเมนู “ข้อมูล”)", () => ED.info.show, (v) => (ED.info.show = v)),
       edInput("หัวข้อ (เช่น ข้อมูลใน SS3)", () => ED.info.title, (v) => (ED.info.title = v), { max: 60, id: "ed-ititle" }),
       edInput("คำอธิบายสั้นๆ", () => ED.info.text, (v) => (ED.info.text = v), { long: true, rows: 2, max: 200, id: "ed-itext" }));
   }, "หมวด รูป และข้อความข้างใน แก้ที่เมนู 📚 ข้อมูล SS (ด้านบน)"));
