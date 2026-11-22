@@ -1121,6 +1121,8 @@ async function initFirebase() {
     }); },
     async login() {
       const p = new authMod.GoogleAuthProvider();
+      // ให้เลือกบัญชี Google ทุกครั้ง (เดิมเครื่องจะล็อกอินบัญชีหลักให้เอง → แอดมินที่ใช้บัญชีอื่นเข้าไม่ได้)
+      p.setCustomParameters({ prompt: "select_account" });
       try { await authMod.signInWithPopup(auth, p); }
       catch (e) {
         // บางเบราว์เซอร์มือถือบล็อกป๊อปอัป → เปลี่ยนไปใช้แบบเปลี่ยนหน้าแทน
@@ -1133,7 +1135,12 @@ async function initFirebase() {
     async isAdmin(u) {
       if (!u?.email) return false;
       if (u.email === OWNER_EMAIL) return true;
-      try { return !!(await Data.get("admins", u.email)); } catch { return false; }
+      // ลอง 2 ครั้ง (เผื่อเน็ตสะดุดตอนเพิ่งล็อกอิน)
+      for (let i = 0; i < 2; i++) {
+        try { return !!(await Data.get("admins", u.email)); }
+        catch (e) { if (String(e?.code || "").includes("permission-denied")) return false; await new Promise((r) => setTimeout(r, 1200)); }
+      }
+      return false;
     },
   };
 }
@@ -2002,12 +2009,16 @@ function renderGate(state) {
   if (state === "out") {
     const b = el("button", "btn-main", "ล็อกอินด้วย Google"); b.type = "button"; b.onclick = () => Auth.login().catch((e) => toast(errText(e)));
     const back0 = el("a", "admin-link", "← กลับหน้าเว็บ"); back0.href = "index.html";
-    g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่ หรือต้องล็อกอินก่อน"), back0);
+    g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่ หรือต้องล็อกอินก่อน"), b, back0); // เดิมลืมใส่ปุ่มล็อกอิน
     return;
   }
   // ล็อกอินแล้วแต่ไม่ใช่แอดมิน → แสดงเหมือนหน้าไม่มีอยู่ (ไม่บอกว่ามีหน้าแอดมิน)
+  // บอกว่าล็อกอินบัญชีไหนอยู่ + ปุ่มสลับบัญชี (แอดมินที่เผลอใช้บัญชีอื่นจะได้แก้เองได้)
   const back = el("a", "admin-link", "← กลับหน้าเว็บ"); back.href = "index.html";
-  g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่"), back);
+  const sw = el("button", "btn-ghost", "สลับบัญชี Google"); sw.type = "button";
+  sw.onclick = async () => { await Auth.logout(); Auth.login().catch((e) => toast(errText(e))); };
+  g.append(el("h1", null, "ไม่พบหน้านี้"), el("p", "hint", "หน้าที่คุณเปิดไม่มีอยู่"),
+    el("p", "hint", "ล็อกอินอยู่ด้วย: " + (me?.email || "-")), sw, back);
 }
 
 /* ---------- แท็บสถานะ ---------- */

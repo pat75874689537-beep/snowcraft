@@ -1175,6 +1175,8 @@ async function initFirebase() {
     }); },
     async login() {
       const p = new authMod.GoogleAuthProvider();
+      // ให้เลือกบัญชี Google ทุกครั้ง (เดิมเครื่องจะล็อกอินบัญชีหลักให้เอง → แอดมินที่ใช้บัญชีอื่นเข้าไม่ได้)
+      p.setCustomParameters({ prompt: "select_account" });
       try { await authMod.signInWithPopup(auth, p); }
       catch (e) {
         // บางเบราว์เซอร์มือถือบล็อกป๊อปอัป → เปลี่ยนไปใช้แบบเปลี่ยนหน้าแทน
@@ -1187,7 +1189,12 @@ async function initFirebase() {
     async isAdmin(u) {
       if (!u?.email) return false;
       if (u.email === OWNER_EMAIL) return true;
-      try { return !!(await Data.get("admins", u.email)); } catch { return false; }
+      // ลอง 2 ครั้ง (เผื่อเน็ตสะดุดตอนเพิ่งล็อกอิน)
+      for (let i = 0; i < 2; i++) {
+        try { return !!(await Data.get("admins", u.email)); }
+        catch (e) { if (String(e?.code || "").includes("permission-denied")) return false; await new Promise((r) => setTimeout(r, 1200)); }
+      }
+      return false;
     },
   };
 }
