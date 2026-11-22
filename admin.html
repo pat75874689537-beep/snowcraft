@@ -569,7 +569,7 @@ html { scroll-behavior: smooth; }
 @media (min-width: 768px) and (max-width: 1099px) { .me .nm { display: none; } }
 
 @media (max-width: 767px) {
-  .botnav { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
+  .botnav { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
     background: rgba(var(--bg-rgb), .92); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
   .botnav a { display: grid; justify-items: center; gap: 3px; padding: 6px 2px; border-radius: 10px; font-size: 11.5px; font-weight: 600; }
@@ -633,6 +633,101 @@ body:has(.apply-dlg[open]) { overflow: hidden; }
 
 /* ฟอร์มในหน้าต่าง: ไม่ต้องมีกรอบซ้อน */
 .ad-body .f-card { border: 0; background: none; box-shadow: none; padding: 0; }
+
+/* =========================================================
+   v22: ข้อมูลใน SS
+   ========================================================= */
+/* ---------- การ์ดใหญ่บนหน้าแรก ---------- */
+.info-banner { position: relative; display: grid; gap: 10px; padding: 22px; border-radius: 16px; overflow: hidden; text-decoration: none; color: var(--fg);
+  background: radial-gradient(90% 120% at 0% 0%, rgba(var(--ice-rgb), .22), transparent 60%), linear-gradient(160deg, var(--panel-2), var(--panel));
+  border: 1px solid rgba(var(--ice-rgb), .4); box-shadow: 0 10px 40px -18px rgba(var(--ice-rgb), .6); transition: transform .25s, box-shadow .25s; }
+.info-banner:hover { transform: translateY(-2px); box-shadow: 0 16px 48px -16px rgba(var(--ice-rgb), .75); }
+.ib-eyebrow { display: inline-flex; align-items: center; gap: 8px; font: 600 12px var(--f-mono); letter-spacing: .14em; color: var(--ice); text-transform: uppercase; }
+.ib-eyebrow canvas, .iv-thumb.no-img canvas, .ib-thumb.no-img canvas { image-rendering: pixelated; }
+.ib-eyebrow canvas { width: 18px; height: 18px; }
+.info-banner h2 { margin: 0; font: 800 clamp(26px, 6vw, 38px)/1.15 var(--f-display); text-wrap: balance; }
+.info-banner > p { margin: 0; color: var(--soft); max-width: 60ch; line-height: 1.7; }
+.ib-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ib-thumb { position: relative; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); }
+.ib-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ib-thumb span { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 8px 6px; font-size: 12.5px; font-weight: 700;
+  background: linear-gradient(transparent, rgba(0,0,0,.85)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.no-img { display: grid; place-items: center; }
+.ib-thumb.no-img canvas { width: 30%; max-width: 44px; height: auto; aspect-ratio: 1; opacity: .7; margin-bottom: 14px; }
+.ib-go { justify-self: start; font-weight: 700; color: var(--ice); }
+@media (max-width: 520px) { .ib-thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- หน้าข้อมูล ---------- */
+body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .foot-wrap { display: none; }
+.info-view { display: grid; gap: 22px; padding-block: 22px 48px; max-width: 1080px; }
+.iv-head { display: grid; gap: 8px; }
+.iv-head h1 { margin: 0; font: 800 clamp(26px, 6vw, 40px)/1.15 var(--f-display); text-wrap: balance; }
+.iv-head p { margin: 0; color: var(--soft); max-width: 62ch; line-height: 1.7; }
+.iv-back { justify-self: start; color: var(--muted); text-decoration: none; font-size: 14px; padding: 4px 0; }
+.iv-back:hover { color: var(--fg); }
+.iv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+@media (max-width: 520px) { .iv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+.iv-card { display: grid; gap: 6px; align-content: start; padding: 10px 10px 14px; border-radius: 14px; text-decoration: none; color: var(--fg);
+  background: var(--panel); border: 1px solid var(--line); transition: transform .25s, border-color .25s, box-shadow .25s; min-width: 0; }
+.iv-card:hover { transform: translateY(-3px); border-color: rgba(var(--ice-rgb), .6); box-shadow: 0 12px 30px -14px rgba(var(--ice-rgb), .55); }
+.iv-thumb { aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(var(--ice-rgb), .18), var(--panel-2)); }
+.iv-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.iv-thumb.no-img canvas { width: 28%; max-width: 56px; height: auto; aspect-ratio: 1; opacity: .8; }
+.iv-card h3 { margin: 4px 4px 0; font: 700 17px var(--f-display); overflow-wrap: anywhere; }
+.iv-card p { margin: 0 4px; color: var(--muted); font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+.iv-card small { margin: 2px 4px 0; color: var(--ice); font-size: 12.5px; font-weight: 600; }
+/* อ่านหมวด */
+.iv-article { display: grid; gap: 18px; max-width: 760px; }
+.iv-text { font-size: 15.5px; line-height: 1.8; }
+.iv-fig { margin: 0; display: grid; gap: 8px; cursor: zoom-in; }
+.iv-fig img { width: 100%; max-height: 80vh; object-fit: contain; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); display: block; }
+.iv-fig.loading img, .iv-fig.broken img { aspect-ratio: 16 / 9; }
+.iv-fig.loading img { animation: ivPulse 1.4s ease-in-out infinite; }
+.iv-fig.broken { cursor: default; }
+.iv-fig.broken::after { content: "โหลดรูปไม่ได้"; color: var(--muted); font-size: 13px; }
+.iv-fig figcaption { color: var(--muted); font-size: 13.5px; text-align: center; }
+.iv-fig:focus-visible { outline: 2px solid var(--ice); outline-offset: 4px; border-radius: 12px; }
+@keyframes ivPulse { 50% { opacity: .55; } }
+.iv-pn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 760px; border-top: 1px solid var(--line); padding-top: 18px; }
+.iv-pn a { display: grid; gap: 2px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; color: var(--fg); min-width: 0; }
+.iv-pn a:hover { border-color: rgba(var(--ice-rgb), .6); }
+.iv-pn small { color: var(--muted); font-size: 12px; }
+.iv-pn b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.iv-next { text-align: right; grid-column: 2; }
+@media (min-width: 1000px) { .iv-article, .iv-pn { margin-inline: auto; width: 100%; } .info-view > .iv-head:has(+ .iv-article) { max-width: 760px; margin-inline: auto; width: 100%; } }
+
+/* ---------- ดูรูปเต็มจอ ---------- */
+.lightbox { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; margin: 0; color: #fff; }
+.lightbox[open] { display: grid; place-items: center; align-content: center; gap: 10px; position: fixed; inset: 0; z-index: 60; }
+.lightbox::backdrop { background: rgba(0,0,0,.92); }
+.lightbox[open]:not(:modal) { background: rgba(0,0,0,.92); }
+.lightbox img { max-width: calc(100vw - 24px); max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px; }
+.lightbox p { margin: 0; padding-inline: 16px; text-align: center; color: #ddd; font-size: 14px; }
+.lb-x { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); color: #fff; font-size: 18px; padding: 8px 14px; background: rgba(0,0,0,.5); }
+
+/* ---------- หน้าแอดมิน: ข้อมูล SS ---------- */
+.ia-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 10px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.ia-thumb { aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background: var(--panel-2); display: grid; place-items: center; color: var(--muted); font-size: 11.5px; }
+.ia-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ia-thumb.big { max-width: 320px; width: 100%; }
+.ia-txt { display: grid; gap: 2px; min-width: 0; }
+.ia-txt b { overflow-wrap: anywhere; }
+.ia-txt small { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+.ia-act { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+@media (min-width: 640px) { .ia-row { grid-template-columns: 120px minmax(0, 1fr) auto; } .ia-act { grid-column: auto; } }
+.btn-ghost.danger.arm { border-color: var(--danger); color: var(--danger); }
+.ie { display: grid; gap: 14px; }
+.ie-bar { position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 12px;
+  border-radius: 12px; background: rgba(var(--bg-rgb), .94); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.ie-state { flex: 1; min-width: 120px; color: var(--muted); }
+.ie-meta { display: grid; gap: 12px; }
+.ie-cover { display: grid; gap: 8px; }
+.ie-h { margin: 6px 0 0; font: 700 17px var(--f-display); }
+.ie-blocks { display: grid; gap: 10px; }
+.ie-block { display: grid; gap: 10px; padding: 12px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.ie-img img { max-width: 100%; max-height: 320px; border-radius: 8px; display: block; }
+.back-arm, .btn-ghost.arm { border-color: var(--gold); color: var(--gold); }
+@media (prefers-reduced-motion: reduce) { .info-banner:hover, .iv-card:hover { transform: none; } .iv-fig.loading img { animation: none; } }
 </style>
 </head>
 <body>
@@ -657,6 +752,7 @@ body:has(.apply-dlg[open]) { overflow: hidden; }
       <button type="button" data-sec="secApps" aria-pressed="true">📝 ใบสมัคร</button>
       <button type="button" data-sec="secNews" aria-pressed="false">📢 ประกาศ</button>
       <button type="button" data-sec="secEdit" aria-pressed="false">✏️ แก้เว็บ</button>
+      <button type="button" data-sec="secInfo" aria-pressed="false">📚 ข้อมูล SS</button>
       <button type="button" data-sec="secBlocked" aria-pressed="false">🚫 บล็อก</button>
       <button type="button" data-sec="secAdmins" aria-pressed="false">👑 แอดมิน</button>
     </nav>
@@ -701,6 +797,13 @@ body:has(.apply-dlg[open]) { overflow: hidden; }
         <button class="btn-ghost" type="button" id="edUndo">ยกเลิกที่แก้</button>
         <button class="btn-main" type="button" id="edSave">บันทึก</button>
       </div>
+    </section>
+
+    <!-- ข้อมูลใน SS: หมวด + รูป + ข้อความ (แสดงที่หน้าเว็บ ลิงก์ #info) -->
+    <section style="display:grid;gap:12px" id="secInfo" hidden aria-labelledby="infoAdmTitle">
+      <h2 class="sec" id="infoAdmTitle">📚 ข้อมูลใน SS</h2>
+      <p class="hint">แต่ละหมวดใส่รูปปก ข้อความ และรูปได้หลายรูป · คนทั่วไปกดการ์ดใหญ่บนหน้าแรก หรือเมนู “ข้อมูล” เพื่อดู · ชื่อการ์ดบนหน้าแรกแก้ที่ ✏️ แก้เว็บ</p>
+      <div id="infoAdm" style="display:grid;gap:10px"></div>
     </section>
 
     <!-- รายชื่อคนที่ถูกบล็อก: บล็อกจากปุ่ม 🚫 บนโพสต์/ความเห็นในหน้าเว็บ ปลดบล็อกที่นี่ -->
@@ -836,6 +939,20 @@ function drawIcon(canvas, seed, color) {
 /* ---------- ไอคอนพิกเซลประจำหมวด 12x12 ----------
    . = ใส  1 = สีหมวด  2 = สีหมวดสว่าง  3 = สีหมวดเข้ม  4 = ขาว */
 const PIXEL_ICONS = {
+  scroll: [ // ม้วนคัมภีร์ (ข้อมูลใน SS)
+    "............",
+    ".3333333333.",
+    "344444444443",
+    ".341111114..",
+    ".344444444..",
+    ".341111114..",
+    ".344444444..",
+    ".341111414..",
+    ".344444444..",
+    "344444444443",
+    ".3333333333.",
+    "............",
+  ],
   join: [ // ใบสมัคร + ติ๊กถูก
     "............",
     ".33333333...",
@@ -1146,9 +1263,34 @@ async function initFirebase() {
 }
 
 /* ---------- โหมดตัวอย่าง: ข้อมูลในหน่วยความจำ ---------- */
+/* รูปตัวอย่างสำหรับโหมดตัวอย่าง (วาดเองในเครื่อง ไม่โหลดจากเน็ต) */
+function demoImg(w, h, c1, c2, label) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const g = c.getContext("2d");
+  const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, c1); gr.addColorStop(1, c2); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  const s = Math.round(w / 16); g.fillStyle = "rgba(0,0,0,.35)";
+  for (let x = 0; x < w; x += s) { const hh = h * (.25 + .35 * Math.abs(Math.sin(x * 0.013 + label.length))); g.fillRect(x, h - hh, s - 1, hh); }
+  g.fillStyle = "rgba(255,255,255,.92)"; g.font = `700 ${Math.round(w / 14)}px sans-serif`; g.textAlign = "center"; g.fillText(label, w / 2, h / 2);
+  return c.toDataURL("image/jpeg", .8);
+}
+
 function initDemo() {
   const now = Date.now(), H = 3600000;
   const store = {
+    // ข้อมูลใน SS ตัวอย่าง (หมวด + รูป)
+    info: [
+      { id: "c1", order: 1, title: "เนื้อเรื่อง", desc: "โลกที่ปรสิตแฝงตัวอยู่ และองค์กร P.E.P", thumb: demoImg(360, 220, "#5a0a14", "#ff2e46", "เนื้อเรื่อง"), updatedAt: now,
+        blocks: [{ t: "text", v: "# จุดเริ่มต้น\nตลอด 10 ปีที่ผ่านมา มนุษย์เผชิญกับ \"ปรสิต\" ที่แฝงตัวอยู่ในร่างกาย (ข้อความตัวอย่าง)\n- องค์กร P.E.P ก่อตั้งเพื่อกำจัดปรสิต\n- โรงเรียนคือสนามทดลองแห่งใหม่\n! ข้อมูลนี้เป็นตัวอย่าง แอดมินแก้ได้ที่หน้าแอดมิน" },
+          { t: "img", id: "di1", cap: "เมืองที่ถูกทิ้งร้าง (รูปตัวอย่าง)" }, { t: "text", v: "* ความลับที่ซ่อนอยู่\nยังไม่มีใครรู้ว่าปรสิตตัวแรกมาจากไหน" }] },
+      { id: "c2", order: 2, title: "ตัวละคร", desc: "ตัวละครสำคัญในซีซั่นนี้", thumb: demoImg(360, 220, "#3a1a50", "#b45cff", "ตัวละคร"), updatedAt: now,
+        blocks: [{ t: "img", id: "di2", cap: "ภาพตัวละครหลัก (ตัวอย่าง)" }, { t: "text", v: "# อาจารย์ใหญ่\nผู้ดูแลโรงเรียน ไม่มีใครเห็นหน้าจริง" }] },
+      { id: "c3", order: 3, title: "อาวุธ", desc: "ขวาน · คาตานะ · มีดสั้นคู่", thumb: demoImg(360, 220, "#4a2a08", "#ffb43d", "อาวุธ"), updatedAt: now,
+        blocks: [{ t: "text", v: "- ขวาน: ดาเมจสูง ช้า\n- คาตานะ: สมดุล\n- มีดสั้นคู่: เร็ว ระยะสั้น" }] },
+      { id: "c4", order: 4, title: "สถานที่", desc: "", thumb: "", updatedAt: now, blocks: [{ t: "text", v: "แผนที่โรงเรียนและเมือง (ยังไม่มีรูปปก = ขึ้นเป็นไอคอนแทน)" }] },
+    ],
+    infoImg: [
+      { id: "di1", src: demoImg(1200, 680, "#1a0508", "#8c0a1e", "เมืองร้าง"), at: now },
+      { id: "di2", src: demoImg(900, 900, "#120820", "#b45cff", "ตัวละคร"), at: now },
+    ],
     news: [{ id: "n1", title: "ยินดีต้อนรับสู่ Snowcraft (ตัวอย่าง)", body: "นี่คือประกาศตัวอย่าง ข่าวสารจริงจะขึ้นตรงนี้", createdAt: now - 2 * H }],
     posts: [
       { id: "p1", title: "กฎเบื้องต้น (ตัวอย่าง)", body: "1. เคารพกัน\n2. ห้ามโปรแกรมโกง\n3. สงสัยอะไรถามในหมวดสอบถาม", link: "", cat: "basics", author: "x1", authorName: "ทีมงานตัวอย่าง", authorPhoto: "", createdAt: now - 5 * H },
@@ -1240,6 +1382,8 @@ const DEFAULT_CONTENT = {
   // ธีมประจำโปรเจกต์: preset = ชุดสี (ดู THEMES ใน core.js) · effect = เอฟเฟกต์หัวเว็บ
   // bgImage = รูปพื้นหลังหัวเว็บ (เก็บเป็นข้อมูลรูปในตัว) · bgDim = ความมืดทับรูป 0–90
   theme: { preset: "red", effect: "mix", bgImage: "", bgDim: 55 },
+  // การ์ด "ข้อมูลใน SS" บนหน้าแรก (หมวด/รูป/ข้อความ แก้ที่หน้าแอดมิน → เมนู 📚 ข้อมูล SS)
+  info: { show: true, title: "ข้อมูลใน SS3", text: "เนื้อเรื่อง ตัวละคร อาวุธ และสถานที่ทั้งหมดของซีซั่นนี้ อ่านก่อนเข้าโรลจะเข้าใจโลกมากขึ้น" },
   badge: { open: "เปิดรับสมัครแล้ว", closed: "ปิดรับสมัครชั่วคราว" },
   // การ์ด "จุดเด่น" ใต้หัวเว็บ · icon เลือกจาก FEATURE_ICONS
   features: {
@@ -1493,7 +1637,7 @@ function renderInfo(info) {
 
 /* ---------- ย่อรูปในเครื่องก่อนส่ง (ด้านยาวสุด 640px, JPEG) ----------
    เก็บเป็นข้อความรูปในฐานข้อมูลได้เลย ไม่ต้องใช้ที่เก็บไฟล์แยก (ฟรี) */
-function shrinkImage(file, maxSide = 640) {
+function shrinkImage(file, maxSide = 640, limit = 380000) { // limit = ความยาวข้อมูลรูปสูงสุด
   return new Promise((ok, bad) => {
     if (!/^image\//.test(file.type)) return bad(new Error("ไฟล์นี้ไม่ใช่รูป"));
     const url = URL.createObjectURL(file), img = new Image();
@@ -1502,8 +1646,8 @@ function shrinkImage(file, maxSide = 640) {
       const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
       c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
       let q = .82, out = c.toDataURL("image/jpeg", q);
-      while (out.length > 350000 && q > .4) { q -= .1; out = c.toDataURL("image/jpeg", q); }
-      out.length > 380000 ? bad(new Error("รูปใหญ่เกินไป")) : ok(out);
+      while (out.length > limit * .92 && q > .4) { q -= .1; out = c.toDataURL("image/jpeg", q); }
+      out.length > limit ? bad(new Error("รูปใหญ่เกินไป")) : ok(out);
     };
     img.onerror = () => { URL.revokeObjectURL(url); bad(new Error("เปิดรูปไม่ได้")); };
     img.src = url;
@@ -1693,13 +1837,13 @@ function markDirty() { edDirty = true; $("edBar").classList.add("dirty"); $("edS
 const newKey = () => "q" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 
 /* ---------- ช่องกรอกเล็กๆ ที่ผูกกับค่าใน ED ---------- */
-function edInput(label, get, set, { long = false, help = "", max = 300, rows = 4, id, rich = false, placeholder = "" } = {}) {
+function edInput(label, get, set, { long = false, help = "", max = 300, rows = 4, id, rich = false, placeholder = "", onDirty = markDirty } = {}) {
   const lab = el(rich ? "div" : "label", "ed-l"); if (id && !rich) lab.htmlFor = id;
   const title = el(rich ? "label" : "span", null, label); if (rich && id) title.htmlFor = id; lab.append(title);
   const inp = el(long ? "textarea" : "input"); if (id) inp.id = id; inp.maxLength = max; inp.value = get() ?? "";
   if (long) inp.rows = rows; if (placeholder) inp.placeholder = placeholder;
   let prev = null;
-  inp.oninput = () => { set(inp.value); markDirty(); if (prev && !prev.hidden) drawPrev(); };
+  inp.oninput = () => { set(inp.value); onDirty(); if (prev && !prev.hidden) drawPrev(); };
   const drawPrev = () => { prev.textContent = ""; prev.append(inp.value.trim() ? renderInfo(inp.value) : el("p", "hint", "(ยังว่างอยู่)")); };
   if (rich) {
     // แถบปุ่มจัดรูปแบบ: ใส่/เอาออก สัญลักษณ์หน้าบรรทัดที่เคอร์เซอร์อยู่
@@ -1810,6 +1954,14 @@ function renderEditor() {
     add.onclick = () => { ED.basics.steps.push({ title: "ขั้นตอนใหม่", text: "", button: "" }); markDirty(); renderEditor(); };
     b.append(add, edInput("ข้อความท้ายส่วน", () => ED.basics.foot, (v) => (ED.basics.foot = v), { long: true, rows: 2, max: 300, id: "ed-bfoot", help: "จะมีลิงก์ “ถามในหมวดสอบถาม” ต่อท้ายให้อัตโนมัติ" }));
   }, "รายการขั้นตอนที่มีเลข 1, 2, 3… บนหน้าเว็บ · เลขเรียงให้อัตโนมัติตามลำดับ"));
+
+  // 3.4) การ์ดข้อมูลใน SS บนหน้าแรก
+  box.append(edGroup("info", "📚 การ์ด “ข้อมูลใน SS” บนหน้าแรก", (b) => {
+    b.append(
+      edCheck("แสดงการ์ดนี้บนหน้าแรก (ซ่อนเองถ้ายังไม่มีหมวด)", () => ED.info.show, (v) => (ED.info.show = v)),
+      edInput("หัวข้อ (เช่น ข้อมูลใน SS3)", () => ED.info.title, (v) => (ED.info.title = v), { max: 60, id: "ed-ititle" }),
+      edInput("คำอธิบายสั้นๆ", () => ED.info.text, (v) => (ED.info.text = v), { long: true, rows: 2, max: 200, id: "ed-itext" }));
+  }, "หมวด รูป และข้อความข้างใน แก้ที่เมนู 📚 ข้อมูล SS (ด้านบน)"));
 
   // 3.5) จุดเด่น
   box.append(edGroup("feats", "🌟 จุดเด่น (การ์ดใต้หัวเว็บ)", (b) => {
@@ -1986,6 +2138,155 @@ async function edSave() {
 function edDiscard() {
   edDirty = false; $("edBar").classList.remove("dirty"); $("edState").textContent = "ยังไม่มีการแก้";
   edLoad(CONTENT, SITE_PRIVATE); applyTheme(CONTENT.theme);
+}
+
+
+/* =========================================================
+   📚 ข้อมูล SS (หน้าแอดมิน)
+   - รายการหมวด: เพิ่ม / แก้ / เลื่อนลำดับ / ลบ
+   - แก้หมวด: ชื่อ · คำอธิบาย · รูปปก · เนื้อหา (กล่องข้อความ/รูป เรียงลำดับได้)
+   - รูปเต็มเก็บแยกใน infoImg (1 รูป/เอกสาร) · รูปปกย่อเก็บในหมวดเลย
+   - กด "บันทึกหมวดนี้" ถึงจะขึ้นเว็บ
+   ========================================================= */
+let INFO = [], IE = null, IE_DIRTY = false;
+const infoId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const admImg = new Map(); // id → Promise(รูป) สำหรับพรีวิวในหน้าแอดมิน
+const admLoadImg = (id) => { if (!admImg.has(id)) admImg.set(id, Data.get("infoImg", id).then((d) => d?.src || null).catch(() => null)); return admImg.get(id); };
+const ieDirty = () => { IE_DIRTY = true; const s = $("ieState"); if (s) s.textContent = "มีการแก้ที่ยังไม่บันทึก"; };
+
+function renderInfoAdmin() {
+  const box = $("infoAdm"); if (!box) return; box.textContent = "";
+  if (IE) { box.append(infoEditor()); return; }
+  const add = el("button", "btn-main", "+ เพิ่มหมวดใหม่"); add.type = "button";
+  add.onclick = () => { IE = { id: infoId("c"), title: "", desc: "", thumb: "", blocks: [{ t: "text", v: "" }], order: Math.max(0, ...INFO.map((c) => c.order || 0)) + 1, _new: true, _orig: [] }; IE_DIRTY = false; renderInfoAdmin(); scrollTo(0, 0); };
+  box.append(add);
+  if (!INFO.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีหมวด"), el("span", null, "กด “+ เพิ่มหมวดใหม่” เช่น เนื้อเรื่อง ตัวละคร อาวุธ สถานที่")); box.append(e); return; }
+  INFO.forEach((cat, i) => {
+    const row = el("article", "ia-row");
+    const th = el("div", "ia-thumb"); if (cat.thumb) { const im = el("img"); im.src = cat.thumb; im.alt = ""; th.append(im); } else th.append(el("span", null, "ไม่มีปก"));
+    const tx = el("div", "ia-txt"); const n = (cat.blocks || []).length, ni = (cat.blocks || []).filter((b) => b.t === "img").length;
+    tx.append(el("b", null, cat.title), el("small", null, (cat.desc ? cat.desc + " · " : "") + `${n} กล่อง (${ni} รูป)`));
+    const act = el("div", "ia-act");
+    const mk = (t, title, fn, dis) => { const b = el("button", "act", t); b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.disabled = !!dis; b.onclick = fn; return b; };
+    // เลื่อนลำดับ: สลับในรายการ แล้วเขียนเลขลำดับใหม่ 1,2,3… ทั้งชุด (กันเลขซ้ำ/เลขเพี้ยน)
+    const swap = async (j) => {
+      const list = INFO.map((x) => ({ id: x.id, order: x.order }));
+      [list[i], list[j]] = [list[j], list[i]];
+      try { for (const [k, x] of list.entries()) if (x.order !== k + 1) await Data.update("info", x.id, { order: k + 1 }); }
+      catch (e) { toast(errText(e)); }
+    };
+    const edit = el("button", "btn-ghost", "แก้ไข"); edit.type = "button";
+    edit.onclick = () => { IE = { ...structuredClone(cat), _orig: (cat.blocks || []).filter((b) => b.t === "img").map((b) => b.id) }; IE_DIRTY = false; renderInfoAdmin(); scrollTo(0, 0); };
+    const del = el("button", "btn-ghost danger"); del.type = "button";
+    armDelete(del, async () => {
+      try { for (const b of cat.blocks || []) if (b.t === "img") await Data.del("infoImg", b.id).catch(() => {}); await Data.del("info", cat.id); toast("ลบหมวด " + cat.title + " แล้ว"); }
+      catch (e) { toast(errText(e)); }
+    }, "ลบ");
+    act.append(mk("↑", "เลื่อนขึ้น", () => swap(i - 1), i === 0), mk("↓", "เลื่อนลง", () => swap(i + 1), i === INFO.length - 1), edit, del);
+    row.append(th, tx, act); box.append(row);
+  });
+}
+
+function infoEditor() {
+  const c = IE, wrap = el("div", "ie");
+  // แถบบน: กลับ / สถานะ / บันทึก
+  const bar = el("div", "ie-bar");
+  const back = el("button", "btn-ghost", "← กลับไปรายการ"); back.type = "button";
+  back.onclick = () => { if (IE_DIRTY && !back.classList.contains("arm")) { back.classList.add("arm"); back.textContent = "ทิ้งที่แก้? กดอีกครั้ง"; setTimeout(() => { back.classList.remove("arm"); back.textContent = "← กลับไปรายการ"; }, 3000); return; } IE = null; renderInfoAdmin(); };
+  const st = el("small", "ie-state", c._new ? "หมวดใหม่ (ยังไม่บันทึก)" : "ยังไม่มีการแก้"); st.id = "ieState";
+  const save = el("button", "btn-main", "💾 บันทึกหมวดนี้"); save.type = "button"; save.onclick = () => saveInfo(save);
+  bar.append(back, st, save);
+
+  // ข้อมูลหมวด
+  const meta = el("div", "form ie-meta");
+  meta.append(
+    edInput("ชื่อหมวด", () => c.title, (v) => (c.title = v), { max: 60, id: "ie-title", placeholder: "เช่น ตัวละคร", onDirty: ieDirty }),
+    edInput("คำอธิบายสั้นๆ (ขึ้นใต้ชื่อในหน้ารวม)", () => c.desc, (v) => (c.desc = v), { max: 160, id: "ie-desc", onDirty: ieDirty }));
+  // รูปปก
+  const cov = el("div", "ie-cover"), cprev = el("div", "ia-thumb big");
+  const drawCov = () => { cprev.textContent = ""; if (c.thumb) { const im = el("img"); im.src = c.thumb; im.alt = "รูปปก"; cprev.append(im); } else cprev.append(el("span", null, "ยังไม่มีรูปปก")); };
+  drawCov();
+  const cf = el("input"); cf.type = "file"; cf.accept = "image/*"; cf.hidden = true;
+  const cb = el("button", "btn-ghost", "🖼 เลือกรูปปก"); cb.type = "button"; cb.onclick = () => cf.click();
+  const cr = el("button", "btn-ghost", "เอาปกออก"); cr.type = "button"; cr.onclick = () => { c.thumb = ""; drawCov(); ieDirty(); };
+  cf.onchange = async () => { const f = cf.files[0]; cf.value = ""; if (!f) return; cb.disabled = true; cb.textContent = "กำลังย่อรูป…";
+    try { c.thumb = await shrinkImage(f, 520, 110000); drawCov(); ieDirty(); } catch (e) { toast(e.message); } cb.disabled = false; cb.textContent = "🖼 เลือกรูปปก"; };
+  const cbtn = el("div", "th-row"); cbtn.append(cb, cr, cf);
+  cov.append(el("b", null, "รูปปก (ขึ้นในหน้ารวมหมวด และการ์ดหน้าแรก)"), cprev, cbtn);
+  meta.append(cov);
+
+  // เนื้อหา
+  const blocksBox = el("div", "ie-blocks");
+  const drawBlocks = () => {
+    blocksBox.textContent = "";
+    c.blocks.forEach((b, i) => {
+      const card = el("div", "ie-block"), head = el("div", "ed-head");
+      const tools = el("div", "ed-tools");
+      const mk = (t, title, fn, dis) => { const x = el("button", "act", t); x.type = "button"; x.title = title; x.setAttribute("aria-label", title); x.disabled = !!dis; x.onclick = fn; return x; };
+      const move = (d) => { const j = i + d; [c.blocks[i], c.blocks[j]] = [c.blocks[j], c.blocks[i]]; ieDirty(); drawBlocks(); };
+      const rm = mk("ลบ", "ลบกล่องนี้", () => { c.blocks.splice(i, 1); ieDirty(); drawBlocks(); });
+      tools.append(mk("↑", "เลื่อนขึ้น", () => move(-1), i === 0), mk("↓", "เลื่อนลง", () => move(1), i === c.blocks.length - 1), rm);
+      head.append(el("b", null, (b.t === "img" ? "🖼 รูป" : "📝 ข้อความ") + ` · กล่องที่ ${i + 1}`), tools);
+      card.append(head);
+      if (b.t === "text") card.append(edInput("ข้อความ", () => b.v, (v) => (b.v = v), { long: true, rows: 6, max: 5000, rich: true, id: "ie-t-" + i, onDirty: ieDirty }));
+      else {
+        const pv = el("div", "ie-img");
+        const show = (src) => { pv.textContent = ""; if (src) { const im = el("img"); im.src = src; im.alt = b.cap || ""; pv.append(im); } else pv.append(el("span", "hint", "โหลดรูปไม่ได้")); };
+        if (b._src) show(b._src); else { pv.append(el("span", "hint", "กำลังโหลดรูป…")); admLoadImg(b.id).then(show); }
+        card.append(pv, edInput("คำบรรยายใต้รูป (ไม่ใส่ก็ได้)", () => b.cap, (v) => (b.cap = v), { max: 200, id: "ie-c-" + i, onDirty: ieDirty }));
+      }
+      blocksBox.append(card);
+    });
+    if (!c.blocks.length) blocksBox.append(el("p", "hint", "ยังไม่มีเนื้อหา กดปุ่มด้านล่างเพื่อเพิ่ม"));
+  };
+  drawBlocks();
+  const addT = el("button", "btn-ghost", "+ กล่องข้อความ"); addT.type = "button";
+  addT.onclick = () => { c.blocks.push({ t: "text", v: "" }); ieDirty(); drawBlocks(); };
+  const imf = el("input"); imf.type = "file"; imf.accept = "image/*"; imf.multiple = true; imf.hidden = true;
+  const addI = el("button", "btn-ghost", "+ รูป (เลือกได้หลายรูป)"); addI.type = "button"; addI.onclick = () => imf.click();
+  imf.onchange = async () => {
+    const files = [...imf.files]; imf.value = ""; if (!files.length) return;
+    if (c.blocks.length + files.length > 80) return toast("หมวดหนึ่งใส่ได้สูงสุด 80 กล่อง");
+    addI.disabled = true;
+    for (const [k, f] of files.entries()) {
+      addI.textContent = `กำลังย่อรูป ${k + 1}/${files.length}…`;
+      try { c.blocks.push({ t: "img", id: infoId("i"), cap: "", _src: await shrinkImage(f, 1600, 800000), _new: true }); }
+      catch (e) { toast(f.name + ": " + e.message); }
+    }
+    addI.disabled = false; addI.textContent = "+ รูป (เลือกได้หลายรูป)"; ieDirty(); drawBlocks();
+  };
+  const adds = el("div", "th-row"); adds.append(addT, addI, imf);
+
+  wrap.append(bar, meta, el("h3", "ie-h", "เนื้อหาในหมวด (เรียงจากบนลงล่าง)"),
+    el("p", "hint", "ใส่ข้อความกับรูปสลับกันได้ตามใจ · ใช้ปุ่ม ↑ ↓ จัดลำดับ · ข้อความจัดรูปแบบได้เหมือนเมนูแก้เว็บ (หัวข้อ / รายการ / ตัวหนา / สีทอง)"),
+    blocksBox, adds);
+  return wrap;
+}
+
+async function saveInfo(btn) {
+  const c = IE;
+  if (!c.title.trim()) { toast("ใส่ชื่อหมวดก่อน"); $("ie-title")?.focus(); return; }
+  const old = btn.textContent; btn.disabled = true;
+  try {
+    // 1) อัปรูปใหม่ทีละรูป
+    const fresh = c.blocks.filter((b) => b.t === "img" && b._new);
+    for (const [k, b] of fresh.entries()) {
+      btn.textContent = `กำลังอัปรูป ${k + 1}/${fresh.length}…`;
+      await Data.set("infoImg", b.id, { src: b._src, at: Date.now() });
+      admImg.set(b.id, Promise.resolve(b._src)); delete b._new; delete b._src;
+    }
+    // 2) บันทึกหมวด
+    btn.textContent = "กำลังบันทึก…";
+    const blocks = c.blocks.map((b) => (b.t === "img" ? { t: "img", id: b.id, cap: (b.cap || "").slice(0, 200) } : { t: "text", v: (b.v || "").slice(0, 5000) }));
+    await Data.set("info", c.id, { title: c.title.trim().slice(0, 60), desc: (c.desc || "").trim().slice(0, 160), thumb: c.thumb || "", blocks, order: c.order || 0, updatedAt: Date.now() });
+    // 3) ลบรูปที่เอาออกจากหมวดแล้ว
+    const keep = new Set(blocks.filter((b) => b.t === "img").map((b) => b.id));
+    for (const id of c._orig || []) if (!keep.has(id)) await Data.del("infoImg", id).catch(() => {});
+    c._orig = [...keep]; c._new = false; IE_DIRTY = false;
+    toast("บันทึกหมวด " + c.title + " แล้ว ขึ้นเว็บทันที");
+    IE = null; renderInfoAdmin(); scrollTo(0, 0);
+  } catch (e) { console.error(e); toast(errText(e)); }
+  btn.disabled = false; btn.textContent = old;
 }
 </script>
 <script>
@@ -2205,8 +2506,10 @@ renderMe($("me"), null, false); renderGate("loading");
       readOnce("posts", { orderBy: "createdAt", dir: "desc", limit: 3000 }),
       readOnce("comments", { orderBy: "createdAt", dir: "asc", limit: 10000 }),
     ]);
+    const info = await readOnce("info", { orderBy: "order", dir: "asc", limit: 60 });
+    const infoImg = []; for (const c of info) for (const b of c.blocks || []) if (b.t === "img") { const d = await Data.get("infoImg", b.id).catch(() => null); if (d) infoImg.push({ id: b.id, ...d }); }
     const data = { app: "Snowcraft", kind: "backup", version: 1, exportedAt: new Date().toISOString(), exportedBy: me.email || me.uid,
-      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, applications, news, posts, comments };
+      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, info, infoImg, applications, news, posts, comments };
     saveFile(`Snowcraft_backup_${stamp()}.json`, JSON.stringify(data, null, 1), "application/json");
     toast(`ดาวน์โหลดแล้ว · ใบสมัคร ${applications.length} · ประกาศ ${news.length} · โพสต์ ${posts.length}`);
   });
@@ -2257,6 +2560,7 @@ renderMe($("me"), null, false); renderGate("loading");
       if (d?.updatedAt) $("edState").textContent = edDirty ? $("edState").textContent : "แก้ล่าสุด " + ago(d.updatedAt) + (d.updatedBy ? " โดย " + d.updatedBy : ""); }, oops));
     unsubs.push(Data.watchDoc("site", "private", (d) => { SITE_PRIVATE = d || structuredClone(DEFAULT_PRIVATE); SITE_PRIVATE.answers ||= {}; renderApps(); if (!edDirty) edLoad(CONTENT, SITE_PRIVATE); }, oops));
     unsubs.push(Data.watch("admins", { orderBy: "addedAt", dir: "asc", limit: 100 }, (r) => { A.admins = r; renderAdmins(); }, oops));
+    unsubs.push(Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => { INFO = r; if (!IE) renderInfoAdmin(); }, oops));
     unsubs.push(Data.watch("blocked", { orderBy: "at", dir: "desc", limit: 500 }, (r) => { A.blocked = r; renderBlockedList(); }, oops));
   });
 })();
