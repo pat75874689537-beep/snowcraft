@@ -525,9 +525,10 @@ main.home .col-main > * { order: 4; }
   .wrap { max-width: 1180px; }
   body:has(.admin-menu) .wrap { max-width: 1040px; } /* หน้าแอดมิน: ไม่กว้างเกิน อ่านง่าย */
   main.home { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 32px; align-items: start; }
-  main.home > .feats { grid-column: 1 / -1; }
-  main.home > .col-main { display: grid; gap: 28px; grid-column: 1; grid-row: 2; min-width: 0; }
-  main.home > .side { display: grid; gap: 28px; grid-column: 2; grid-row: 2; align-self: start; position: sticky; top: 76px;
+  main.home > .feats, main.home > .info-banner, main.home > .sched, main.home > .recaps { grid-column: 1 / -1; } /* ส่วนเต็มความกว้างด้านบน */
+  main.home > .col-main { display: grid; gap: 28px; grid-column: 1; min-width: 0; } /* ไม่ล็อกแถว: ต่อจากส่วนบนเอง */
+  main.home > .col-main, main.home > .side { order: 2; } /* ต้องอยู่หลัง "ทำไมต้อง Snowcraft" (order 1 ที่ตั้งไว้สำหรับมือถือ) */
+  main.home > .side { display: grid; gap: 28px; grid-column: 2; align-self: start; position: sticky; top: 76px;
     max-height: calc(100vh - 92px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; } /* ประกาศเยอะจนยาวเกินจอ = เลื่อนในแถบข้างได้ */
   .side .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* หัวเว็บแบบโปสเตอร์ จัดกลาง */
@@ -798,6 +799,140 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .prof-dlg .actions { align-items: center; }
 .prof-dlg .sp { flex: 1; }
 .av-box { display: inline-flex; }
+
+/* =========================================================
+   v29: ตารางโรล · สรุป EP · โปรไฟล์ตัวละคร · แจ้งเตือน
+   ========================================================= */
+.sched, .recaps { display: grid; gap: 12px; }
+.sc-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.sc-head h2.sec { margin: 0; }
+.sc-prog { font: 700 13.5px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.sc-next { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 20px 16px; border-radius: 16px;
+  background: radial-gradient(80% 120% at 50% 0%, rgba(var(--ice-rgb), .2), transparent 70%), var(--panel); border: 1px solid rgba(var(--ice-rgb), .45); }
+.sc-badge { font: 700 12px var(--f-mono); letter-spacing: .12em; color: var(--ice); text-transform: uppercase; }
+.sc-ep { font: 800 clamp(30px, 8vw, 44px)/1 var(--f-display); text-shadow: 0 0 18px rgba(var(--ice-rgb), .6); }
+.sc-next small { color: var(--soft); font-size: 14px; }
+.sc-next.live { border-color: #ff4d63; animation: livePulse2 2s ease-in-out infinite; }
+.sc-next.live .sc-badge { color: #ff6b7d; }
+.sc-next.end { border-color: var(--gold); }
+.sc-next.end .sc-badge { color: var(--gold); font-size: 14px; }
+@keyframes livePulse2 { 50% { box-shadow: 0 0 0 4px rgba(255,77,99,.18), 0 0 30px rgba(255,77,99,.35); } }
+.sc-cd { display: flex; gap: 8px; margin-top: 6px; }
+.cd-u { display: grid; justify-items: center; min-width: 58px; padding: 8px 6px; border-radius: 10px; background: rgba(var(--bg-rgb), .6); border: 1px solid var(--line); }
+.cd-u b { font: 800 24px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.cd-u small { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.sc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.sc-list li { display: grid; grid-template-columns: 56px 1fr auto; gap: 2px 10px; align-items: center; padding: 9px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; }
+.sc-list li small { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
+.sc-list li small:empty { display: none; }
+.sc-list li.past { opacity: .55; }
+.sc-list li.now { border-color: rgba(var(--ice-rgb), .6); }
+.sc-list li b { font-family: var(--f-mono); color: var(--ice); }
+.sc-all { justify-self: center; }
+@media (min-width: 768px) { .sc-list li { grid-template-columns: 70px 1fr auto 1fr; } .sc-list li small { grid-column: auto; text-align: right; } }
+/* สรุป EP บนหน้าแรก */
+.rc-all { color: var(--ice); text-decoration: none; font-weight: 600; font-size: 14px; }
+.rc-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .rc-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -16px; padding: 2px 16px 8px; scrollbar-width: none; } .rc-row::-webkit-scrollbar { display: none; } .rc-card { flex: 0 0 72%; scroll-snap-align: center; } }
+.rc-card { display: grid; gap: 4px; align-content: start; padding: 8px 8px 12px; border-radius: 12px; text-decoration: none; color: var(--fg); background: var(--panel); border: 1px solid var(--line); min-width: 0; transition: border-color .2s, transform .25s; }
+.rc-card:hover { border-color: rgba(var(--ice-rgb), .6); transform: translateY(-2px); }
+.rc-thumb { aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--panel-2); }
+.rc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc-thumb.no-img canvas { width: 26%; max-width: 44px; height: auto; aspect-ratio: 1; image-rendering: pixelated; opacity: .8; }
+.rc-card b { margin: 4px 4px 0; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-card small { margin: 0 4px; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* โปรไฟล์ตัวละคร */
+.char-dlg { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 40px); overflow: auto; border-color: rgba(var(--ice-rgb), .6); position: fixed; }
+.char-x { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.char-body { display: grid; gap: 16px; padding: 18px; }
+@media (min-width: 600px) { .char-body { grid-template-columns: 220px minmax(0, 1fr); align-items: start; } }
+.char-pic { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); cursor: zoom-in; max-width: 260px; width: 100%; justify-self: center; }
+.char-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.char-pic.no-img { display: grid; place-items: center; cursor: default; }
+.char-pic.no-img canvas { width: 30%; height: auto; aspect-ratio: 1; image-rendering: pixelated; opacity: .8; }
+.char-info { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.char-info h3 { margin: 0; padding-right: 50px; font: 800 24px var(--f-display); overflow-wrap: anywhere; }
+.char-info .pill { justify-self: start; }
+.char-bio { font-size: 14.5px; line-height: 1.75; overflow-wrap: anywhere; }
+/* กระดิ่งแจ้งเตือน */
+.bell { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-size: 17px; flex: none; }
+.bell:hover { border-color: rgba(var(--ice-rgb), .6); }
+.bell b { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: #ff2e46; color: #fff;
+  font: 700 11px/18px var(--f-mono); text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px rgba(255,46,70,.8); }
+.noti-dlg { width: min(460px, calc(100vw - 24px)); max-height: calc(100vh - 60px); overflow: auto; border-color: rgba(var(--ice-rgb), .6); }
+.noti-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); }
+.noti-head h3 { margin: 0; font: 700 17px var(--f-display); }
+.noti-list { list-style: none; margin: 0; padding: 6px; display: grid; gap: 4px; }
+.noti-list > li.hint { padding: 18px; text-align: center; }
+.noti-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 2px 8px; width: 100%; text-align: left; padding: 10px; border-radius: 10px; border: 0; background: none; color: var(--fg); font: inherit; cursor: pointer; }
+.noti-item:hover { background: rgba(255,255,255,.05); }
+.noti-ic { grid-row: 1 / 3; font-size: 18px; }
+.noti-t { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.noti-item small { color: var(--muted); font-size: 12px; }
+.card.flash { animation: cardFlash 1.6s ease-out; }
+@keyframes cardFlash { 0%, 40% { box-shadow: 0 0 0 2px var(--ice), 0 0 30px rgba(var(--ice-rgb), .5); } 100% { box-shadow: none; } }
+/* หน้าแอดมิน: ตารางโรล */
+.sch-list { display: grid; gap: 6px; }
+.sch-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 6px 8px; align-items: center; padding: 8px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); }
+.sch-row input[type=datetime-local] { min-width: 0; }
+.sch-row input:not([type]) { grid-column: 2 / 3; }
+.sch-row .act { grid-row: 1 / 3; grid-column: 3; }
+.sch-row.past { opacity: .6; }
+.sch-row b { font-family: var(--f-mono); color: var(--ice); }
+.gen-days { gap: 10px 14px; }
+@media (prefers-reduced-motion: reduce) { .sc-next.live, .card.flash { animation: none; } }
+
+/* ===== v30: สรุป EP ที่ยังเป็นปริศนา ===== */
+.myst-thumb { position: relative; display: grid; place-items: center; overflow: hidden;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 6px, transparent 6px 12px), radial-gradient(circle at 50% 45%, rgba(255,46,70,.28), #0b0306 70%); }
+.myst-thumb::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(transparent 0 46%, rgba(255,46,70,.22) 50%, transparent 54%); background-size: 100% 300%; animation: myst-scan 3.2s linear infinite; }
+.myst-q { font: 800 clamp(34px, 7vw, 56px)/1 var(--f-display); color: #ff2e46; text-shadow: 0 0 18px rgba(255,46,70,.75), 2px 0 0 rgba(61,184,255,.55), -2px 0 0 rgba(255,180,61,.35); animation: myst-glitch 2.6s steps(1) infinite; }
+.myst-ep { position: absolute; left: 8px; bottom: 6px; font-size: 11px; font-weight: 700; letter-spacing: .12em; color: rgba(255,255,255,.55); }
+.iv-card.myst, .rc-card.myst { border-style: dashed; border-color: rgba(255,46,70,.45); }
+.iv-card.myst { cursor: default; }
+.iv-card.myst:hover { transform: none; box-shadow: none; }
+.iv-card.myst h3, .rc-card.myst b { letter-spacing: .04em; }
+.iv-card.myst small, .rc-card.myst small { color: #ff6b7d; }
+@keyframes myst-scan { from { background-position: 0 100%; } to { background-position: 0 -200%; } }
+@keyframes myst-glitch { 0%, 88%, 100% { transform: none; opacity: 1; } 90% { transform: translate(2px, -1px) skewX(-8deg); opacity: .7; } 93% { transform: translate(-3px, 1px); opacity: .9; } 96% { transform: translate(1px, 0) skewX(6deg); } }
+@media (prefers-reduced-motion: reduce) { .myst-thumb::after, .myst-q { animation: none; } }
+.ia-mystery { border-style: dashed; border-color: rgba(255,46,70,.5); }
+.ie-myst { padding: 10px 12px; border: 1px dashed rgba(255,46,70,.5); border-radius: 10px; background: rgba(255,46,70,.06); }
+
+/* ===== v30: ตารางโรลแบบกลิตช์ (วันเวลา/ตัวเลขกระตุกสลับ) ===== */
+.sc-next .glx { display: inline-block; font-variant-numeric: tabular-nums; }
+.sc-next.glitching .glx { color: #ff6b7d; text-shadow: 2px 0 rgba(61,184,255,.8), -2px 0 rgba(255,46,70,.9); transform: translateX(-1px) skewX(-6deg); }
+.sc-next.glitching .sc-ep { text-shadow: 3px 0 rgba(61,184,255,.7), -3px 0 rgba(255,46,70,.9), 0 0 18px rgba(var(--ice-rgb), .6); transform: translateX(2px); }
+.cd-u b { position: relative; }
+.cd-u b[data-g]::after { content: attr(data-g); position: absolute; inset: 0; display: grid; place-items: center; color: #ff2e46; background: rgba(var(--bg-rgb), .92);
+  text-shadow: 2px 0 rgba(61,184,255,.8); clip-path: inset(18% 0 38% 0); transform: translateX(-2px); }
+.sc-next.glitching .cd-u { border-color: rgba(255,46,70,.7); }
+@media (prefers-reduced-motion: reduce) { .sc-next.glitching .glx, .sc-next.glitching .sc-ep { transform: none; } }
+.sc-next.noise-mode .nz-line { font: 700 15px var(--f-mono); letter-spacing: .06em; white-space: nowrap; filter: blur(.3px); }
+.sc-next.noise-mode .cd-u b { color: #ff2e46; text-shadow: 2px 0 rgba(61,184,255,.8), -2px 0 rgba(255,180,61,.4); }
+.sc-next.noise-mode.nz-shift .nz-line, .sc-next.noise-mode.nz-shift .sc-cd { transform: translateX(3px) skewX(-10deg); clip-path: inset(0 0 22% 0); }
+.sc-next.noise-mode.nz-shift .sc-ep { transform: translateX(-3px); }
+.sc-next .nz-note { color: #ff6b7d; font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .sc-next.noise-mode.nz-shift .nz-line, .sc-next.noise-mode.nz-shift .sc-cd, .sc-next.noise-mode.nz-shift .sc-ep { transform: none; clip-path: none; } }
+
+/* ===== v30: กลิตช์เล็กๆ (หัวข้อ/ป้าย/การ์ดปริศนา) + เส้นสแกนในกล่องตารางโรล ===== */
+.tglx { animation: tglx .26s steps(2) 1; }
+@keyframes tglx {
+  0%   { text-shadow: 2px 0 rgba(61,184,255,.85), -2px 0 rgba(255,46,70,.9); transform: translateX(-2px); clip-path: inset(0 0 45% 0); }
+  50%  { text-shadow: -3px 0 rgba(61,184,255,.85), 3px 0 rgba(255,46,70,.9); transform: translateX(2px) skewX(-8deg); clip-path: inset(40% 0 0 0); }
+  100% { text-shadow: none; transform: none; clip-path: none; }
+}
+.sc-next { position: relative; overflow: hidden; isolation: isolate; }
+.sc-next::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .35;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px); }
+.sc-next::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 18%; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,46,70,.18) 20%, rgba(61,184,255,.14) 60%, transparent); mix-blend-mode: screen;
+  animation: scSlice 5.5s steps(1) infinite; }
+@keyframes scSlice { 0%, 90%, 100% { opacity: 0; } 91% { opacity: 1; top: 22%; transform: translateX(-6px); } 93% { opacity: 1; top: 61%; transform: translateX(8px); } 95% { opacity: .7; top: 40%; transform: none; } }
+.rc-card.myst, .iv-card.myst { animation: mystFlicker 6.5s steps(1) infinite; }
+@keyframes mystFlicker { 0%, 94%, 100% { border-color: rgba(255,46,70,.45); } 95% { border-color: rgba(61,184,255,.7); } 97% { border-color: rgba(255,46,70,.95); } }
+@media (prefers-reduced-motion: reduce) { .tglx, .sc-next::after, .rc-card.myst, .iv-card.myst { animation: none; } }
 </style>
 </head>
 <body>
@@ -815,6 +950,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     <a href="#feedSec" data-nav="feedSec"><canvas data-ic="ask" aria-hidden="true"></canvas><span>โพสต์</span></a>
     </nav>
     <div class="sp"></div>
+    <button class="bell" type="button" id="bell" hidden aria-label="แจ้งเตือน"><span aria-hidden="true">🔔</span><b id="bellN" hidden>0</b></button>
     <div class="me" id="me"></div>
   </div>
 </header>
@@ -885,6 +1021,25 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
   </form>
 </dialog>
 
+<!-- ===== โปรไฟล์ตัวละคร (กดการ์ดสมาชิก) ===== -->
+<dialog class="blk-dlg char-dlg" id="charDlg" aria-labelledby="charName">
+  <button class="btn-ghost lb-x char-x" type="button" id="charClose" aria-label="ปิด">✕</button>
+  <div class="char-body">
+    <div class="char-pic" id="charPic"></div>
+    <div class="char-info">
+      <h3 id="charName"></h3>
+      <span class="pill approved" id="charNote"></span>
+      <div class="char-bio" id="charBio"></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== แจ้งเตือน ===== -->
+<dialog class="blk-dlg noti-dlg" id="notiDlg" aria-labelledby="notiTitle">
+  <div class="noti-head"><h3 id="notiTitle">🔔 แจ้งเตือน</h3><button class="btn-ghost" type="button" id="notiClose">ปิด</button></div>
+  <ul class="noti-list" id="notiList"></ul>
+</dialog>
+
 <!-- ===== ดูรูปเต็มจอ ===== -->
 <dialog class="lightbox" id="lightbox" aria-label="ดูรูปเต็มจอ">
   <button class="btn-ghost lb-x" type="button" id="lbClose" aria-label="ปิดรูป">✕</button>
@@ -920,6 +1075,26 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     <div class="ib-thumbs" id="ibThumbs" aria-hidden="true"></div>
     <span class="ib-go">เปิดดูข้อมูลทั้งหมด →</span>
   </a>
+
+  <!-- ===== ตารางโรล: EP ถัดไป + นับถอยหลัง (แก้ที่หน้าแอดมิน → 📅 ตารางโรล) ===== -->
+  <section class="sched" id="schedSec" aria-labelledby="schedTitle" hidden>
+    <div class="sc-head">
+      <h2 class="sec" id="schedTitle">📅 ตารางโรล</h2>
+      <span class="sc-prog" id="scProgText"></span>
+    </div>
+    <div class="sc-next" id="scNext"></div>
+    <ol class="sc-list" id="scList"></ol>
+    <button class="btn-ghost sc-all" type="button" id="scAll"></button>
+  </section>
+
+  <!-- ===== สรุปแต่ละ EP: ตอนล่าสุด (กดเข้าไปอ่าน / ดูทั้งหมดที่ #ep) ===== -->
+  <section class="recaps" id="recapSec" aria-labelledby="recapTitle" hidden>
+    <div class="sc-head">
+      <h2 class="sec" id="recapTitle">📜 สรุปแต่ละ EP</h2>
+      <a class="rc-all" href="#ep">ดูทั้งหมด →</a>
+    </div>
+    <div class="rc-row" id="rcRow"></div>
+  </section>
 
   <!-- ===== จุดเด่น (แก้ได้ในเมนูแก้เว็บ) ===== -->
   <section class="feats" aria-labelledby="featTitle">
@@ -1461,7 +1636,15 @@ function initDemo() {
     members: Array.from({ length: 11 }, (_, i) => ({ id: "m" + i, order: i + 1, addedAt: now - i * H,
       name: ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i],
       note: i % 3 ? "นักเรียน" : "บทบาทพิเศษ",
+      bio: i === 0 ? "# ข้อมูลตัวละคร\n- เพศ: หญิง\n- ทวีป: เอเชีย\n\n# ประวัติ\nเด็กสาวเงียบๆ ที่ชอบอ่านหนังสือ (ตัวอย่าง)" : "",
       img: i === 4 ? "" : demoImg(300, 400, ["#5a0a14", "#3a1a50", "#0a3a5c", "#4a2a08"][i % 4], ["#ff2e46", "#b45cff", "#3db8ff", "#ffb43d"][i % 4], ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i]) })),
+    // สรุป EP ตัวอย่าง: ทุกตอนยังเป็นปริศนาตั้งแต่ EP 1 → อยู่ใน recapsDraft (แอดมินเท่านั้น) · หน้าเว็บ (recaps) ว่าง
+    recaps: [],
+    recapsDraft: [...[1, 2, 3].map((n) => ({ id: "ep" + n, order: n, title: `EP ${n} · ${["คืนแรก", "เงาในห้องสมุด", "เสียงจากใต้ดิน"][n - 1]}`,
+      desc: ["ทุกคนมาถึงโรงเรียนเป็นวันแรก", "มีคนเห็นเงาแปลกๆ ในห้องสมุด", "เสียงเคาะดังมาจากใต้พื้นโรงอาหาร"][n - 1],
+      thumb: demoImg(360, 220, ["#2a0a10", "#14102a", "#0a2a1a"][n - 1], ["#ff2e46", "#7b8cff", "#3dff8a"][n - 1], "EP " + n), hidden: true, updatedAt: now - (4 - n) * 24 * H,
+      blocks: [{ t: "text", v: "# เกิดอะไรขึ้นบ้าง\n- เหตุการณ์ที่ 1 (ตัวอย่าง)\n- เหตุการณ์ที่ 2\n! เบาะแสสำคัญ: ประตูห้องใต้ดินถูกล็อก" }, ...(n === 1 ? [{ t: "img", id: "di1", cap: "ภาพจากโรล (ตัวอย่าง)" }] : [])] })),
+    ],
     infoImg: [
       { id: "di1", src: demoImg(1200, 680, "#1a0508", "#8c0a1e", "เมืองร้าง"), at: now },
       { id: "di2", src: demoImg(900, 900, "#120820", "#b45cff", "ตัวละคร"), at: now },
@@ -1487,8 +1670,17 @@ function initDemo() {
     admins: [{ id: "admin2@example.com", email: "admin2@example.com", label: "แอดมินตัวอย่าง ดูแลใบสมัคร", addedAt: now - 48 * H }],
   };
   // เนื้อหาเว็บ (site) ในโหมดตัวอย่างจำไว้ในเครื่อง จะได้ลองแก้ในหน้าแอดมินแล้วเปิดหน้าเว็บดูผลได้
-  const SITE_KEY = "snowcraft-demo-site";
+  const SITE_KEY = "snowcraft-demo-site-v30b"; // เปลี่ยนชื่อเมื่อข้อมูลตัวอย่างเปลี่ยน (ของเก่าในเครื่องจะได้ไม่ค้าง)
   try { store.site = JSON.parse(localStorage.getItem(SITE_KEY) || "[]"); } catch { store.site = []; }
+  // ตารางโรลตัวอย่าง: 16 EP · จันทร์ พุธ ศุกร์ เสาร์ 19:30 · ยังไม่เริ่ม (EP ถัดไป = EP 1 นับถอยหลังอยู่)
+  // ตารางเต็มอยู่ schedulePriv (แอดมิน) · หน้าเว็บได้แค่รอบที่ผ่านไปแล้ว + รอบถัดไป 1 รอบ (schedule)
+  if (!store.site.some((d) => d.id === "schedulePriv")) {
+    const ses = [], d = new Date(now + 24 * H); d.setHours(19, 30, 0, 0);
+    while (ses.length < 16) { if ([1, 3, 5, 6].includes(d.getDay())) ses.push({ at: d.getTime(), note: "" }); d.setDate(d.getDate() + 1); }
+    const priv = { show: true, title: "📅 ตารางโรล SS นี้", totalEp: 16, duration: 150, ended: false, hideTime: true, sessions: ses };
+    store.site = store.site.filter((x) => x.id !== "schedule");
+    store.site.push({ id: "schedulePriv", ...priv }, { id: "schedule", ...schedPublic(priv, now) });
+  }
   const saveSite = () => { try { localStorage.setItem(SITE_KEY, JSON.stringify(store.site)); } catch {} };
   addEventListener("storage", (e) => { if (e.key === SITE_KEY) { try { store.site = JSON.parse(e.newValue || "[]"); emit(); } catch {} } });
   const subs = new Set();
@@ -1545,6 +1737,19 @@ function renderMe(box, me, isAdmin, opts = {}) {
   box.append(out);
 }
 
+
+/* ตารางโรลฉบับหน้าเว็บ (site/schedule) สร้างจากตารางเต็มของแอดมิน (site/schedulePriv)
+   - ส่งออกไปแค่: รอบที่เริ่มไปแล้ว + รอบถัดไป 1 รอบ → คนดูไม่รู้ว่าทั้งซีซั่นมีกี่ EP
+   - ไม่ส่งจำนวน EP ทั้งหมด และไม่ส่งหมายเหตุของรอบที่ยังไม่ถึง (ยกเว้นรอบถัดไป) */
+function schedPublic(d, now = Date.now()) {
+  const ses = (Array.isArray(d.sessions) ? d.sessions : []).filter((x) => x && Number.isFinite(x.at)).sort((a, b) => a.at - b.at);
+  const past = ses.filter((x) => x.at <= now), next = ses.find((x) => x.at > now);
+  const base = { show: !!d.show, title: String(d.title || "").slice(0, 60), duration: Math.round(+d.duration) || 150, ended: !!d.ended, hideTime: !!d.hideTime, done: past.length };
+  // ซ่อนวันเวลา: ไม่ส่งเวลาใดๆ ออกไปเลย (แม้แต่รอบที่ผ่านไปแล้ว) ส่งแค่ว่าโรลไปแล้วกี่ EP → หน้าเว็บโชว์เป็นกลิตช์อ่านไม่ออก
+  if (d.hideTime) return { ...base, sessions: [] };
+  return { ...base, sessions: [...past, ...(next ? [next] : [])].map((x) => ({ at: Math.round(x.at), note: String(x.note || "").slice(0, 40) })) };
+}
+
 /* =========================================================
    content.js — เนื้อหาเว็บที่แอดมินแก้ได้จากเมนู "✏️ แก้เว็บ"
    (ถูกต่อท้าย core.js ตอน build — แก้ที่ไฟล์นี้)
@@ -1569,6 +1774,8 @@ const DEFAULT_CONTENT = {
   theme: { preset: "red", effect: "mix", bgImage: "", bgDim: 55 },
   // การ์ด "ข้อมูลใน SS" บนหน้าแรก (หมวด/รูป/ข้อความ แก้ที่หน้าแอดมิน → เมนู 📚 ข้อมูล SS)
   info: { show: true, title: "ข้อมูลในซีซั่นนี้", text: "เนื้อเรื่อง ตัวละคร และข้อมูลสำคัญทั้งหมดของซีซั่นนี้ อ่านก่อนเข้าโรลจะเข้าใจโลกมากขึ้น" },
+  // การ์ด/หน้า "สรุปแต่ละ EP" (เนื้อหาแก้ที่หน้าแอดมิน → 📜 สรุป EP)
+  recap: { show: true, title: "📜 สรุปแต่ละ EP", text: "ย้อนอ่านเหตุการณ์ของแต่ละตอน พลาดโรลตอนไหนก็ตามทันได้" },
   badge: { open: "เปิดรับสมัครแล้ว", closed: "ปิดรับสมัครชั่วคราว" },
   // การ์ด "จุดเด่น" ใต้หัวเว็บ · icon เลือกจาก FEATURE_ICONS
   features: {
@@ -1991,7 +2198,7 @@ function renderAnswers(a, keys = {}) {
    ========================================================= */
 const HOT_DAYS = 7; // "มาแรง" = ถูกใจ + ความเห็น×2 ใน 7 วันล่าสุด
 let inInfo = false; // กำลังอยู่ในหน้าข้อมูลใน SS (#info) ไหม · ประกาศไว้บนๆ เพราะ renderContent เรียกใช้ตั้งแต่เปิดเว็บ
-const S = { profiles: {}, members: [], mset: null, mAll: false, info: [], infoReady: false, posts: [], comments: [], likes: [], news: [], app: undefined, filter: "all", sort: "new", open: new Set(), busy: new Set() };
+const S = { recaps: [], recapsReady: false, sched: null, scAll: false, seen: null, profiles: {}, members: [], mset: null, mAll: false, info: [], infoReady: false, posts: [], comments: [], likes: [], news: [], app: undefined, filter: "all", sort: "new", open: new Set(), busy: new Set() };
 let me = null, isAdmin = false, unApp = null, unBlk = null;
 
 /* ---------- ประกาศ (อ่านอย่างเดียว แอดมินจัดการในหน้าแอดมิน) ---------- */
@@ -2042,8 +2249,8 @@ function renderContent() {
   const c = CONTENT;
   $("heroEyebrow").textContent = c.hero.eyebrow; $("heroText").textContent = c.hero.text;
   $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL; $("footDiscord").href = DISCORD_URL;
-  drawNavIcons(); renderInfoBanner(); if (inInfo) route();
-  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 28"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
+  drawNavIcons(); renderInfoBanner(); renderRecapRow(); if (inInfo) route();
+  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 30"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
   // ป้ายสถานะรับสมัคร (จุดกะพริบ)
   const bd = $("heroBadge"); bd.classList.toggle("off", !c.apply.open);
   bd.querySelector("span").textContent = c.apply.open ? c.badge.open : c.badge.closed;
@@ -2148,6 +2355,7 @@ function renderStats() {
 }
 
 function renderFeed() {
+  if (typeof renderBell === "function") queueMicrotask(renderBell); // โพสต์/ความเห็นเปลี่ยน → นับแจ้งเตือนใหม่
   renderStats(); buildCats();
   $("feedFilter").textContent = S.filter === "all" ? "· ทุกหมวด" : "· " + CATS[S.filter].name;
   $("clearFilter").hidden = S.filter === "all";
@@ -2334,10 +2542,17 @@ $("heroApply").onclick = openApply;
 const okImg = (s) => typeof s === "string" && s.startsWith("data:image/");
 const imgCache = new Map(); // id → Promise(รูป)
 const loadImg = (id) => { if (!imgCache.has(id)) imgCache.set(id, Data.get("infoImg", id).then((d) => (okImg(d?.src) ? d.src : null)).catch(() => null)); return imgCache.get(id); };
-function infoThumb(cat, cls) { // รูปปกย่อ หรือไอคอนแทนถ้าไม่มีรูป
+function infoThumb(cat, cls, icon = "scroll") { // รูปปกย่อ หรือไอคอนแทนถ้าไม่มีรูป
   const box = el("div", cls);
   if (okImg(cat.thumb)) { const i = el("img"); i.src = cat.thumb; i.alt = ""; i.loading = "lazy"; box.append(i); }
-  else { box.classList.add("no-img"); const c = el("canvas"); c.setAttribute("aria-hidden", "true"); drawPixelIcon(c, "scroll", CATS.join.c); box.append(c); }
+  else { box.classList.add("no-img"); const c = el("canvas"); c.setAttribute("aria-hidden", "true"); drawPixelIcon(c, icon, CATS.join.c); box.append(c); }
+  return box;
+}
+// ตอนที่ยังเป็นปริศนา: หน้าเว็บไม่ได้รับข้อมูลเลย (ไม่รู้ว่ามีกี่ตอน) → โชว์การ์ด "EP ถัดไป · ???" ใบเดียว
+function showMystery() { return !(S.sched && S.sched.ended); }
+function mysteryThumb(cls, n) {
+  const box = el("div", cls + " myst-thumb"); box.setAttribute("aria-hidden", "true");
+  box.append(el("span", "myst-q", "?"), el("span", "myst-ep", "EP " + n));
   return box;
 }
 function renderInfoBanner() {
@@ -2357,28 +2572,39 @@ const closeLightbox = () => { const d = $("lightbox"); if (d.close) d.close(); e
 $("lbClose").onclick = closeLightbox;
 $("lightbox").onclick = (e) => { if (e.target.id !== "lbClose") closeLightbox(); }; // แตะตรงไหนก็ปิด
 
-function renderInfoView(id) {
-  const v = $("infoView"); v.textContent = "";
-  const c = CONTENT.info;
-  if (!id) { // หน้ารวมหมวด
+/* ---------- หน้าแบบ "รวมหมวด → อ่านหมวด" ใช้ร่วมกัน 2 แบบ ----------
+   info = ข้อมูลใน SS (#info) · ep = สรุปแต่ละ EP (#ep) · เนื้อหา = ข้อความ/รูป เรียงตามที่แอดมินจัด */
+const HUBS = {
+  info: { list: () => S.info, ready: () => S.infoReady, cfg: () => CONTENT.info, icon: "scroll", noun: "หมวด", empty: "ทีมงานกำลังเตรียมข้อมูล" },
+  ep:   { list: () => S.recaps, ready: () => S.recapsReady, cfg: () => CONTENT.recap, icon: "basics", noun: "ตอน", empty: "ยังไม่มีสรุป EP" },
+};
+function renderHubView(kind, id) {
+  const H = HUBS[kind], list = H.list(), c = H.cfg(), v = $("infoView"); v.textContent = "";
+  if (!id) { // หน้ารวม
     const head = el("header", "iv-head"), back = el("a", "iv-back", "← หน้าแรก"); back.href = "#home";
     head.append(back, el("h1", null, c.title), el("p", null, c.text));
     v.append(head);
-    if (!S.infoReady) { v.append(el("p", "hint", "กำลังโหลด…")); return; }
-    if (!S.info.length) { const e = el("div", "empty"); e.append(el("strong", null, "ทีมงานกำลังเตรียมข้อมูล"), el("span", null, "กลับมาดูใหม่เร็วๆ นี้ ❄")); v.append(e); return; }
+    if (!H.ready()) { v.append(el("p", "hint", "กำลังโหลด…")); return; }
+    if (!list.length && !(kind === "ep" && showMystery())) { const e = el("div", "empty"); e.append(el("strong", null, H.empty), el("span", null, "กลับมาดูใหม่เร็วๆ นี้ ❄")); v.append(e); return; }
     const g = el("div", "iv-grid");
-    S.info.forEach((cat) => {
-      const a = el("a", "iv-card"); a.href = "#info/" + cat.id;
+    list.forEach((cat) => {
+      const a = el("a", "iv-card"); a.href = `#${kind}/${cat.id}`;
       const n = (cat.blocks || []).filter((b) => b.t === "img").length;
-      a.append(infoThumb(cat, "iv-thumb"), el("h3", null, cat.title), el("p", null, cat.desc || ""), el("small", null, n ? `${n} รูป · อ่านต่อ →` : "อ่านต่อ →"));
+      a.append(infoThumb(cat, "iv-thumb", H.icon), el("h3", null, cat.title), el("p", null, cat.desc || ""), el("small", null, n ? `${n} รูป · อ่านต่อ →` : "อ่านต่อ →"));
       g.append(a);
     });
+    if (kind === "ep" && showMystery()) { // ตอนถัดไป = ปริศนา (การ์ดเดียว ไม่บอกว่าเหลือกี่ตอน)
+      const n = list.length + 1, m = el("div", "iv-card myst"); m.setAttribute("aria-label", `EP ${n} ยังเป็นปริศนา`);
+      m.append(mysteryThumb("iv-thumb", n), el("h3", null, `EP ${n} · ???`), el("p", null, "ยังเป็นปริศนา… รอติดตาม"), el("small", null, "🔒 ยังไม่เปิดเผย"));
+      g.append(m);
+    }
     v.append(g); return;
   }
-  // หน้าอ่านหมวด
-  const i = S.info.findIndex((x) => x.id === id), cat = S.info[i];
-  const back = el("a", "iv-back", "← " + c.title); back.href = "#info";
-  if (!cat) { v.append(back, S.infoReady ? el("p", "hint", "ไม่พบหมวดนี้ อาจถูกลบไปแล้ว") : el("p", "hint", "กำลังโหลด…")); return; }
+  // หน้าอ่าน
+  const shown = list;
+  const i = shown.findIndex((x) => x.id === id), cat = shown[i];
+  const back = el("a", "iv-back", "← " + c.title); back.href = "#" + kind;
+  if (!cat) { v.append(back, H.ready() ? el("p", "hint", `ไม่พบ${H.noun}นี้ อาจถูกลบไปแล้ว`) : el("p", "hint", "กำลังโหลด…")); return; }
   const head = el("header", "iv-head"); head.append(back, el("h1", null, cat.title)); if (cat.desc) head.append(el("p", null, cat.desc));
   const art = el("article", "iv-article");
   for (const b of cat.blocks || []) {
@@ -2392,11 +2618,11 @@ function renderInfoView(id) {
       art.append(fig);
     }
   }
-  // หมวดก่อนหน้า / ถัดไป
-  const nav = el("nav", "iv-pn"); nav.setAttribute("aria-label", "หมวดอื่น");
-  const prev = S.info[i - 1], next = S.info[i + 1];
-  if (prev) { const a = el("a", "iv-prev"); a.href = "#info/" + prev.id; a.append(el("small", null, "← ก่อนหน้า"), el("b", null, prev.title)); nav.append(a); } else nav.append(el("span"));
-  if (next) { const a = el("a", "iv-next"); a.href = "#info/" + next.id; a.append(el("small", null, "ถัดไป →"), el("b", null, next.title)); nav.append(a); }
+  // ก่อนหน้า / ถัดไป
+  const nav = el("nav", "iv-pn"); nav.setAttribute("aria-label", H.noun + "อื่น");
+  const prev = shown[i - 1], next = shown[i + 1];
+  if (prev) { const a = el("a", "iv-prev"); a.href = `#${kind}/${prev.id}`; a.append(el("small", null, "← ก่อนหน้า"), el("b", null, prev.title)); nav.append(a); } else nav.append(el("span"));
+  if (next) { const a = el("a", "iv-next"); a.href = `#${kind}/${next.id}`; a.append(el("small", null, "ถัดไป →"), el("b", null, next.title)); nav.append(a); }
   v.append(head, art, nav);
 }
 
@@ -2471,10 +2697,9 @@ function renderMembers() {
   list.forEach((m, i) => {
     const c = el("figure", "mb-card"); c.style.setProperty("--d", (i % 12) * 30 + "ms");
     const pic = el("div", "mb-pic");
-    if (okImg(m.img)) { const im = el("img"); im.src = m.img; im.alt = ""; im.loading = "lazy"; pic.append(im);
-      c.tabIndex = 0; c.setAttribute("role", "button"); c.setAttribute("aria-label", "ดูรูป " + m.name);
-      c.onclick = () => openLightbox(m.img, m.name + (m.note ? " · " + m.note : ""));
-      c.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); c.onclick(); } }; }
+    c.tabIndex = 0; c.setAttribute("role", "button"); c.setAttribute("aria-label", "ดูโปรไฟล์ตัวละคร " + m.name);
+    c.onclick = () => openChar(m); c.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); c.onclick(); } };
+    if (okImg(m.img)) { const im = el("img"); im.src = m.img; im.alt = ""; im.loading = "lazy"; pic.append(im); }
     else { pic.classList.add("no-img"); const ic = el("canvas"); ic.setAttribute("aria-hidden", "true"); drawPixelIcon(ic, "people", CATS.join.c); pic.append(ic); } // ไม่มีรูป = ไอคอนคน (ตัวอักษรแรกของชื่อไทยอาจเป็นสระ เช่น "เ")
     const cap2 = el("figcaption"); cap2.append(el("b", null, m.name)); if (m.note) cap2.append(el("small", null, m.note));
     c.append(pic, cap2); g.append(c);
@@ -2484,13 +2709,232 @@ function renderMembers() {
 }
 $("mbMore").onclick = () => { S.mAll = !S.mAll; renderMembers(); if (!S.mAll) $("membersSec").scrollIntoView({ block: "start" }); };
 
+/* ---------- โปรไฟล์ตัวละคร ---------- */
+function openChar(m) {
+  const pic = $("charPic"); pic.textContent = ""; pic.classList.toggle("no-img", !okImg(m.img));
+  if (okImg(m.img)) { const im = el("img"); im.src = m.img; im.alt = m.name; pic.append(im); pic.onclick = () => openLightbox(m.img, m.name); pic.title = "แตะเพื่อดูรูปเต็มจอ"; }
+  else { const ic = el("canvas"); ic.setAttribute("aria-hidden", "true"); drawPixelIcon(ic, "people", CATS.join.c); pic.append(ic); pic.onclick = null; }
+  $("charName").textContent = m.name; $("charNote").textContent = m.note || ""; $("charNote").hidden = !m.note;
+  const bio = $("charBio"); bio.textContent = "";
+  bio.append(m.bio ? renderInfo(m.bio) : el("p", "hint", "ยังไม่มีข้อมูลตัวละคร"));
+  const d = $("charDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+}
+const closeChar = () => { const d = $("charDlg"); if (d.close) d.close(); else d.removeAttribute("open"); };
+$("charClose").onclick = closeChar;
+$("charDlg").onclick = (e) => { if (e.target.id === "charDlg") closeChar(); }; // แตะพื้นหลังมืดเพื่อปิด
+
+/* =========================================================
+   ตารางโรล + นับถอยหลัง (site/schedule)
+   - EP ที่ i = รอบที่ i ในตาราง (เรียงตามเวลา) · กำลังโรล = ตั้งแต่เวลาเริ่มจนครบระยะเวลา (duration นาที)
+   ========================================================= */
+// หน้าเว็บได้แค่รอบที่ผ่านแล้ว + รอบถัดไป 1 รอบ (ตารางเต็มและจำนวน EP ทั้งหมดอยู่ที่แอดมินเท่านั้น)
+const SCHED_DEFAULT = { show: true, title: "📅 ตารางโรล", duration: 150, ended: false, sessions: [] };
+const TZ = "Asia/Bangkok";
+const fmtDay = (t) => new Date(t).toLocaleDateString("th-TH", { timeZone: TZ, weekday: "short", day: "numeric", month: "short" });
+const fmtTime = (t) => new Date(t).toLocaleTimeString("th-TH", { timeZone: TZ, hour: "2-digit", minute: "2-digit" });
+function schedState() {
+  const sc = { ...SCHED_DEFAULT, ...(S.sched || {}) };
+  const ses = (Array.isArray(sc.sessions) ? sc.sessions : []).filter((x) => x && Number.isFinite(x.at)).sort((a, b) => a.at - b.at)
+    .map((x, i) => ({ ...x, ep: i + 1 }));
+  const now = Date.now(), dur = (sc.duration || 150) * 60000;
+  const live = ses.find((x) => x.at <= now && now < x.at + dur);
+  const next = ses.find((x) => x.at > now);
+  const done = ses.filter((x) => x.at + dur <= now).length;
+  return { sc, ses, live, next, done, dur, now };
+}
+function renderSchedule() {
+  const { sc, ses, live, next, done } = schedState(), sec = $("schedSec");
+  sec.hidden = !sc.show || (!ses.length && !sc.hideTime); if (sec.hidden) return;
+  if (sc.hideTime) return renderScheduleHidden(sc);
+  $("schedTitle").textContent = sc.title || SCHED_DEFAULT.title;
+  $("scProgText").textContent = done ? `โรลไปแล้ว ${done} EP` : "";
+  const box = $("scNext"); box.textContent = ""; box.className = "sc-next";
+  if (live) {
+    box.classList.add("live");
+    box.append(el("span", "sc-badge", "🔴 กำลังโรลอยู่ตอนนี้"), el("b", "sc-ep", "EP " + live.ep), el("small", "glx", `${fmtDay(live.at)} · ${fmtTime(live.at)} น.` + (live.note ? " · " + live.note : "")));
+  } else if (next) {
+    const cd = el("div", "sc-cd"); cd.id = "scCd";
+    box.append(el("span", "sc-badge", "EP ถัดไป"), el("b", "sc-ep", "EP " + next.ep), el("small", "glx", `${fmtDay(next.at)} · ${fmtTime(next.at)} น.` + (next.note ? " · " + next.note : "")), cd);
+    tickCountdown();
+  } else if (sc.ended) {
+    box.classList.add("end"); box.append(el("span", "sc-badge", "🎉 จบซีซั่นแล้ว"), el("small", null, "ขอบคุณทุกคนที่ร่วมโรล รอติดตามซีซั่นหน้า"));
+  } else { // ยังไม่ประกาศรอบถัดไป (ไม่บอกว่าเหลืออีกกี่ EP)
+    box.classList.add("end"); box.append(el("span", "sc-badge", "EP ถัดไป"), el("b", "sc-ep", `EP ${ses.length + 1} · ???`), el("small", null, "รอประกาศวันโรลเร็วๆ นี้ ❄"));
+  }
+  // รายการรอบที่โรลไปแล้ว (กดดูย้อนหลัง) · ไม่มีรอบล่วงหน้าเกิน 1 รอบ
+  const list = $("scList"); list.textContent = "";
+  const show = S.scAll ? ses.filter((x) => x !== live && x !== next) : [];
+  show.forEach((x) => {
+    const li = el("li"), past = x.at + (sc.duration || 150) * 60000 <= Date.now();
+    li.classList.toggle("past", past); li.classList.toggle("now", x === live || x === next);
+    li.append(el("b", null, "EP " + x.ep), el("span", null, fmtDay(x.at)), el("span", null, fmtTime(x.at) + " น."), el("small", null, past ? "✓ จบแล้ว" : x.note || ""));
+    list.append(li);
+  });
+  list.hidden = !show.length;
+  $("scAll").hidden = !done; $("scAll").textContent = S.scAll ? "ย่อ ↑" : `ดูรอบที่โรลไปแล้ว ↓`;
+}
+$("scAll").onclick = () => { S.scAll = !S.scAll; renderSchedule(); };
+// โหมดซ่อนวันเวลา: หน้าเว็บไม่ได้รับเวลาจริงเลย → วันเวลา/นับถอยหลังเป็นสัญญาณรบกวนล้วนๆ (อ่านไม่ออก เดาไม่ได้)
+function renderScheduleHidden(sc) {
+  const done = Math.max(0, sc.done | 0);
+  $("schedTitle").textContent = sc.title || SCHED_DEFAULT.title;
+  $("scProgText").textContent = done ? `โรลไปแล้ว ${done} EP` : "";
+  const box = $("scNext"); box.textContent = ""; box.className = "sc-next";
+  if (sc.ended) { box.classList.add("end"); box.append(el("span", "sc-badge", "🎉 จบซีซั่นแล้ว"), el("small", null, "ขอบคุณทุกคนที่ร่วมโรล รอติดตามซีซั่นหน้า")); }
+  else {
+    box.classList.add("noise-mode", "glitching");
+    const cd = el("div", "sc-cd noise"); cd.setAttribute("aria-label", "ยังไม่เปิดเผยเวลา");
+    ["วัน", "ชม.", "นาที", "วิ"].forEach((l) => { const u = el("span", "cd-u"); u.append(el("b", "nz", "??"), el("small", null, l)); cd.append(u); });
+    const date = el("small", "glx nz-line", "????"); date.setAttribute("aria-label", "ยังไม่เปิดเผยวันเวลา");
+    box.append(el("span", "sc-badge", "EP ถัดไป"), el("b", "sc-ep", "EP " + (done + 1)), date, cd, el("small", "nz-note", "🔒 วันเวลายังเป็นความลับ"));
+    noiseTick();
+  }
+  $("scList").textContent = ""; $("scList").hidden = true; $("scAll").hidden = true;
+}
+const NZ = "█▓▒░#@%&?!<>/\\|=+*¤§ΔΞ";
+const nz = (n) => Array.from({ length: n }, () => NZ[(Math.random() * NZ.length) | 0]).join("");
+function noiseTick() {
+  const box = $("scNext"); if (!box.classList.contains("noise-mode")) return;
+  const line = box.querySelector(".nz-line"); if (line) line.textContent = `${nz(3)} ${nz(2)} ${nz(4)} · ${nz(2)}:${nz(2)} ${nz(2)}`;
+  box.querySelectorAll(".nz").forEach((b) => (b.textContent = nz(2)));
+  box.classList.toggle("nz-shift", Math.random() < 0.35);
+}
+setInterval(() => { if (!document.hidden && !$("schedSec").hidden) noiseTick(); }, 90);
+function tickCountdown() {
+  const cd = $("scCd"); if (!cd) return;
+  const { next } = schedState(); if (!next) return renderSchedule();
+  let s = Math.max(0, Math.floor((next.at - Date.now()) / 1000));
+  if (s === 0) return renderSchedule();
+  const d = Math.floor(s / 86400); s %= 86400; const h = Math.floor(s / 3600); s %= 3600; const m = Math.floor(s / 60); s %= 60;
+  const parts = [[d, "วัน"], [h, "ชม."], [m, "นาที"], [s, "วิ"]];
+  if (cd.childElementCount !== 4) { cd.textContent = ""; parts.forEach(() => { const u = el("span", "cd-u"); u.append(el("b"), el("small")); cd.append(u); }); }
+  parts.forEach(([v, l], i) => { const u = cd.children[i]; u.firstChild.textContent = String(v).padStart(2, "0"); u.lastChild.textContent = l; });
+  cd.setAttribute("aria-label", `อีก ${d} วัน ${h} ชั่วโมง ${m} นาที`);
+}
+setInterval(() => { if (!document.hidden && !$("schedSec").hidden) { if ($("scCd")) tickCountdown(); else if (schedState().live === undefined && $("scNext").classList.contains("live")) renderSchedule(); } }, 1000);
+setInterval(() => { if (!document.hidden) renderSchedule(); }, 60000); // เปลี่ยนสถานะ (เริ่มโรล/จบโรล) ทุกนาที
+
+/* ---------- เอฟเฟกต์กลิตช์: วันเวลา + ตัวเลขนับถอยหลัง สลับเป็นตัวอักษรมั่วๆ แวบหนึ่งแล้วกลับ ----------
+   ทุก 2–4.5 วินาที กระตุก ~0.4 วิ · คนที่ตั้งเครื่องให้ลดการเคลื่อนไหว จะไม่มีเอฟเฟกต์นี้ */
+const GLX_CH = "█▓▒░#@%&?!<>/\\|=+*01";
+const glxNoMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const glxRand = (t) => [...t].map((c) => (c === " " || c === "·" || Math.random() < 0.45 ? c : GLX_CH[(Math.random() * GLX_CH.length) | 0])).join("");
+function glitchOnce() {
+  const sec = $("schedSec"); if (sec.hidden || document.hidden || glxNoMotion.matches) return;
+  if (sec.querySelector(".sc-next.noise-mode")) return; // โหมดซ่อนเวลา กระตุกตลอดอยู่แล้ว
+  const date = sec.querySelector(".sc-next .glx"), cd = $("scCd");
+  if (!date && !cd) return;
+  const real = date ? date.textContent : "";
+  const alt = date ? real.replace(/\d/g, "?") : ""; // บางเฟรมโชว์เป็น ??:?? 
+  sec.querySelector(".sc-next").classList.add("glitching");
+  let f = 0;
+  const step = () => {
+    if (date) date.textContent = f % 3 === 2 ? alt : glxRand(real);
+    if (cd) for (const b of cd.querySelectorAll("b")) b.dataset.g = glxRand(b.textContent); // ตัวเลขซ้อนแบบมั่วๆ (ผ่าน CSS)
+    if (++f < 6) setTimeout(step, 65);
+    else {
+      if (date && date.isConnected) date.textContent = real;
+      if (cd) for (const b of cd.querySelectorAll("b")) delete b.dataset.g;
+      sec.querySelector(".sc-next")?.classList.remove("glitching");
+    }
+  };
+  step();
+}
+(function glxLoop() { glitchOnce(); setTimeout(glxLoop, 2000 + Math.random() * 2500); })();
+
+/* ---------- กลิตช์เล็กๆ ตามจุดต่างๆ (ตารางโรล + สรุป EP) ----------
+   ทุก 2.5–6 วิ สุ่ม 1 จุด ให้กระตุก ~0.25 วิ (สีเหลื่อม + ตัวอักษรสลับ 1–2 ตัว) แล้วกลับเหมือนเดิม */
+const MINI_GLX = "#schedTitle, #recapTitle, .sc-badge, .sc-ep, .rc-card.myst b, .iv-card.myst h3, .sc-prog";
+function miniGlitch() {
+  if (document.hidden || glxNoMotion.matches) return;
+  const els = [...document.querySelectorAll(MINI_GLX)].filter((e) => e.offsetParent && !e.closest("[hidden]") && !e.classList.contains("tglx"));
+  if (!els.length) return;
+  const t = els[(Math.random() * els.length) | 0];
+  // สลับตัวอักษรเฉพาะข้อความล้วน (ไม่มีลูกข้างใน) จะได้ไม่ทำโครงสร้างพัง
+  const plain = t.childElementCount === 0, real = t.textContent;
+  t.classList.add("tglx");
+  if (plain && real.length > 1) {
+    const ch = [...real]; for (let k = 0; k < 2; k++) { const i = (Math.random() * ch.length) | 0; if (ch[i].trim()) ch[i] = GLX_CH[(Math.random() * GLX_CH.length) | 0]; }
+    t.textContent = ch.join("");
+    setTimeout(() => { if (t.textContent !== real && t.isConnected) t.textContent = real; }, 120);
+  }
+  setTimeout(() => t.classList.remove("tglx"), 260);
+}
+(function miniLoop() { miniGlitch(); setTimeout(miniLoop, 2500 + Math.random() * 3500); })();
+
+/* ---------- สรุป EP บนหน้าแรก: 3 ตอนล่าสุด ---------- */
+function renderRecapRow() {
+  const c = CONTENT.recap, sec = $("recapSec");
+  sec.hidden = !c.show || (!S.recaps.length && !showMystery()); if (sec.hidden) return;
+  $("recapTitle").textContent = c.title;
+  const row = $("rcRow"); row.textContent = "";
+  // ตอนปริศนาถัดไป 1 ใบ (ถ้ามี) + ตอนที่เปิดเผยล่าสุด
+  const open = S.recaps, myst = showMystery(), n = open.length + 1;
+  if (myst) { const a = el("a", "rc-card myst"); a.href = "#ep"; a.setAttribute("aria-label", `EP ${n} ยังเป็นปริศนา`);
+    a.append(mysteryThumb("rc-thumb", n), el("b", null, `EP ${n} · ???`), el("small", null, "🔒 ยังเป็นปริศนา… รอติดตาม")); row.append(a); }
+  open.slice(myst ? -2 : -3).reverse().forEach((r) => {
+    const a = el("a", "rc-card"); a.href = "#ep/" + r.id;
+    a.append(infoThumb(r, "rc-thumb", "basics"), el("b", null, r.title), el("small", null, r.desc || "อ่านสรุป →"));
+    row.append(a);
+  });
+}
+
+/* =========================================================
+   แจ้งเตือน (เก็บว่า "อ่านแล้วถึงไหน" ไว้ในเครื่องนี้)
+   - มีคนคอมเมนต์ในโพสต์ของเรา · ใบสมัครเปลี่ยนสถานะ · ประกาศใหม่
+   ========================================================= */
+const SEEN_KEY = () => "snowcraft-seen-" + (me?.uid || "");
+function loadSeen() {
+  try { S.seen = JSON.parse(localStorage.getItem(SEEN_KEY()) || "null"); } catch { S.seen = null; }
+  if (!S.seen) { S.seen = { t: Date.now() - 3 * 86400000, app: "pending" }; saveSeen(); } // ครั้งแรก: ย้อนดู 3 วัน
+}
+const saveSeen = () => { try { localStorage.setItem(SEEN_KEY(), JSON.stringify(S.seen)); } catch {} };
+function notiItems() {
+  if (!me || !S.seen) return [];
+  const out = [], mine = new Set(S.posts.filter((p) => p.author === me.uid).map((p) => p.id));
+  for (const c of S.comments) if (mine.has(c.post) && c.author !== me.uid && c.createdAt > S.seen.t) {
+    const p = S.posts.find((x) => x.id === c.post);
+    out.push({ t: c.createdAt, icon: "💬", text: `${nameOf(c.author, c.authorName)} ตอบโพสต์ “${p?.title || ""}”: ${c.text.slice(0, 60)}`, go: () => openPost(c.post) });
+  }
+  if (S.app && S.app.status !== "pending" && S.app.status !== S.seen.app)
+    out.push({ t: Date.now(), icon: S.app.status === "approved" ? "🎉" : "📝", text: S.app.status === "approved" ? "ใบสมัครของคุณผ่านแล้ว!" : "ใบสมัครของคุณมีผลแล้ว ดูรายละเอียดได้ที่ส่วนสมัคร", go: () => $("applySec").scrollIntoView({ block: "start" }) });
+  for (const n of S.news) if (n.createdAt > S.seen.t) out.push({ t: n.createdAt, icon: "📢", text: "ประกาศใหม่: " + n.title, go: () => $("newsTitle").scrollIntoView({ block: "start" }) });
+  return out.sort((a, b) => b.t - a.t).slice(0, 30);
+}
+function renderBell() {
+  const b = $("bell"); b.hidden = !me; if (!me) return;
+  const n = notiItems().length; $("bellN").hidden = !n; $("bellN").textContent = n > 9 ? "9+" : n;
+  b.setAttribute("aria-label", n ? `แจ้งเตือน ${n} รายการใหม่` : "แจ้งเตือน (ไม่มีรายการใหม่)");
+}
+$("bell").onclick = () => {
+  const items = notiItems(), ul = $("notiList"); ul.textContent = "";
+  if (!items.length) ul.append(el("li", "hint", "ยังไม่มีอะไรใหม่ ❄"));
+  for (const it of items) {
+    const li = el("li"), btn = el("button", "noti-item"); btn.type = "button";
+    btn.append(el("span", "noti-ic", it.icon), el("span", "noti-t", it.text), el("small", null, ago(it.t)));
+    btn.onclick = () => { closeNoti(); if (location.hash.startsWith("#info") || location.hash.startsWith("#ep")) location.hash = "#home"; setTimeout(it.go, 60); };
+    li.append(btn); ul.append(li);
+  }
+  // เปิดดูแล้ว = อ่านแล้ว
+  // นับว่าอ่านถึงรายการล่าสุด (กันเวลาในเครื่องคนอื่นเดินเร็ว ทำให้จุดแดงค้าง)
+  S.seen = { t: Math.max(Date.now(), ...items.map((x) => x.t)), app: S.app?.status || "pending" }; saveSeen(); renderBell();
+  const d = $("notiDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+};
+const closeNoti = () => { const d = $("notiDlg"); if (d.close) d.close(); else d.removeAttribute("open"); };
+$("notiClose").onclick = closeNoti;
+function openPost(pid) { // เลื่อนไปที่โพสต์ แล้วเปิดความเห็น
+  S.open.add(pid); renderFeed();
+  const c = cards.get(pid); if (c) { c.scrollIntoView({ block: "center" }); c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1600); }
+  else $("feedSec").scrollIntoView({ block: "start" });
+}
+
 /* ---------- เปลี่ยนหน้าด้วยลิงก์ (#info, #info/<id>) ปุ่มย้อนกลับของมือถือใช้ได้ ---------- */
 function route() {
   let h = location.hash || ""; try { h = decodeURIComponent(h); } catch {} // ลิงก์เพี้ยนก็ไม่พัง
-  const m = h.match(/^#info(?:\/(.+))?$/);
+  const m = h.match(/^#(info|ep)(?:\/(.+))?$/);
   if (m) {
     const was = inInfo; inInfo = true; document.body.classList.add("in-info"); $("infoView").hidden = false;
-    renderInfoView(m[1] || ""); markNav("info"); scrollTo({ top: 0, behavior: was ? "smooth" : "auto" }); return;
+    renderHubView(m[1], m[2] || ""); markNav(m[1] === "info" ? "info" : ""); scrollTo({ top: 0, behavior: was ? "smooth" : "auto" }); return;
   }
   if (inInfo) { // ออกจากหน้าข้อมูล → กลับหน้าหลัก แล้วเลื่อนไปส่วนที่กด
     inInfo = false; document.body.classList.remove("in-info"); $("infoView").hidden = true;
@@ -2534,10 +2978,14 @@ renderMe($("me"), null, false); renderNews(); renderApply(); renderFeed();
   Data.watchDoc("site", "content", (d) => {
     applyContent(mergeContent(d)); renderContent(); renderFeed(); contentReady = true; wiz = null; renderApply();
   }, (e) => { console.error(e); contentReady = true; renderApply(); });
-  Data.watch("news", { orderBy: "createdAt", dir: "desc", limit: 10 }, (r) => { S.news = r; renderNews(); }, oops);
+  Data.watch("news", { orderBy: "createdAt", dir: "desc", limit: 10 }, (r) => { S.news = r; renderNews(); renderBell(); }, oops);
   Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => {
     S.info = r; S.infoReady = true; imgCache.clear(); renderInfoBanner(); if (inInfo) route();
   }, (e) => { console.error(e); S.infoReady = true; if (inInfo) route(); });
+  Data.watchDoc("site", "schedule", (d) => { S.sched = d; renderSchedule(); renderRecapRow(); }, () => {});
+  Data.watch("recaps", { orderBy: "order", dir: "asc", limit: 200 }, (r) => {
+    S.recaps = r; S.recapsReady = true; renderRecapRow(); if (inInfo) route();
+  }, (e) => { console.error(e); S.recapsReady = true; if (inInfo) route(); });
   Data.watch("profiles", { orderBy: "updatedAt", dir: "desc", limit: 5000 }, (r) => {
     S.profiles = Object.fromEntries(r.map((p) => [p.id, p.name])); renderFeed();
   }, () => {});
@@ -2557,11 +3005,12 @@ renderMe($("me"), null, false); renderNews(); renderApply(); renderFeed();
     }
     renderMe($("me"), me, isAdmin, { adminLink: "admin.html", onProfile: () => openProfile() });
     if (me && !me.name) openProfile(true); // เพิ่งล็อกอินครั้งแรก → ตั้งชื่อ
+    S.seen = null; if (me) loadSeen(); renderBell();
     fillCatSelect();
     if (unApp) { unApp(); unApp = null; }
     if (unBlk) { unBlk(); unBlk = null; }
     S.app = undefined; S.blockedMe = null; renderBlocked();
-    if (me) unApp = Data.watchDoc("applications", me.uid, (a) => { S.app = a; renderApply(); }, oops);
+    if (me) unApp = Data.watchDoc("applications", me.uid, (a) => { S.app = a; renderApply(); renderBell(); }, oops);
     if (me && !isAdmin) unBlk = Data.watchDoc("blocked", me.uid, (b) => { S.blockedMe = b; renderBlocked(); renderApply(); renderFeed(); }, () => {});
     renderApply(); renderFeed();
   });

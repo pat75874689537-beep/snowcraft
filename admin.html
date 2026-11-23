@@ -519,9 +519,10 @@ main.home .col-main > * { order: 4; }
   .wrap { max-width: 1180px; }
   body:has(.admin-menu) .wrap { max-width: 1040px; } /* หน้าแอดมิน: ไม่กว้างเกิน อ่านง่าย */
   main.home { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 32px; align-items: start; }
-  main.home > .feats { grid-column: 1 / -1; }
-  main.home > .col-main { display: grid; gap: 28px; grid-column: 1; grid-row: 2; min-width: 0; }
-  main.home > .side { display: grid; gap: 28px; grid-column: 2; grid-row: 2; align-self: start; position: sticky; top: 76px;
+  main.home > .feats, main.home > .info-banner, main.home > .sched, main.home > .recaps { grid-column: 1 / -1; } /* ส่วนเต็มความกว้างด้านบน */
+  main.home > .col-main { display: grid; gap: 28px; grid-column: 1; min-width: 0; } /* ไม่ล็อกแถว: ต่อจากส่วนบนเอง */
+  main.home > .col-main, main.home > .side { order: 2; } /* ต้องอยู่หลัง "ทำไมต้อง Snowcraft" (order 1 ที่ตั้งไว้สำหรับมือถือ) */
+  main.home > .side { display: grid; gap: 28px; grid-column: 2; align-self: start; position: sticky; top: 76px;
     max-height: calc(100vh - 92px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; } /* ประกาศเยอะจนยาวเกินจอ = เลื่อนในแถบข้างได้ */
   .side .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* หัวเว็บแบบโปสเตอร์ จัดกลาง */
@@ -792,6 +793,140 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .prof-dlg .actions { align-items: center; }
 .prof-dlg .sp { flex: 1; }
 .av-box { display: inline-flex; }
+
+/* =========================================================
+   v29: ตารางโรล · สรุป EP · โปรไฟล์ตัวละคร · แจ้งเตือน
+   ========================================================= */
+.sched, .recaps { display: grid; gap: 12px; }
+.sc-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.sc-head h2.sec { margin: 0; }
+.sc-prog { font: 700 13.5px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.sc-next { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 20px 16px; border-radius: 16px;
+  background: radial-gradient(80% 120% at 50% 0%, rgba(var(--ice-rgb), .2), transparent 70%), var(--panel); border: 1px solid rgba(var(--ice-rgb), .45); }
+.sc-badge { font: 700 12px var(--f-mono); letter-spacing: .12em; color: var(--ice); text-transform: uppercase; }
+.sc-ep { font: 800 clamp(30px, 8vw, 44px)/1 var(--f-display); text-shadow: 0 0 18px rgba(var(--ice-rgb), .6); }
+.sc-next small { color: var(--soft); font-size: 14px; }
+.sc-next.live { border-color: #ff4d63; animation: livePulse2 2s ease-in-out infinite; }
+.sc-next.live .sc-badge { color: #ff6b7d; }
+.sc-next.end { border-color: var(--gold); }
+.sc-next.end .sc-badge { color: var(--gold); font-size: 14px; }
+@keyframes livePulse2 { 50% { box-shadow: 0 0 0 4px rgba(255,77,99,.18), 0 0 30px rgba(255,77,99,.35); } }
+.sc-cd { display: flex; gap: 8px; margin-top: 6px; }
+.cd-u { display: grid; justify-items: center; min-width: 58px; padding: 8px 6px; border-radius: 10px; background: rgba(var(--bg-rgb), .6); border: 1px solid var(--line); }
+.cd-u b { font: 800 24px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.cd-u small { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.sc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.sc-list li { display: grid; grid-template-columns: 56px 1fr auto; gap: 2px 10px; align-items: center; padding: 9px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; }
+.sc-list li small { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
+.sc-list li small:empty { display: none; }
+.sc-list li.past { opacity: .55; }
+.sc-list li.now { border-color: rgba(var(--ice-rgb), .6); }
+.sc-list li b { font-family: var(--f-mono); color: var(--ice); }
+.sc-all { justify-self: center; }
+@media (min-width: 768px) { .sc-list li { grid-template-columns: 70px 1fr auto 1fr; } .sc-list li small { grid-column: auto; text-align: right; } }
+/* สรุป EP บนหน้าแรก */
+.rc-all { color: var(--ice); text-decoration: none; font-weight: 600; font-size: 14px; }
+.rc-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .rc-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -16px; padding: 2px 16px 8px; scrollbar-width: none; } .rc-row::-webkit-scrollbar { display: none; } .rc-card { flex: 0 0 72%; scroll-snap-align: center; } }
+.rc-card { display: grid; gap: 4px; align-content: start; padding: 8px 8px 12px; border-radius: 12px; text-decoration: none; color: var(--fg); background: var(--panel); border: 1px solid var(--line); min-width: 0; transition: border-color .2s, transform .25s; }
+.rc-card:hover { border-color: rgba(var(--ice-rgb), .6); transform: translateY(-2px); }
+.rc-thumb { aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--panel-2); }
+.rc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc-thumb.no-img canvas { width: 26%; max-width: 44px; height: auto; aspect-ratio: 1; image-rendering: pixelated; opacity: .8; }
+.rc-card b { margin: 4px 4px 0; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-card small { margin: 0 4px; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* โปรไฟล์ตัวละคร */
+.char-dlg { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 40px); overflow: auto; border-color: rgba(var(--ice-rgb), .6); position: fixed; }
+.char-x { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.char-body { display: grid; gap: 16px; padding: 18px; }
+@media (min-width: 600px) { .char-body { grid-template-columns: 220px minmax(0, 1fr); align-items: start; } }
+.char-pic { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); cursor: zoom-in; max-width: 260px; width: 100%; justify-self: center; }
+.char-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.char-pic.no-img { display: grid; place-items: center; cursor: default; }
+.char-pic.no-img canvas { width: 30%; height: auto; aspect-ratio: 1; image-rendering: pixelated; opacity: .8; }
+.char-info { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.char-info h3 { margin: 0; padding-right: 50px; font: 800 24px var(--f-display); overflow-wrap: anywhere; }
+.char-info .pill { justify-self: start; }
+.char-bio { font-size: 14.5px; line-height: 1.75; overflow-wrap: anywhere; }
+/* กระดิ่งแจ้งเตือน */
+.bell { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-size: 17px; flex: none; }
+.bell:hover { border-color: rgba(var(--ice-rgb), .6); }
+.bell b { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: #ff2e46; color: #fff;
+  font: 700 11px/18px var(--f-mono); text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px rgba(255,46,70,.8); }
+.noti-dlg { width: min(460px, calc(100vw - 24px)); max-height: calc(100vh - 60px); overflow: auto; border-color: rgba(var(--ice-rgb), .6); }
+.noti-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); }
+.noti-head h3 { margin: 0; font: 700 17px var(--f-display); }
+.noti-list { list-style: none; margin: 0; padding: 6px; display: grid; gap: 4px; }
+.noti-list > li.hint { padding: 18px; text-align: center; }
+.noti-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 2px 8px; width: 100%; text-align: left; padding: 10px; border-radius: 10px; border: 0; background: none; color: var(--fg); font: inherit; cursor: pointer; }
+.noti-item:hover { background: rgba(255,255,255,.05); }
+.noti-ic { grid-row: 1 / 3; font-size: 18px; }
+.noti-t { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.noti-item small { color: var(--muted); font-size: 12px; }
+.card.flash { animation: cardFlash 1.6s ease-out; }
+@keyframes cardFlash { 0%, 40% { box-shadow: 0 0 0 2px var(--ice), 0 0 30px rgba(var(--ice-rgb), .5); } 100% { box-shadow: none; } }
+/* หน้าแอดมิน: ตารางโรล */
+.sch-list { display: grid; gap: 6px; }
+.sch-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 6px 8px; align-items: center; padding: 8px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); }
+.sch-row input[type=datetime-local] { min-width: 0; }
+.sch-row input:not([type]) { grid-column: 2 / 3; }
+.sch-row .act { grid-row: 1 / 3; grid-column: 3; }
+.sch-row.past { opacity: .6; }
+.sch-row b { font-family: var(--f-mono); color: var(--ice); }
+.gen-days { gap: 10px 14px; }
+@media (prefers-reduced-motion: reduce) { .sc-next.live, .card.flash { animation: none; } }
+
+/* ===== v30: สรุป EP ที่ยังเป็นปริศนา ===== */
+.myst-thumb { position: relative; display: grid; place-items: center; overflow: hidden;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 6px, transparent 6px 12px), radial-gradient(circle at 50% 45%, rgba(255,46,70,.28), #0b0306 70%); }
+.myst-thumb::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(transparent 0 46%, rgba(255,46,70,.22) 50%, transparent 54%); background-size: 100% 300%; animation: myst-scan 3.2s linear infinite; }
+.myst-q { font: 800 clamp(34px, 7vw, 56px)/1 var(--f-display); color: #ff2e46; text-shadow: 0 0 18px rgba(255,46,70,.75), 2px 0 0 rgba(61,184,255,.55), -2px 0 0 rgba(255,180,61,.35); animation: myst-glitch 2.6s steps(1) infinite; }
+.myst-ep { position: absolute; left: 8px; bottom: 6px; font-size: 11px; font-weight: 700; letter-spacing: .12em; color: rgba(255,255,255,.55); }
+.iv-card.myst, .rc-card.myst { border-style: dashed; border-color: rgba(255,46,70,.45); }
+.iv-card.myst { cursor: default; }
+.iv-card.myst:hover { transform: none; box-shadow: none; }
+.iv-card.myst h3, .rc-card.myst b { letter-spacing: .04em; }
+.iv-card.myst small, .rc-card.myst small { color: #ff6b7d; }
+@keyframes myst-scan { from { background-position: 0 100%; } to { background-position: 0 -200%; } }
+@keyframes myst-glitch { 0%, 88%, 100% { transform: none; opacity: 1; } 90% { transform: translate(2px, -1px) skewX(-8deg); opacity: .7; } 93% { transform: translate(-3px, 1px); opacity: .9; } 96% { transform: translate(1px, 0) skewX(6deg); } }
+@media (prefers-reduced-motion: reduce) { .myst-thumb::after, .myst-q { animation: none; } }
+.ia-mystery { border-style: dashed; border-color: rgba(255,46,70,.5); }
+.ie-myst { padding: 10px 12px; border: 1px dashed rgba(255,46,70,.5); border-radius: 10px; background: rgba(255,46,70,.06); }
+
+/* ===== v30: ตารางโรลแบบกลิตช์ (วันเวลา/ตัวเลขกระตุกสลับ) ===== */
+.sc-next .glx { display: inline-block; font-variant-numeric: tabular-nums; }
+.sc-next.glitching .glx { color: #ff6b7d; text-shadow: 2px 0 rgba(61,184,255,.8), -2px 0 rgba(255,46,70,.9); transform: translateX(-1px) skewX(-6deg); }
+.sc-next.glitching .sc-ep { text-shadow: 3px 0 rgba(61,184,255,.7), -3px 0 rgba(255,46,70,.9), 0 0 18px rgba(var(--ice-rgb), .6); transform: translateX(2px); }
+.cd-u b { position: relative; }
+.cd-u b[data-g]::after { content: attr(data-g); position: absolute; inset: 0; display: grid; place-items: center; color: #ff2e46; background: rgba(var(--bg-rgb), .92);
+  text-shadow: 2px 0 rgba(61,184,255,.8); clip-path: inset(18% 0 38% 0); transform: translateX(-2px); }
+.sc-next.glitching .cd-u { border-color: rgba(255,46,70,.7); }
+@media (prefers-reduced-motion: reduce) { .sc-next.glitching .glx, .sc-next.glitching .sc-ep { transform: none; } }
+.sc-next.noise-mode .nz-line { font: 700 15px var(--f-mono); letter-spacing: .06em; white-space: nowrap; filter: blur(.3px); }
+.sc-next.noise-mode .cd-u b { color: #ff2e46; text-shadow: 2px 0 rgba(61,184,255,.8), -2px 0 rgba(255,180,61,.4); }
+.sc-next.noise-mode.nz-shift .nz-line, .sc-next.noise-mode.nz-shift .sc-cd { transform: translateX(3px) skewX(-10deg); clip-path: inset(0 0 22% 0); }
+.sc-next.noise-mode.nz-shift .sc-ep { transform: translateX(-3px); }
+.sc-next .nz-note { color: #ff6b7d; font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .sc-next.noise-mode.nz-shift .nz-line, .sc-next.noise-mode.nz-shift .sc-cd, .sc-next.noise-mode.nz-shift .sc-ep { transform: none; clip-path: none; } }
+
+/* ===== v30: กลิตช์เล็กๆ (หัวข้อ/ป้าย/การ์ดปริศนา) + เส้นสแกนในกล่องตารางโรล ===== */
+.tglx { animation: tglx .26s steps(2) 1; }
+@keyframes tglx {
+  0%   { text-shadow: 2px 0 rgba(61,184,255,.85), -2px 0 rgba(255,46,70,.9); transform: translateX(-2px); clip-path: inset(0 0 45% 0); }
+  50%  { text-shadow: -3px 0 rgba(61,184,255,.85), 3px 0 rgba(255,46,70,.9); transform: translateX(2px) skewX(-8deg); clip-path: inset(40% 0 0 0); }
+  100% { text-shadow: none; transform: none; clip-path: none; }
+}
+.sc-next { position: relative; overflow: hidden; isolation: isolate; }
+.sc-next::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .35;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px); }
+.sc-next::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 18%; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,46,70,.18) 20%, rgba(61,184,255,.14) 60%, transparent); mix-blend-mode: screen;
+  animation: scSlice 5.5s steps(1) infinite; }
+@keyframes scSlice { 0%, 90%, 100% { opacity: 0; } 91% { opacity: 1; top: 22%; transform: translateX(-6px); } 93% { opacity: 1; top: 61%; transform: translateX(8px); } 95% { opacity: .7; top: 40%; transform: none; } }
+.rc-card.myst, .iv-card.myst { animation: mystFlicker 6.5s steps(1) infinite; }
+@keyframes mystFlicker { 0%, 94%, 100% { border-color: rgba(255,46,70,.45); } 95% { border-color: rgba(61,184,255,.7); } 97% { border-color: rgba(255,46,70,.95); } }
+@media (prefers-reduced-motion: reduce) { .tglx, .sc-next::after, .rc-card.myst, .iv-card.myst { animation: none; } }
 </style>
 </head>
 <body>
@@ -816,6 +951,8 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
       <button type="button" data-sec="secApps" aria-pressed="true">📝 ใบสมัคร</button>
       <button type="button" data-sec="secNews" aria-pressed="false">📢 ประกาศ</button>
       <button type="button" data-sec="secEdit" aria-pressed="false">✏️ แก้เว็บ</button>
+      <button type="button" data-sec="secSched" aria-pressed="false">📅 ตารางโรล</button>
+      <button type="button" data-sec="secRecap" aria-pressed="false">📜 สรุป EP</button>
       <button type="button" data-sec="secMembers" aria-pressed="false">👥 สมาชิก</button>
       <button type="button" data-sec="secInfo" aria-pressed="false">📚 ข้อมูล SS</button>
       <button type="button" data-sec="secBlocked" aria-pressed="false">🚫 บล็อก</button>
@@ -862,6 +999,19 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
         <button class="btn-ghost" type="button" id="edUndo">ยกเลิกที่แก้</button>
         <button class="btn-main" type="button" id="edSave">บันทึก</button>
       </div>
+    </section>
+
+    <!-- ตารางโรล: EP ทั้งหมด + รอบโรล (หน้าเว็บนับถอยหลังให้เอง) -->
+    <section style="display:grid;gap:12px" id="secSched" hidden aria-labelledby="schAdmTitle">
+      <h2 class="sec" id="schAdmTitle">📅 ตารางโรล</h2>
+      <div id="schAdm" style="display:grid;gap:12px"></div>
+    </section>
+
+    <!-- สรุปแต่ละ EP: ใช้ตัวแก้แบบเดียวกับข้อมูลใน SS -->
+    <section style="display:grid;gap:12px" id="secRecap" hidden aria-labelledby="epAdmTitle">
+      <h2 class="sec" id="epAdmTitle">📜 สรุปแต่ละ EP</h2>
+      <p class="hint">หลังจบโรลแต่ละตอน ลงสรุปเหตุการณ์ + รูปแคปในเกม · หน้าแรกจะโชว์ 3 ตอนล่าสุด · ชื่อหัวข้อแก้ที่ ✏️ แก้เว็บ</p>
+      <div id="epAdm" style="display:grid;gap:10px"></div>
     </section>
 
     <!-- สมาชิกในโปรเจกต์: ตั้งจำนวนรับ + เพิ่มชื่อ/รูปปก -->
@@ -919,7 +1069,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     </section>
   </div>
 
-  <footer>หน้าแอดมิน Snowcraft · เห็นข้อมูลได้เฉพาะบัญชีที่อยู่ในรายชื่อแอดมิน · เวอร์ชันเว็บ 28</footer>
+  <footer>หน้าแอดมิน Snowcraft · เห็นข้อมูลได้เฉพาะบัญชีที่อยู่ในรายชื่อแอดมิน · เวอร์ชันเว็บ 30</footer>
 </main>
 
 <div class="toast" id="toast" hidden></div>
@@ -1370,7 +1520,15 @@ function initDemo() {
     members: Array.from({ length: 11 }, (_, i) => ({ id: "m" + i, order: i + 1, addedAt: now - i * H,
       name: ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i],
       note: i % 3 ? "นักเรียน" : "บทบาทพิเศษ",
+      bio: i === 0 ? "# ข้อมูลตัวละคร\n- เพศ: หญิง\n- ทวีป: เอเชีย\n\n# ประวัติ\nเด็กสาวเงียบๆ ที่ชอบอ่านหนังสือ (ตัวอย่าง)" : "",
       img: i === 4 ? "" : demoImg(300, 400, ["#5a0a14", "#3a1a50", "#0a3a5c", "#4a2a08"][i % 4], ["#ff2e46", "#b45cff", "#3db8ff", "#ffb43d"][i % 4], ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i]) })),
+    // สรุป EP ตัวอย่าง: ทุกตอนยังเป็นปริศนาตั้งแต่ EP 1 → อยู่ใน recapsDraft (แอดมินเท่านั้น) · หน้าเว็บ (recaps) ว่าง
+    recaps: [],
+    recapsDraft: [...[1, 2, 3].map((n) => ({ id: "ep" + n, order: n, title: `EP ${n} · ${["คืนแรก", "เงาในห้องสมุด", "เสียงจากใต้ดิน"][n - 1]}`,
+      desc: ["ทุกคนมาถึงโรงเรียนเป็นวันแรก", "มีคนเห็นเงาแปลกๆ ในห้องสมุด", "เสียงเคาะดังมาจากใต้พื้นโรงอาหาร"][n - 1],
+      thumb: demoImg(360, 220, ["#2a0a10", "#14102a", "#0a2a1a"][n - 1], ["#ff2e46", "#7b8cff", "#3dff8a"][n - 1], "EP " + n), hidden: true, updatedAt: now - (4 - n) * 24 * H,
+      blocks: [{ t: "text", v: "# เกิดอะไรขึ้นบ้าง\n- เหตุการณ์ที่ 1 (ตัวอย่าง)\n- เหตุการณ์ที่ 2\n! เบาะแสสำคัญ: ประตูห้องใต้ดินถูกล็อก" }, ...(n === 1 ? [{ t: "img", id: "di1", cap: "ภาพจากโรล (ตัวอย่าง)" }] : [])] })),
+    ],
     infoImg: [
       { id: "di1", src: demoImg(1200, 680, "#1a0508", "#8c0a1e", "เมืองร้าง"), at: now },
       { id: "di2", src: demoImg(900, 900, "#120820", "#b45cff", "ตัวละคร"), at: now },
@@ -1396,8 +1554,17 @@ function initDemo() {
     admins: [{ id: "admin2@example.com", email: "admin2@example.com", label: "แอดมินตัวอย่าง ดูแลใบสมัคร", addedAt: now - 48 * H }],
   };
   // เนื้อหาเว็บ (site) ในโหมดตัวอย่างจำไว้ในเครื่อง จะได้ลองแก้ในหน้าแอดมินแล้วเปิดหน้าเว็บดูผลได้
-  const SITE_KEY = "snowcraft-demo-site";
+  const SITE_KEY = "snowcraft-demo-site-v30b"; // เปลี่ยนชื่อเมื่อข้อมูลตัวอย่างเปลี่ยน (ของเก่าในเครื่องจะได้ไม่ค้าง)
   try { store.site = JSON.parse(localStorage.getItem(SITE_KEY) || "[]"); } catch { store.site = []; }
+  // ตารางโรลตัวอย่าง: 16 EP · จันทร์ พุธ ศุกร์ เสาร์ 19:30 · ยังไม่เริ่ม (EP ถัดไป = EP 1 นับถอยหลังอยู่)
+  // ตารางเต็มอยู่ schedulePriv (แอดมิน) · หน้าเว็บได้แค่รอบที่ผ่านไปแล้ว + รอบถัดไป 1 รอบ (schedule)
+  if (!store.site.some((d) => d.id === "schedulePriv")) {
+    const ses = [], d = new Date(now + 24 * H); d.setHours(19, 30, 0, 0);
+    while (ses.length < 16) { if ([1, 3, 5, 6].includes(d.getDay())) ses.push({ at: d.getTime(), note: "" }); d.setDate(d.getDate() + 1); }
+    const priv = { show: true, title: "📅 ตารางโรล SS นี้", totalEp: 16, duration: 150, ended: false, hideTime: true, sessions: ses };
+    store.site = store.site.filter((x) => x.id !== "schedule");
+    store.site.push({ id: "schedulePriv", ...priv }, { id: "schedule", ...schedPublic(priv, now) });
+  }
   const saveSite = () => { try { localStorage.setItem(SITE_KEY, JSON.stringify(store.site)); } catch {} };
   addEventListener("storage", (e) => { if (e.key === SITE_KEY) { try { store.site = JSON.parse(e.newValue || "[]"); emit(); } catch {} } });
   const subs = new Set();
@@ -1454,6 +1621,19 @@ function renderMe(box, me, isAdmin, opts = {}) {
   box.append(out);
 }
 
+
+/* ตารางโรลฉบับหน้าเว็บ (site/schedule) สร้างจากตารางเต็มของแอดมิน (site/schedulePriv)
+   - ส่งออกไปแค่: รอบที่เริ่มไปแล้ว + รอบถัดไป 1 รอบ → คนดูไม่รู้ว่าทั้งซีซั่นมีกี่ EP
+   - ไม่ส่งจำนวน EP ทั้งหมด และไม่ส่งหมายเหตุของรอบที่ยังไม่ถึง (ยกเว้นรอบถัดไป) */
+function schedPublic(d, now = Date.now()) {
+  const ses = (Array.isArray(d.sessions) ? d.sessions : []).filter((x) => x && Number.isFinite(x.at)).sort((a, b) => a.at - b.at);
+  const past = ses.filter((x) => x.at <= now), next = ses.find((x) => x.at > now);
+  const base = { show: !!d.show, title: String(d.title || "").slice(0, 60), duration: Math.round(+d.duration) || 150, ended: !!d.ended, hideTime: !!d.hideTime, done: past.length };
+  // ซ่อนวันเวลา: ไม่ส่งเวลาใดๆ ออกไปเลย (แม้แต่รอบที่ผ่านไปแล้ว) ส่งแค่ว่าโรลไปแล้วกี่ EP → หน้าเว็บโชว์เป็นกลิตช์อ่านไม่ออก
+  if (d.hideTime) return { ...base, sessions: [] };
+  return { ...base, sessions: [...past, ...(next ? [next] : [])].map((x) => ({ at: Math.round(x.at), note: String(x.note || "").slice(0, 40) })) };
+}
+
 /* =========================================================
    content.js — เนื้อหาเว็บที่แอดมินแก้ได้จากเมนู "✏️ แก้เว็บ"
    (ถูกต่อท้าย core.js ตอน build — แก้ที่ไฟล์นี้)
@@ -1478,6 +1658,8 @@ const DEFAULT_CONTENT = {
   theme: { preset: "red", effect: "mix", bgImage: "", bgDim: 55 },
   // การ์ด "ข้อมูลใน SS" บนหน้าแรก (หมวด/รูป/ข้อความ แก้ที่หน้าแอดมิน → เมนู 📚 ข้อมูล SS)
   info: { show: true, title: "ข้อมูลในซีซั่นนี้", text: "เนื้อเรื่อง ตัวละคร และข้อมูลสำคัญทั้งหมดของซีซั่นนี้ อ่านก่อนเข้าโรลจะเข้าใจโลกมากขึ้น" },
+  // การ์ด/หน้า "สรุปแต่ละ EP" (เนื้อหาแก้ที่หน้าแอดมิน → 📜 สรุป EP)
+  recap: { show: true, title: "📜 สรุปแต่ละ EP", text: "ย้อนอ่านเหตุการณ์ของแต่ละตอน พลาดโรลตอนไหนก็ตามทันได้" },
   badge: { open: "เปิดรับสมัครแล้ว", closed: "ปิดรับสมัครชั่วคราว" },
   // การ์ด "จุดเด่น" ใต้หัวเว็บ · icon เลือกจาก FEATURE_ICONS
   features: {
@@ -2047,6 +2229,14 @@ function renderEditor() {
       edInput("คำอธิบายสั้นๆ", () => ED.info.text, (v) => (ED.info.text = v), { long: true, rows: 2, max: 200, id: "ed-itext" }));
   }, "หมวด รูป และข้อความข้างใน แก้ที่เมนู 📚 ข้อมูล SS (ด้านบน)"));
 
+  // 3.45) การ์ดสรุป EP บนหน้าแรก
+  box.append(edGroup("recap", "📜 ส่วน “สรุปแต่ละ EP” บนหน้าแรก", (b) => {
+    b.append(
+      edCheck("แสดงบนหน้าแรก (ซ่อนเองถ้ายังไม่มีสรุป)", () => ED.recap.show, (v) => (ED.recap.show = v)),
+      edInput("หัวข้อ", () => ED.recap.title, (v) => (ED.recap.title = v), { max: 60, id: "ed-rtitle" }),
+      edInput("คำอธิบายในหน้ารวม", () => ED.recap.text, (v) => (ED.recap.text = v), { long: true, rows: 2, max: 200, id: "ed-rtext" }));
+  }, "เนื้อหาแต่ละตอนแก้ที่เมนู 📜 สรุป EP (ด้านบน)"));
+
   // 3.5) จุดเด่น
   box.append(edGroup("feats", "🌟 จุดเด่น (การ์ดใต้หัวเว็บ)", (b) => {
     b.append(edInput("หัวข้อส่วนนี้", () => ED.features.title, (v) => (ED.features.title = v), { max: 60, id: "ed-ftitle" }));
@@ -2232,72 +2422,112 @@ function edDiscard() {
    - รูปเต็มเก็บแยกใน infoImg (1 รูป/เอกสาร) · รูปปกย่อเก็บในหมวดเลย
    - กด "บันทึกหมวดนี้" ถึงจะขึ้นเว็บ
    ========================================================= */
-let INFO = [], IE = null, IE_DIRTY = false;
+// ใช้ร่วมกัน 2 แบบ: info = ข้อมูลใน SS · recaps = สรุปแต่ละ EP (รูปเต็มเก็บใน infoImg ร่วมกัน)
+const HUBS_ADM = {
+  info:   { col: "info",   box: "infoAdm", list: [], ed: null, dirty: false, noun: "หมวด", add: "+ เพิ่มหมวดใหม่", titleLabel: "ชื่อหมวด", titlePh: "เช่น ตัวละคร",
+            emptyHint: "กด “+ เพิ่มหมวดใหม่” เช่น เนื้อเรื่อง ตัวละคร สถานที่ กฎของโลก" },
+  recaps: { col: "recaps", box: "epAdm",   list: [], ed: null, dirty: false, noun: "ตอน", add: "+ เพิ่มสรุป EP", titleLabel: "ชื่อตอน", titlePh: "เช่น EP 1 · คืนแรก",
+            emptyHint: "หลังจบโรลแต่ละตอน กด “+ เพิ่มสรุป EP” เล่าเหตุการณ์สำคัญ พร้อมรูปแคปในเกม" },
+};
+// สรุป EP ที่ "ยังเป็นปริศนา": recaps/<id> เป็นเปลือกเปล่า (hidden) · เนื้อหาจริงอยู่ recapsDraft/<id> (แอดมินเท่านั้น)
+HUBS_ADM.recaps.pub = []; HUBS_ADM.recaps.drafts = [];
+function mergeRecaps() { // รวม 2 ที่: ตอนที่เปิดเผยแล้ว (recaps) + ตอนปริศนา (recapsDraft) เรียงตามลำดับ
+  const H = HUBS_ADM.recaps;
+  H.list = [...H.pub.map((r) => ({ ...r, hidden: false })), ...H.drafts.map((r) => ({ ...r, hidden: true }))].sort((a, b) => (a.order || 0) - (b.order || 0));
+  if (!H.ed) renderInfoAdmin("recaps");
+}
+// เขียนตอนลงฐานข้อมูลตามสถานะ (ปริศนา / เปิดเผย)
+async function writeRecap(id, d) {
+  const full = { title: d.title, desc: d.desc, thumb: d.thumb, blocks: d.blocks, order: d.order, updatedAt: Date.now() };
+  if (d.hidden) { // ปริศนา: เก็บในที่ลับ แล้วลบออกจากหน้าเว็บ (ไม่ทิ้งร่องรอยว่ามีตอนนี้)
+    await Data.set("recapsDraft", id, { ...full, hidden: true });
+    await Data.del("recaps", id).catch(() => {});
+  } else {
+    await Data.set("recaps", id, { ...full, hidden: false });
+    await Data.del("recapsDraft", id).catch(() => {});
+  }
+}
 const infoId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const admImg = new Map(); // id → Promise(รูป) สำหรับพรีวิวในหน้าแอดมิน
 const admLoadImg = (id) => { if (!admImg.has(id)) admImg.set(id, Data.get("infoImg", id).then((d) => d?.src || null).catch(() => null)); return admImg.get(id); };
-const ieDirty = () => { IE_DIRTY = true; const s = $("ieState"); if (s) s.textContent = "มีการแก้ที่ยังไม่บันทึก"; };
+const ieDirty = (H) => { H.dirty = true; const s = $("ieState"); if (s) s.textContent = "มีการแก้ที่ยังไม่บันทึก"; };
 
-function renderInfoAdmin() {
-  const box = $("infoAdm"); if (!box) return; box.textContent = "";
-  if (IE) { box.append(infoEditor()); return; }
-  const add = el("button", "btn-main", "+ เพิ่มหมวดใหม่"); add.type = "button";
-  add.onclick = () => { IE = { id: infoId("c"), title: "", desc: "", thumb: "", blocks: [{ t: "text", v: "" }], order: Math.max(0, ...INFO.map((c) => c.order || 0)) + 1, _new: true, _orig: [] }; IE_DIRTY = false; renderInfoAdmin(); scrollTo(0, 0); };
+function renderInfoAdmin(kind = "info") {
+  const H = HUBS_ADM[kind], box = $(H.box); if (!box) return; box.textContent = "";
+  if (H.ed) { box.append(infoEditor(kind)); return; }
+  const add = el("button", "btn-main", H.add); add.type = "button";
+  add.onclick = () => { H.ed = { id: infoId("c"), title: "", desc: "", thumb: "", blocks: [{ t: "text", v: "" }], order: Math.max(0, ...H.list.map((c) => c.order || 0)) + 1, hidden: kind === "recaps", _new: true, _orig: [] }; H.dirty = false; renderInfoAdmin(kind); scrollTo(0, 0); };
   box.append(add);
-  if (!INFO.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีหมวด"), el("span", null, "กด “+ เพิ่มหมวดใหม่” เช่น เนื้อเรื่อง ตัวละคร สถานที่ กฎของโลก")); box.append(e); return; }
-  INFO.forEach((cat, i) => {
+  if (!H.list.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มี" + H.noun), el("span", null, H.emptyHint)); box.append(e); return; }
+  H.list.forEach((cat, i) => {
     const row = el("article", "ia-row");
     const th = el("div", "ia-thumb"); if (cat.thumb) { const im = el("img"); im.src = cat.thumb; im.alt = ""; th.append(im); } else th.append(el("span", null, "ไม่มีปก"));
     const tx = el("div", "ia-txt"); const n = (cat.blocks || []).length, ni = (cat.blocks || []).filter((b) => b.t === "img").length;
-    tx.append(el("b", null, cat.title), el("small", null, (cat.desc ? cat.desc + " · " : "") + `${n} กล่อง (${ni} รูป)`));
+    tx.append(el("b", null, (cat.hidden ? "🔒 " : "") + cat.title), el("small", null, (cat.hidden ? "ปริศนา (คนดูไม่เห็นเลย) · " : "") + (cat.desc ? cat.desc + " · " : "") + `${n} กล่อง (${ni} รูป)`));
+    if (cat.hidden) row.classList.add("ia-mystery");
     const act = el("div", "ia-act");
     const mk = (t, title, fn, dis) => { const b = el("button", "act", t); b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.disabled = !!dis; b.onclick = fn; return b; };
     // เลื่อนลำดับ: สลับในรายการ แล้วเขียนเลขลำดับใหม่ 1,2,3… ทั้งชุด (กันเลขซ้ำ/เลขเพี้ยน)
     const swap = async (j) => {
-      const list = INFO.map((x) => ({ id: x.id, order: x.order }));
+      const list = H.list.map((x) => ({ id: x.id, order: x.order }));
       [list[i], list[j]] = [list[j], list[i]];
-      try { for (const [k, x] of list.entries()) if (x.order !== k + 1) await Data.update("info", x.id, { order: k + 1 }); }
+      try { for (const [k, x] of list.entries()) if (x.order !== k + 1) await Data.update(kind === "recaps" && H.list.find((y) => y.id === x.id)?.hidden ? "recapsDraft" : H.col, x.id, { order: k + 1 }); }
       catch (e) { toast(errText(e)); }
     };
     const edit = el("button", "btn-ghost", "แก้ไข"); edit.type = "button";
-    edit.onclick = () => { IE = { ...structuredClone(cat), _orig: (cat.blocks || []).filter((b) => b.t === "img").map((b) => b.id) }; IE_DIRTY = false; renderInfoAdmin(); scrollTo(0, 0); };
+    edit.onclick = () => { H.ed = { ...structuredClone(cat), _orig: (cat.blocks || []).filter((b) => b.t === "img").map((b) => b.id) }; H.dirty = false; renderInfoAdmin(kind); scrollTo(0, 0); };
     const del = el("button", "btn-ghost danger"); del.type = "button";
     armDelete(del, async () => {
-      try { for (const b of cat.blocks || []) if (b.t === "img") await Data.del("infoImg", b.id).catch(() => {}); await Data.del("info", cat.id); toast("ลบหมวด " + cat.title + " แล้ว"); }
+      try { for (const b of cat.blocks || []) if (b.t === "img") await Data.del("infoImg", b.id).catch(() => {}); await Data.del(H.col, cat.id).catch(() => {}); if (kind === "recaps") await Data.del("recapsDraft", cat.id).catch(() => {}); toast("ลบ " + cat.title + " แล้ว"); }
       catch (e) { toast(errText(e)); }
     }, "ลบ");
-    act.append(mk("↑", "เลื่อนขึ้น", () => swap(i - 1), i === 0), mk("↓", "เลื่อนลง", () => swap(i + 1), i === INFO.length - 1), edit, del);
+    act.append(mk("↑", "เลื่อนขึ้น", () => swap(i - 1), i === 0), mk("↓", "เลื่อนลง", () => swap(i + 1), i === H.list.length - 1));
+    if (kind === "recaps") { // ปุ่มเปิดเผย / ซ่อนเป็นปริศนา
+      const tg = el("button", cat.hidden ? "btn-main" : "btn-ghost", cat.hidden ? "🔓 เปิดเผย" : "🔒 ทำเป็นปริศนา"); tg.type = "button";
+      tg.onclick = async () => { tg.disabled = true;
+        try { await writeRecap(cat.id, { ...cat, hidden: !cat.hidden }); toast(cat.hidden ? "เปิดเผย " + cat.title + " แล้ว ทุกคนอ่านได้ทันที" : cat.title + " กลายเป็นปริศนาแล้ว"); }
+        catch (e) { toast(errText(e)); } tg.disabled = false; };
+      act.append(tg);
+    }
+    act.append(edit, del);
     row.append(th, tx, act); box.append(row);
   });
 }
 
-function infoEditor() {
-  const c = IE, wrap = el("div", "ie");
+function infoEditor(kind) {
+  const H = HUBS_ADM[kind], c = H.ed, wrap = el("div", "ie");
   // แถบบน: กลับ / สถานะ / บันทึก
   const bar = el("div", "ie-bar");
   const back = el("button", "btn-ghost", "← กลับไปรายการ"); back.type = "button";
-  back.onclick = () => { if (IE_DIRTY && !back.classList.contains("arm")) { back.classList.add("arm"); back.textContent = "ทิ้งที่แก้? กดอีกครั้ง"; setTimeout(() => { back.classList.remove("arm"); back.textContent = "← กลับไปรายการ"; }, 3000); return; } IE = null; renderInfoAdmin(); };
-  const st = el("small", "ie-state", c._new ? "หมวดใหม่ (ยังไม่บันทึก)" : "ยังไม่มีการแก้"); st.id = "ieState";
-  const save = el("button", "btn-main", "💾 บันทึกหมวดนี้"); save.type = "button"; save.onclick = () => saveInfo(save);
+  back.onclick = () => { if (H.dirty && !back.classList.contains("arm")) { back.classList.add("arm"); back.textContent = "ทิ้งที่แก้? กดอีกครั้ง"; setTimeout(() => { back.classList.remove("arm"); back.textContent = "← กลับไปรายการ"; }, 3000); return; } H.ed = null; renderInfoAdmin(kind); };
+  const st = el("small", "ie-state", c._new ? H.noun + "ใหม่ (ยังไม่บันทึก)" : "ยังไม่มีการแก้"); st.id = "ieState";
+  const save = el("button", "btn-main", "💾 บันทึก" + H.noun + "นี้"); save.type = "button"; save.onclick = () => saveInfo(save, kind);
   bar.append(back, st, save);
 
   // ข้อมูลหมวด
   const meta = el("div", "form ie-meta");
   meta.append(
-    edInput("ชื่อหมวด", () => c.title, (v) => (c.title = v), { max: 60, id: "ie-title", placeholder: "เช่น ตัวละคร", onDirty: ieDirty }),
-    edInput("คำอธิบายสั้นๆ (ขึ้นใต้ชื่อในหน้ารวม)", () => c.desc, (v) => (c.desc = v), { max: 160, id: "ie-desc", onDirty: ieDirty }));
+    edInput(H.titleLabel, () => c.title, (v) => (c.title = v), { max: 60, id: "ie-title", placeholder: H.titlePh, onDirty: () => ieDirty(H) }),
+    edInput("คำอธิบายสั้นๆ (ขึ้นใต้ชื่อในหน้ารวม)", () => c.desc, (v) => (c.desc = v), { max: 160, id: "ie-desc", onDirty: () => ieDirty(H) }));
   // รูปปก
   const cov = el("div", "ie-cover"), cprev = el("div", "ia-thumb big");
   const drawCov = () => { cprev.textContent = ""; if (c.thumb) { const im = el("img"); im.src = c.thumb; im.alt = "รูปปก"; cprev.append(im); } else cprev.append(el("span", null, "ยังไม่มีรูปปก")); };
   drawCov();
   const cf = el("input"); cf.type = "file"; cf.accept = "image/*"; cf.hidden = true;
   const cb = el("button", "btn-ghost", "🖼 เลือกรูปปก"); cb.type = "button"; cb.onclick = () => cf.click();
-  const cr = el("button", "btn-ghost", "เอาปกออก"); cr.type = "button"; cr.onclick = () => { c.thumb = ""; drawCov(); ieDirty(); };
+  const cr = el("button", "btn-ghost", "เอาปกออก"); cr.type = "button"; cr.onclick = () => { c.thumb = ""; drawCov(); ieDirty(H); };
   cf.onchange = async () => { const f = cf.files[0]; cf.value = ""; if (!f) return; cb.disabled = true; cb.textContent = "กำลังย่อรูป…";
-    try { c.thumb = await shrinkImage(f, 520, 110000); drawCov(); ieDirty(); } catch (e) { toast(e.message); } cb.disabled = false; cb.textContent = "🖼 เลือกรูปปก"; };
+    try { c.thumb = await shrinkImage(f, 520, 110000); drawCov(); ieDirty(H); } catch (e) { toast(e.message); } cb.disabled = false; cb.textContent = "🖼 เลือกรูปปก"; };
   const cbtn = el("div", "th-row"); cbtn.append(cb, cr, cf);
-  cov.append(el("b", null, "รูปปก (ขึ้นในหน้ารวมหมวด และการ์ดหน้าแรก)"), cprev, cbtn);
+  cov.append(el("b", null, "รูปปก (ขึ้นในหน้ารวม และการ์ดหน้าแรก)"), cprev, cbtn);
   meta.append(cov);
+  if (kind === "recaps") { // ซ่อนเป็นปริศนา
+    const hb = el("input"); hb.type = "checkbox"; hb.id = "ie-hidden"; hb.checked = !!c.hidden;
+    hb.onchange = () => { c.hidden = hb.checked; ieDirty(H); };
+    const lb = el("label", "mem-chk ie-myst"); lb.htmlFor = "ie-hidden";
+    lb.append(hb, el("span", null, "🔒 ยังเป็นปริศนา — คนดูไม่เห็นตอนนี้เลย (หน้าเว็บขึ้นแค่การ์ด “EP ถัดไป · ???” ใบเดียว) · พร้อมเมื่อไหร่ เอาติ๊กออก หรือกด “🔓 เปิดเผย” ในรายการ"));
+    meta.append(lb);
+  }
 
   // เนื้อหา
   const blocksBox = el("div", "ie-blocks");
@@ -2307,17 +2537,17 @@ function infoEditor() {
       const card = el("div", "ie-block"), head = el("div", "ed-head");
       const tools = el("div", "ed-tools");
       const mk = (t, title, fn, dis) => { const x = el("button", "act", t); x.type = "button"; x.title = title; x.setAttribute("aria-label", title); x.disabled = !!dis; x.onclick = fn; return x; };
-      const move = (d) => { const j = i + d; [c.blocks[i], c.blocks[j]] = [c.blocks[j], c.blocks[i]]; ieDirty(); drawBlocks(); };
-      const rm = mk("ลบ", "ลบกล่องนี้", () => { c.blocks.splice(i, 1); ieDirty(); drawBlocks(); });
+      const move = (d) => { const j = i + d; [c.blocks[i], c.blocks[j]] = [c.blocks[j], c.blocks[i]]; ieDirty(H); drawBlocks(); };
+      const rm = mk("ลบ", "ลบกล่องนี้", () => { c.blocks.splice(i, 1); ieDirty(H); drawBlocks(); });
       tools.append(mk("↑", "เลื่อนขึ้น", () => move(-1), i === 0), mk("↓", "เลื่อนลง", () => move(1), i === c.blocks.length - 1), rm);
       head.append(el("b", null, (b.t === "img" ? "🖼 รูป" : "📝 ข้อความ") + ` · กล่องที่ ${i + 1}`), tools);
       card.append(head);
-      if (b.t === "text") card.append(edInput("ข้อความ", () => b.v, (v) => (b.v = v), { long: true, rows: 6, max: 5000, rich: true, id: "ie-t-" + i, onDirty: ieDirty }));
+      if (b.t === "text") card.append(edInput("ข้อความ", () => b.v, (v) => (b.v = v), { long: true, rows: 6, max: 5000, rich: true, id: "ie-t-" + i, onDirty: () => ieDirty(H) }));
       else {
         const pv = el("div", "ie-img");
         const show = (src) => { pv.textContent = ""; if (src) { const im = el("img"); im.src = src; im.alt = b.cap || ""; pv.append(im); } else pv.append(el("span", "hint", "โหลดรูปไม่ได้")); };
         if (b._src) show(b._src); else { pv.append(el("span", "hint", "กำลังโหลดรูป…")); admLoadImg(b.id).then(show); }
-        card.append(pv, edInput("คำบรรยายใต้รูป (ไม่ใส่ก็ได้)", () => b.cap, (v) => (b.cap = v), { max: 200, id: "ie-c-" + i, onDirty: ieDirty }));
+        card.append(pv, edInput("คำบรรยายใต้รูป (ไม่ใส่ก็ได้)", () => b.cap, (v) => (b.cap = v), { max: 200, id: "ie-c-" + i, onDirty: () => ieDirty(H) }));
       }
       blocksBox.append(card);
     });
@@ -2325,31 +2555,31 @@ function infoEditor() {
   };
   drawBlocks();
   const addT = el("button", "btn-ghost", "+ กล่องข้อความ"); addT.type = "button";
-  addT.onclick = () => { c.blocks.push({ t: "text", v: "" }); ieDirty(); drawBlocks(); };
+  addT.onclick = () => { c.blocks.push({ t: "text", v: "" }); ieDirty(H); drawBlocks(); };
   const imf = el("input"); imf.type = "file"; imf.accept = "image/*"; imf.multiple = true; imf.hidden = true;
   const addI = el("button", "btn-ghost", "+ รูป (เลือกได้หลายรูป)"); addI.type = "button"; addI.onclick = () => imf.click();
   imf.onchange = async () => {
     const files = [...imf.files]; imf.value = ""; if (!files.length) return;
-    if (c.blocks.length + files.length > 80) return toast("หมวดหนึ่งใส่ได้สูงสุด 80 กล่อง");
+    if (c.blocks.length + files.length > 80) return toast("ใส่ได้สูงสุด 80 กล่อง");
     addI.disabled = true;
     for (const [k, f] of files.entries()) {
       addI.textContent = `กำลังย่อรูป ${k + 1}/${files.length}…`;
       try { c.blocks.push({ t: "img", id: infoId("i"), cap: "", _src: await shrinkImage(f, 1600, 800000), _new: true }); }
       catch (e) { toast(f.name + ": " + e.message); }
     }
-    addI.disabled = false; addI.textContent = "+ รูป (เลือกได้หลายรูป)"; ieDirty(); drawBlocks();
+    addI.disabled = false; addI.textContent = "+ รูป (เลือกได้หลายรูป)"; ieDirty(H); drawBlocks();
   };
   const adds = el("div", "th-row"); adds.append(addT, addI, imf);
 
-  wrap.append(bar, meta, el("h3", "ie-h", "เนื้อหาในหมวด (เรียงจากบนลงล่าง)"),
+  wrap.append(bar, meta, el("h3", "ie-h", "เนื้อหาใน" + H.noun + "นี้ (เรียงจากบนลงล่าง)"),
     el("p", "hint", "ใส่ข้อความกับรูปสลับกันได้ตามใจ · ใช้ปุ่ม ↑ ↓ จัดลำดับ · ข้อความจัดรูปแบบได้เหมือนเมนูแก้เว็บ (หัวข้อ / รายการ / ตัวหนา / สีทอง)"),
     blocksBox, adds);
   return wrap;
 }
 
-async function saveInfo(btn) {
-  const c = IE;
-  if (!c.title.trim()) { toast("ใส่ชื่อหมวดก่อน"); $("ie-title")?.focus(); return; }
+async function saveInfo(btn, kind) {
+  const H = HUBS_ADM[kind], c = H.ed;
+  if (!c.title.trim()) { toast("ใส่" + H.titleLabel + "ก่อน"); $("ie-title")?.focus(); return; }
   const old = btn.textContent; btn.disabled = true;
   try {
     // 1) อัปรูปใหม่ทีละรูป
@@ -2362,13 +2592,15 @@ async function saveInfo(btn) {
     // 2) บันทึกหมวด
     btn.textContent = "กำลังบันทึก…";
     const blocks = c.blocks.map((b) => (b.t === "img" ? { t: "img", id: b.id, cap: (b.cap || "").slice(0, 200) } : { t: "text", v: (b.v || "").slice(0, 5000) }));
-    await Data.set("info", c.id, { title: c.title.trim().slice(0, 60), desc: (c.desc || "").trim().slice(0, 160), thumb: c.thumb || "", blocks, order: c.order || 0, updatedAt: Date.now() });
+    const doc = { title: c.title.trim().slice(0, 60), desc: (c.desc || "").trim().slice(0, 160), thumb: c.thumb || "", blocks, order: c.order || 0, updatedAt: Date.now() };
+    if (kind === "recaps") await writeRecap(c.id, { ...doc, hidden: !!c.hidden });
+    else await Data.set(H.col, c.id, doc);
     // 3) ลบรูปที่เอาออกจากหมวดแล้ว
     const keep = new Set(blocks.filter((b) => b.t === "img").map((b) => b.id));
     for (const id of c._orig || []) if (!keep.has(id)) await Data.del("infoImg", id).catch(() => {});
-    c._orig = [...keep]; c._new = false; IE_DIRTY = false;
-    toast("บันทึกหมวด " + c.title + " แล้ว ขึ้นเว็บทันที");
-    IE = null; renderInfoAdmin(); scrollTo(0, 0);
+    c._orig = [...keep]; c._new = false; H.dirty = false;
+    toast("บันทึก " + c.title + (c.hidden ? " แล้ว (ยังเป็นปริศนา)" : " แล้ว ขึ้นเว็บทันที"));
+    H.ed = null; renderInfoAdmin(kind); scrollTo(0, 0);
   } catch (e) { console.error(e); toast(errText(e)); }
   btn.disabled = false; btn.textContent = old;
 }
@@ -2460,12 +2692,14 @@ function memberForm() {
   save.onclick = async () => {
     if (!m.name.trim()) { toast("ใส่ชื่อก่อน"); name.focus(); return; }
     save.disabled = true;
-    try { await Data.set("members", m.id, { name: m.name.trim().slice(0, 60), note: (m.note || "").trim().slice(0, 80), img: m.img || "", order: m.order || 0, addedAt: m.addedAt || Date.now() });
+    try { await Data.set("members", m.id, { name: m.name.trim().slice(0, 60), note: (m.note || "").trim().slice(0, 80), img: m.img || "", order: m.order || 0, addedAt: m.addedAt || Date.now(), bio: (m.bio || "").slice(0, 3000) });
       toast((m._new ? "เพิ่ม " : "บันทึก ") + m.name.trim() + " แล้ว"); ME = null; renderMembersAdmin(); }
     catch (e) { toast(errText(e)); save.disabled = false; }
   };
   const btns = el("div", "th-row"); btns.append(cancel, save);
-  f.append(el("b", null, m._new ? "➕ เพิ่มสมาชิก" : "✏️ แก้ไข " + m.name), ln, name, lno, note, el("b", null, "รูปปก (แนวตั้งสวยสุด เช่น รูปตัวละคร)"), pv, row, btns);
+  const bio = edInput("ข้อมูลตัวละคร (ขึ้นตอนกดการ์ดสมาชิก)", () => m.bio || "", (v) => (m.bio = v), { long: true, rows: 6, max: 3000, rich: true, id: "meBio", onDirty: () => {},
+    placeholder: "# ข้อมูลตัวละคร\n- อายุ: \n- นิสัย: \n\n# ประวัติ\n..." });
+  f.append(el("b", null, m._new ? "➕ เพิ่มสมาชิก" : "✏️ แก้ไข " + m.name), ln, name, lno, note, el("b", null, "รูปปก (แนวตั้งสวยสุด เช่น รูปตัวละคร)"), pv, row, bio, btns);
   return f;
 }
 
@@ -2477,10 +2711,129 @@ async function addMemberFromApp(a, btn) {
     if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) {
       try { img = await shrinkImage(await (await fetch(a.charImg)).blob(), 480, 85000); } catch {}
     }
-    await Data.set("members", "app_" + a.id, { name: (a.charName || a.name || "สมาชิก").slice(0, 60), note: (a.role || "").slice(0, 80), img,
-      order: Math.max(0, ...A.members.map((m) => m.order || 0)) + 1, addedAt: Date.now() });
+    // ข้อมูลตัวละครจากใบสมัคร (แก้ทีหลังได้ในเมนู 👥 สมาชิก)
+    const ans = a.answers || {}, lines = [];
+    const clean = (v) => String(v || "").replace(/\s*\([^)]*\)\s*$/, "").trim(); // ตัด "(จำนวน 30 คน)" ท้ายตัวเลือกออก
+    if (ans.gender) lines.push("- เพศ: " + clean(ans.gender));
+    if (a.continent || ans.continent) lines.push("- ทวีป: " + clean(a.continent || ans.continent));
+    if (a.role) lines.push("- บทบาท: " + clean(a.role));
+    let bio = lines.length ? "# ข้อมูลตัวละคร\n" + lines.join("\n") : "";
+    if (ans.history) bio += (bio ? "\n\n" : "") + "# ประวัติ\n" + String(ans.history);
+    await Data.set("members", "app_" + a.id, { name: (a.charName || a.name || "สมาชิก").slice(0, 60), note: clean(a.role).slice(0, 80), img,
+      order: Math.max(0, ...A.members.map((m) => m.order || 0)) + 1, addedAt: Date.now(), bio: bio.slice(0, 3000) });
     toast("เพิ่ม " + (a.charName || a.name) + " เข้ารายชื่อสมาชิกแล้ว");
   } catch (e) { toast(errText(e)); btn.disabled = false; btn.textContent = "👥 เพิ่มเข้ารายชื่อสมาชิก"; }
+}
+
+
+/* =========================================================
+   📅 ตารางโรล (หน้าแอดมิน) → site/schedule
+   - ตั้งค่า: แสดง/ซ่อน · หัวข้อ · จำนวน EP ทั้งหมด · โรลรอบละกี่นาที
+   - สร้างตารางทั้งซีซั่นอัตโนมัติ: วันเริ่ม + วันในสัปดาห์ + เวลา
+   - แก้ทีละรอบ: วันเวลา · หมายเหตุ (เช่น ตอนจบ) · ลบรอบที่งดโรล
+   EP ที่ = ลำดับรอบตามเวลา (หน้าเว็บนับให้เอง)
+   ========================================================= */
+const SCH_DEF = { show: true, title: "📅 ตารางโรล", totalEp: 16, duration: 150, ended: false, hideTime: true, sessions: [] };
+// เขียนฉบับหน้าเว็บ (รอบที่ผ่านแล้ว + รอบถัดไป) ใหม่ ถ้าไม่ตรงกับตารางเต็ม · เรียกตอนเปิดหน้าแอดมิน และทุกนาที
+let schPubBusy = false;
+async function syncSchedPublic() {
+  if (!A.sched || schPubBusy) return;
+  const want = schedPublic({ ...SCH_DEF, ...A.sched });
+  const P = A.schedPub; // เทียบตรงๆ ทีละช่อง (ลำดับช่องเดียวกับ schedPublic) · ตรงกันแล้วไม่เขียนซ้ำ กันวนเขียนไม่จบ
+  const cur = P ? { show: !!P.show, title: String(P.title || ""), duration: P.duration, ended: !!P.ended, hideTime: !!P.hideTime, done: P.done ?? -1,
+    sessions: (P.sessions || []).map((x) => ({ at: x.at, note: x.note || "" })) } : null;
+  if (cur && JSON.stringify(cur) === JSON.stringify(want)) return;
+  schPubBusy = true; try { await Data.set("site", "schedule", want); } catch (e) { console.error(e); } schPubBusy = false;
+}
+setInterval(() => { if (!document.hidden) syncSchedPublic(); }, 60000);
+let SCH = null; // สำเนาที่กำลังแก้ (null = ยังไม่ได้แก้ → แสดงของจริงจากฐานข้อมูล)
+const toLocalInput = (ms) => { const d = new Date(ms); return new Date(ms - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
+const schEdit = () => (SCH ||= structuredClone({ ...SCH_DEF, ...(A.sched || {}) }));
+const schDirty = () => { schEdit(); const st = $("schState"); if (st) st.textContent = "มีการแก้ที่ยังไม่บันทึก"; };
+
+function renderScheduleAdmin() {
+  const box = $("schAdm"); if (!box) return; box.textContent = "";
+  const d = SCH || { ...SCH_DEF, ...(A.sched || {}) };
+  const ses = [...(d.sessions || [])].sort((a, b) => a.at - b.at);
+
+  // แถบบันทึก
+  const bar = el("div", "ie-bar");
+  const st = el("small", "ie-state", SCH ? "มีการแก้ที่ยังไม่บันทึก" : `${ses.length} รอบ · ยังไม่มีการแก้`); st.id = "schState";
+  const undo = el("button", "btn-ghost", "ยกเลิกที่แก้"); undo.type = "button"; undo.disabled = !SCH; undo.onclick = () => { SCH = null; renderScheduleAdmin(); };
+  const save = el("button", "btn-main", "💾 บันทึกตาราง"); save.type = "button"; save.onclick = () => saveSchedule(save);
+  bar.append(st, undo, save);
+
+  // ตั้งค่า
+  const set = el("div", "form mem-set");
+  const num = (id, label, val, min, max, on) => { const l = el("label"); l.htmlFor = id; l.textContent = label;
+    const i = el("input"); i.id = id; i.type = "number"; i.min = min; i.max = max; i.inputMode = "numeric"; i.value = val; i.oninput = () => { on(Math.round(+i.value)); schDirty(); }; return [l, i]; };
+  const shw = el("input"); shw.type = "checkbox"; shw.id = "schShow"; shw.checked = d.show; shw.onchange = () => { schEdit().show = shw.checked; schDirty(); };
+  const lsh = el("label", "mem-chk"); lsh.append(shw, el("span", null, "แสดงตารางโรลบนหน้าแรก"));
+  const tl = el("label"); tl.htmlFor = "schTitle"; tl.textContent = "หัวข้อ";
+  const ti = el("input"); ti.id = "schTitle"; ti.maxLength = 60; ti.value = d.title; ti.oninput = () => { schEdit().title = ti.value; schDirty(); };
+  const end = el("input"); end.type = "checkbox"; end.id = "schEnded"; end.checked = !!d.ended; end.onchange = () => { schEdit().ended = end.checked; schDirty(); };
+  const lend = el("label", "mem-chk"); lend.append(end, el("span", null, "🎉 ประกาศจบซีซั่น (ติ๊กหลังโรลตอนสุดท้ายจบ)"));
+  const hid = el("input"); hid.type = "checkbox"; hid.id = "schHideTime"; hid.checked = d.hideTime !== false; hid.onchange = () => { schEdit().hideTime = hid.checked; schDirty(); };
+  const lhid = el("label", "mem-chk ie-myst"); lhid.append(hid, el("span", null, "🔒 ซ่อนวันเวลา — หน้าเว็บขึ้นวันเวลาและนับถอยหลังเป็นกลิตช์อ่านไม่ออก (เวลาจริงไม่ถูกส่งไปหน้าเว็บเลย) · เอาติ๊กออกเมื่อพร้อมประกาศ"));
+  set.append(el("b", null, "⚙️ ตั้งค่า"),
+    el("small", "f-hint", "🔒 คนดูจะเห็นแค่รอบที่โรลไปแล้ว กับรอบถัดไป 1 รอบ — ไม่รู้ว่าทั้งซีซั่นมีกี่ EP"), lsh, lhid, lend, tl, ti,
+    ...num("schTotal", "จำนวน EP ทั้งซีซั่น (🔒 แอดมินเห็นคนเดียว)", d.totalEp, 1, 200, (v) => (schEdit().totalEp = v)),
+    ...num("schDur", "โรลรอบละกี่นาที (ใช้บอกว่า “กำลังโรลอยู่”)", d.duration, 10, 720, (v) => (schEdit().duration = v)));
+
+  // สร้างตารางทั้งซีซั่น
+  const gen = el("div", "form mem-set");
+  const today = new Date(); const ds = el("input"); ds.type = "date"; ds.id = "genStart"; ds.value = toLocalInput(today.getTime()).slice(0, 10);
+  const tm = el("input"); tm.type = "time"; tm.id = "genTime"; tm.value = "19:30";
+  const days = el("div", "th-row gen-days");
+  ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"].forEach((n, i) => { const l = el("label", "mem-chk"); const c = el("input"); c.type = "checkbox"; c.value = i; c.checked = [1, 3, 5, 6].includes(i); l.append(c, el("span", null, n)); days.append(l); });
+  const cnt = el("input"); cnt.type = "number"; cnt.id = "genCount"; cnt.min = 1; cnt.max = 200; cnt.value = d.totalEp;
+  const go = el("button", "btn-ghost", "🗓 สร้างตาราง"); go.type = "button";
+  go.onclick = () => {
+    const wd = [...days.querySelectorAll("input:checked")].map((x) => +x.value), n = Math.min(200, Math.max(1, Math.round(+cnt.value)));
+    if (!ds.value || !tm.value) return toast("ใส่วันเริ่มและเวลาก่อน"); if (!wd.length) return toast("เลือกวันโรลอย่างน้อย 1 วัน");
+    if (ses.length && !go.classList.contains("arm")) { go.classList.add("arm"); go.textContent = "แทนตารางเดิม? กดอีกครั้ง"; setTimeout(() => { go.classList.remove("arm"); go.textContent = "🗓 สร้างตาราง"; }, 3000); return; }
+    const [hh, mm] = tm.value.split(":").map(Number), cur = new Date(ds.value + "T00:00"); cur.setHours(hh, mm, 0, 0);
+    const out = []; let guard = 0;
+    while (out.length < n && guard++ < 2000) { if (wd.includes(cur.getDay())) out.push({ at: cur.getTime(), note: "" }); cur.setDate(cur.getDate() + 1); }
+    const e = schEdit(); e.sessions = out; e.totalEp = n; schDirty(); renderScheduleAdmin(); toast(`สร้าง ${n} รอบแล้ว ตรวจดูแล้วกด “บันทึกตาราง”`);
+  };
+  const lab = (t, f) => { const l = el("label"); l.htmlFor = f; l.textContent = t; return l; };
+  gen.append(el("b", null, "🗓 สร้างตารางทั้งซีซั่นอัตโนมัติ"), el("small", "f-hint", "เลือกวันเริ่ม เวลา และวันที่โรลในสัปดาห์ → ระบบไล่วันให้จนครบจำนวน EP"),
+    lab("วันเริ่ม", "genStart"), ds, lab("เวลาเริ่มโรล", "genTime"), tm, el("small", "f-hint", "วันที่โรล:"), days, lab("จำนวนรอบ", "genCount"), cnt, go);
+
+  // รายการรอบ
+  const list = el("div", "sch-list");
+  ses.forEach((x, i) => {
+    const row = el("div", "sch-row" + (x.at + d.duration * 60000 < Date.now() ? " past" : ""));
+    const dt = el("input"); dt.type = "datetime-local"; dt.value = toLocalInput(x.at); dt.setAttribute("aria-label", `วันเวลา EP ${i + 1}`);
+    dt.onchange = () => { const t = new Date(dt.value).getTime(); if (!Number.isFinite(t)) return; const e = schEdit(); e.sessions = ses.map((y, j) => (j === i ? { ...y, at: t } : y)); schDirty(); renderScheduleAdmin(); };
+    const nt = el("input"); nt.maxLength = 40; nt.placeholder = "หมายเหตุ (ไม่ใส่ก็ได้)"; nt.value = x.note || ""; nt.setAttribute("aria-label", `หมายเหตุ EP ${i + 1}`);
+    nt.oninput = () => { const e = schEdit(); e.sessions = ses.map((y, j) => (j === i ? { ...y, note: nt.value } : y)); ses[i].note = nt.value; schDirty(); };
+    const del = el("button", "act", "ลบ"); del.type = "button"; del.title = "ลบรอบนี้ (งดโรล)";
+    del.onclick = () => { const e = schEdit(); e.sessions = ses.filter((_, j) => j !== i); schDirty(); renderScheduleAdmin(); };
+    row.append(el("b", null, "EP " + (i + 1)), dt, nt, del); list.append(row);
+  });
+  const add = el("button", "btn-ghost", "+ เพิ่มรอบ"); add.type = "button";
+  add.onclick = () => { const last = ses.length ? ses[ses.length - 1].at : Date.now(); const e = schEdit(); e.sessions = [...ses, { at: last + 7 * 86400000, note: "" }]; schDirty(); renderScheduleAdmin(); };
+
+  box.append(bar, set, gen, el("h3", "ie-h", `รอบโรลทั้งหมด (${ses.length} รอบ · EP เรียงตามเวลาให้เอง)`),
+    ses.length ? list : el("p", "hint", "ยังไม่มีรอบโรล ใช้ “สร้างตารางทั้งซีซั่นอัตโนมัติ” ด้านบน หรือกด “+ เพิ่มรอบ”"), add);
+}
+
+async function saveSchedule(btn) {
+  const d = SCH || { ...SCH_DEF, ...(A.sched || {}) };
+  const sessions = (d.sessions || []).filter((x) => Number.isFinite(x.at)).sort((a, b) => a.at - b.at)
+    .map((x) => ({ at: Math.round(x.at), note: String(x.note || "").trim().slice(0, 40) }));
+  const totalEp = Math.round(+d.totalEp), duration = Math.round(+d.duration);
+  if (!(totalEp >= 1 && totalEp <= 200)) return toast("จำนวน EP ต้องอยู่ระหว่าง 1–200");
+  if (!(duration >= 10 && duration <= 720)) return toast("เวลาโรลต่อรอบต้องอยู่ระหว่าง 10–720 นาที");
+  if (sessions.length > 200) return toast("ใส่ได้สูงสุด 200 รอบ");
+  btn.disabled = true;
+  const full = { show: !!d.show, title: String(d.title || "").trim().slice(0, 60) || SCH_DEF.title, totalEp, duration, ended: !!d.ended, hideTime: d.hideTime !== false, sessions };
+  try { await Data.set("site", "schedulePriv", full); await Data.set("site", "schedule", schedPublic(full));
+    SCH = null; toast("บันทึกตารางโรลแล้ว"); renderScheduleAdmin(); }
+  catch (e) { toast(errText(e)); }
+  btn.disabled = false;
 }
 </script>
 <script>
@@ -2489,7 +2842,7 @@ async function addMemberFromApp(a, btn) {
    ความปลอดภัยจริงอยู่ที่ firestore.rules (คนที่ไม่ใช่แอดมินอ่านใบสมัครคนอื่นไม่ได้
    ต่อให้เปิดหน้านี้ก็ตาม)
    ========================================================= */
-const A = { apps: [], news: [], admins: [], blocked: [], members: [], mset: null, tab: "pending", notes: {} };
+const A = { apps: [], news: [], admins: [], blocked: [], members: [], mset: null, sched: null, tab: "pending", notes: {} };
 let SITE_PRIVATE = structuredClone(DEFAULT_PRIVATE); // คำตอบที่ถูกของคำถามทดสอบ
 let me = null, unsubs = [];
 
@@ -2706,9 +3059,11 @@ renderMe($("me"), null, false); renderGate("loading");
       readOnce("comments", { orderBy: "createdAt", dir: "asc", limit: 10000 }),
     ]);
     const info = await readOnce("info", { orderBy: "order", dir: "asc", limit: 60 });
-    const infoImg = []; for (const c of info) for (const b of c.blocks || []) if (b.t === "img") { const d = await Data.get("infoImg", b.id).catch(() => null); if (d) infoImg.push({ id: b.id, ...d }); }
+    const recaps = await readOnce("recaps", { orderBy: "order", dir: "asc", limit: 200 });
+    const recapsDraft = await readOnce("recapsDraft", { orderBy: "order", dir: "asc", limit: 200 });
+    const infoImg = []; for (const c of [...info, ...recaps, ...recapsDraft]) for (const b of c.blocks || []) if (b.t === "img") { const d = await Data.get("infoImg", b.id).catch(() => null); if (d) infoImg.push({ id: b.id, ...d }); }
     const data = { app: "Snowcraft", kind: "backup", version: 1, exportedAt: new Date().toISOString(), exportedBy: me.email || me.uid,
-      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, info, infoImg, members: A.members, membersSettings: A.mset, applications, news, posts, comments };
+      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, info, recaps, recapsDraft, schedule: A.sched, infoImg, members: A.members, membersSettings: A.mset, applications, news, posts, comments };
     saveFile(`Snowcraft_backup_${stamp()}.json`, JSON.stringify(data, null, 1), "application/json");
     toast(`ดาวน์โหลดแล้ว · ใบสมัคร ${applications.length} · ประกาศ ${news.length} · โพสต์ ${posts.length}`);
   });
@@ -2761,7 +3116,11 @@ renderMe($("me"), null, false); renderGate("loading");
     unsubs.push(Data.watch("admins", { orderBy: "addedAt", dir: "asc", limit: 100 }, (r) => { A.admins = r; renderAdmins(); }, oops));
     unsubs.push(Data.watch("members", { orderBy: "order", dir: "asc", limit: 500 }, (r) => { A.members = r; if (!ME) renderMembersAdmin(); renderApps(); }, oops));
     unsubs.push(Data.watchDoc("site", "members", (d) => { A.mset = d; if (!ME) renderMembersAdmin(); }, oops));
-    unsubs.push(Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => { INFO = r; if (!IE) renderInfoAdmin(); }, oops));
+    unsubs.push(Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => { HUBS_ADM.info.list = r; if (!HUBS_ADM.info.ed) renderInfoAdmin("info"); }, oops));
+    unsubs.push(Data.watch("recaps", { orderBy: "order", dir: "asc", limit: 200 }, (r) => { HUBS_ADM.recaps.pub = r; mergeRecaps(); }, oops));
+    unsubs.push(Data.watch("recapsDraft", { orderBy: "order", dir: "asc", limit: 200 }, (r) => { HUBS_ADM.recaps.drafts = r; mergeRecaps(); }, oops));
+    unsubs.push(Data.watchDoc("site", "schedulePriv", (d) => { A.sched = d; if (!SCH) renderScheduleAdmin(); syncSchedPublic(); }, oops));
+    unsubs.push(Data.watchDoc("site", "schedule", (d) => { A.schedPub = d; syncSchedPublic(); }, oops));
     unsubs.push(Data.watch("blocked", { orderBy: "at", dir: "desc", limit: 500 }, (r) => { A.blocked = r; renderBlockedList(); }, oops));
   });
 })();
