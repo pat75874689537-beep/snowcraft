@@ -728,6 +728,70 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .ie-img img { max-width: 100%; max-height: 320px; border-radius: 8px; display: block; }
 .back-arm, .btn-ghost.arm { border-color: var(--gold); color: var(--gold); }
 @media (prefers-reduced-motion: reduce) { .info-banner:hover, .iv-card:hover { transform: none; } .iv-fig.loading img { animation: none; } }
+
+/* =========================================================
+   v25: สมาชิกในโปรเจกต์
+   ========================================================= */
+.members { display: grid; gap: 12px; }
+.mb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mb-head h2.sec { margin: 0; }
+.mb-count { display: inline-flex; align-items: baseline; gap: 4px; font: 700 15px var(--f-mono); color: var(--muted);
+  padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(var(--ice-rgb), .45); background: rgba(var(--ice-rgb), .1); font-variant-numeric: tabular-nums; }
+.mb-count b { font-size: 26px; line-height: 1; color: var(--fg); text-shadow: 0 0 12px rgba(var(--ice-rgb), .7); }
+.mb-count.full { border-color: var(--gold); background: rgba(255,211,110,.1); }
+.mb-count.full b { color: var(--gold); text-shadow: 0 0 12px rgba(255,211,110,.6); }
+.mb-bar { height: 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.mb-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--aurora), var(--ice));
+  box-shadow: 0 0 12px rgba(var(--ice-rgb), .7); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.members .hint { margin: -4px 0 0; }
+.mb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 560px) { .mb-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 768px) { .mb-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .mb-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } } /* จอคอมอยู่ในคอลัมน์ซ้าย */
+.mb-grid > .empty { grid-column: 1 / -1; display: grid; justify-items: center; gap: 8px; }
+.mb-card { margin: 0; display: grid; gap: 6px; min-width: 0; animation: mbIn .45s ease-out both; animation-delay: var(--d, 0ms); }
+.mb-card[role="button"] { cursor: zoom-in; }
+.mb-card:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; border-radius: 12px; }
+.mb-pic { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); transition: border-color .2s, transform .25s, box-shadow .25s; }
+.mb-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mb-pic.no-img { display: grid; place-items: center; background: radial-gradient(circle at 50% 35%, rgba(var(--ice-rgb), .3), var(--panel-2) 70%); }
+.mb-pic.no-img span { font: 800 clamp(26px, 8vw, 40px) var(--f-display); color: var(--fg); opacity: .85; }
+@media (hover: hover) { .mb-card:hover .mb-pic { border-color: rgba(var(--ice-rgb), .7); transform: translateY(-3px); box-shadow: 0 10px 24px -12px rgba(var(--ice-rgb), .7); } }
+.mb-card figcaption { display: grid; gap: 1px; text-align: center; min-width: 0; }
+.mb-card figcaption b { font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mb-card figcaption small { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mb-more { justify-self: center; }
+@keyframes mbIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mb-card { animation: none; } .mb-bar i { transition: none; } }
+/* หน้าแอดมิน */
+.mem-set, .mem-form { display: grid; gap: 8px; }
+.mem-set input[type=number] { max-width: 160px; }
+#memAdmCount { font: 700 15px var(--f-mono); color: var(--muted); }
+#memAdmCount.over, .hint.warn { color: var(--gold); }
+.mem-list { display: grid; gap: 8px; }
+.mem-row { grid-template-columns: 64px minmax(0, 1fr); }
+@media (min-width: 640px) { .mem-row { grid-template-columns: 72px minmax(0, 1fr) auto; } }
+.mem-thumb { aspect-ratio: 3 / 4; font: 800 22px var(--f-display); color: var(--fg); }
+.mem-thumb.big { max-width: 160px; font-size: 13px; color: var(--muted); }
+
+.mem-chk { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.mem-chk input { width: 20px; height: 20px; margin: 0; flex: none; accent-color: var(--ice); }
+.mb-pic.no-img canvas { width: 38%; max-width: 56px; height: auto; aspect-ratio: 1; image-rendering: pixelated; opacity: .8; }
+.mem-thumb > span { font: 600 10.5px var(--f-body); color: var(--muted); text-align: center; }
+
+/* ===== v27: โปรไฟล์ / ตั้งชื่อ ===== */
+.me-btn { display: inline-flex; align-items: center; gap: 8px; padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid transparent;
+  background: none; color: var(--fg); font: inherit; cursor: pointer; transition: border-color .2s, background .2s; min-width: 0; }
+.me-btn:hover { border-color: var(--line); background: rgba(255,255,255,.04); }
+.me-btn .nm { max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prof-dlg { border-color: rgba(var(--ice-rgb), .6); }
+.prof-dlg h3 { color: var(--fg); }
+.prof-who { display: flex; align-items: center; gap: 10px; }
+.prof-who small { color: var(--muted); overflow-wrap: anywhere; }
+.prof-err { margin: 0; min-height: 1.2em; color: var(--danger); font-size: 13.5px; }
+.prof-dlg .actions { align-items: center; }
+.prof-dlg .sp { flex: 1; }
+.av-box { display: inline-flex; }
 </style>
 </head>
 <body>
@@ -752,6 +816,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
       <button type="button" data-sec="secApps" aria-pressed="true">📝 ใบสมัคร</button>
       <button type="button" data-sec="secNews" aria-pressed="false">📢 ประกาศ</button>
       <button type="button" data-sec="secEdit" aria-pressed="false">✏️ แก้เว็บ</button>
+      <button type="button" data-sec="secMembers" aria-pressed="false">👥 สมาชิก</button>
       <button type="button" data-sec="secInfo" aria-pressed="false">📚 ข้อมูล SS</button>
       <button type="button" data-sec="secBlocked" aria-pressed="false">🚫 บล็อก</button>
       <button type="button" data-sec="secAdmins" aria-pressed="false">👑 แอดมิน</button>
@@ -797,6 +862,12 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
         <button class="btn-ghost" type="button" id="edUndo">ยกเลิกที่แก้</button>
         <button class="btn-main" type="button" id="edSave">บันทึก</button>
       </div>
+    </section>
+
+    <!-- สมาชิกในโปรเจกต์: ตั้งจำนวนรับ + เพิ่มชื่อ/รูปปก -->
+    <section style="display:grid;gap:12px" id="secMembers" hidden aria-labelledby="memAdmTitle">
+      <h2 class="sec" id="memAdmTitle">👥 สมาชิกในโปรเจกต์ <small id="memAdmCount"></small></h2>
+      <div id="memAdm" style="display:grid;gap:12px"></div>
     </section>
 
     <!-- ข้อมูลใน SS: หมวด + รูป + ข้อความ (แสดงที่หน้าเว็บ ลิงก์ #info) -->
@@ -1228,6 +1299,14 @@ async function initFirebase() {
       b.set(fs.doc(fs.collection(db, col)), data);
       await b.commit();
     },
+    // ตั้ง/เปลี่ยนชื่อ: จองชื่อใหม่ + ปล่อยชื่อเก่า + บันทึกโปรไฟล์ ในครั้งเดียว (กฎ Firebase ตรวจทั้งชุด)
+    saveName: async (uid, name, old) => {
+      const k = name.toLowerCase(), ok = old ? old.toLowerCase() : null, b = fs.writeBatch(db);
+      if (k !== ok) b.set(fs.doc(db, "names", k), { uid });
+      if (ok && ok !== k) b.delete(fs.doc(db, "names", ok));
+      b.set(fs.doc(db, "profiles", uid), { name, updatedAt: Date.now() });
+      await b.commit();
+    },
   };
   Auth = {
     // ชื่อ/รูปเอาจากบัตรยืนยันตัวตนของ Google (ค่าเดียวกับที่กฎ Firebase ใช้ตรวจ กันคนปลอมชื่อ)
@@ -1283,10 +1362,15 @@ function initDemo() {
           { t: "img", id: "di1", cap: "เมืองที่ถูกทิ้งร้าง (รูปตัวอย่าง)" }, { t: "text", v: "* ความลับที่ซ่อนอยู่\nบางอย่างยังไม่มีใครรู้ (ตัวอย่าง)" }] },
       { id: "c2", order: 2, title: "ตัวละคร", desc: "ตัวละครสำคัญในซีซั่นนี้", thumb: demoImg(360, 220, "#3a1a50", "#b45cff", "ตัวละคร"), updatedAt: now,
         blocks: [{ t: "img", id: "di2", cap: "ภาพตัวละครหลัก (ตัวอย่าง)" }, { t: "text", v: "# อาจารย์ใหญ่\nผู้ดูแลโรงเรียน ไม่มีใครเห็นหน้าจริง" }] },
-      { id: "c3", order: 3, title: "อาวุธ", desc: "ไอเทมและอาวุธในซีซั่นนี้", thumb: demoImg(360, 220, "#4a2a08", "#ffb43d", "อาวุธ"), updatedAt: now,
-        blocks: [{ t: "text", v: "- อาวุธชิ้นที่ 1\n- อาวุธชิ้นที่ 2 (ตัวอย่าง)" }] },
+      { id: "c3", order: 3, title: "กฎของโลก", desc: "สิ่งที่ทำได้และทำไม่ได้ในโรล", thumb: demoImg(360, 220, "#4a2a08", "#ffb43d", "กฎของโลก"), updatedAt: now,
+        blocks: [{ t: "text", v: "- กฎข้อที่ 1\n- กฎข้อที่ 2 (ตัวอย่าง)" }] },
       { id: "c4", order: 4, title: "สถานที่", desc: "", thumb: "", updatedAt: now, blocks: [{ t: "text", v: "แผนที่โรงเรียนและเมือง (ยังไม่มีรูปปก = ขึ้นเป็นไอคอนแทน)" }] },
     ],
+    // สมาชิกตัวอย่าง 11 คน (จาก 20 ที่)
+    members: Array.from({ length: 11 }, (_, i) => ({ id: "m" + i, order: i + 1, addedAt: now - i * H,
+      name: ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i],
+      note: i % 3 ? "นักเรียน" : "บทบาทพิเศษ",
+      img: i === 4 ? "" : demoImg(300, 400, ["#5a0a14", "#3a1a50", "#0a3a5c", "#4a2a08"][i % 4], ["#ff2e46", "#b45cff", "#3db8ff", "#ffb43d"][i % 4], ["ไอริน", "คาเซะ", "มินท์", "ซากุระ", "เรย์", "โนอาห์", "ฮารุ", "ลูน่า", "ไคโตะ", "เอลล่า", "ริว"][i]) })),
     infoImg: [
       { id: "di1", src: demoImg(1200, 680, "#1a0508", "#8c0a1e", "เมืองร้าง"), at: now },
       { id: "di2", src: demoImg(900, 900, "#120820", "#b45cff", "ตัวละคร"), at: now },
@@ -1333,6 +1417,12 @@ function initDemo() {
     update: async (col, id, p) => { const x = (store[col] || []).find((x) => x.id === id); if (x) Object.assign(x, p); emit(); },
     del: async (col, id) => { store[col] = (store[col] || []).filter((x) => x.id !== id); emit(); },
     addRated: async (col, d) => Data.add(col, d),
+    saveName: async (uid, name, old) => {
+      const k = name.toLowerCase(), taken = (store.names || []).find((x) => x.id === k);
+      if (taken && taken.uid !== uid) throw Object.assign(new Error("taken"), { code: "permission-denied" });
+      store.names = (store.names || []).filter((x) => !(old && x.id === old.toLowerCase())).concat(taken ? [] : [{ id: k, uid }]);
+      await Data.set("profiles", uid, { name, updatedAt: Date.now() });
+    },
   };
   let cur = null; const ls = [];
   const tell = () => ls.forEach((f) => f(cur));
@@ -1355,7 +1445,11 @@ function renderMe(box, me, isAdmin, opts = {}) {
   }
   if (isAdmin && opts.adminLink) { const a = el("a", "admin-link", "หน้าแอดมิน"); a.href = opts.adminLink; box.append(a); }
   if (opts.homeLink) { const a = el("a", "admin-link", "← หน้าเว็บ"); a.href = opts.homeLink; box.append(a); }
-  box.append(avatar(me.name, me.photo), el("span", "nm", me.name));
+  // กดรูป/ชื่อ = เปิดโปรไฟล์ (ตั้ง/เปลี่ยนชื่อ) ถ้าหน้านั้นมีหน้าโปรไฟล์
+  if (opts.onProfile) {
+    const b = el("button", "me-btn"); b.type = "button"; b.title = "โปรไฟล์ของฉัน"; b.setAttribute("aria-label", "โปรไฟล์ของฉัน: " + (me.name || "ยังไม่ได้ตั้งชื่อ"));
+    b.append(avatar(me.name || "?", me.photo), el("span", "nm", me.name || "ตั้งชื่อ ✏️")); b.onclick = opts.onProfile; box.append(b);
+  } else box.append(avatar(me.name, me.photo), el("span", "nm", me.name));
   const out = el("button", "link-btn", "ออกจากระบบ"); out.type = "button"; out.onclick = () => Auth.logout();
   box.append(out);
 }
@@ -1390,7 +1484,7 @@ const DEFAULT_CONTENT = {
     title: "ทำไมต้อง Snowcraft",
     items: [
       { icon: "basics", title: "เนื้อเรื่องเข้มข้น", text: "เนื้อเรื่องใหม่ทุกซีซั่น พร้อมความลับให้ค้นหาระหว่างโรล" },
-      { icon: "sword", title: "ระบบเฉพาะซีซั่น", text: "ไอเทม อาวุธ และระบบในเกมออกแบบใหม่ให้เข้ากับเนื้อเรื่อง" },
+      { icon: "snow", title: "ระบบเฉพาะซีซั่น", text: "ระบบและไอเทมในเกมออกแบบใหม่ให้เข้ากับเนื้อเรื่อง" },
       { icon: "people", title: "รับผู้เล่นจำกัด", text: "ดูจำนวนที่รับ และวันเวลาโรล ได้ในประกาศ" },
       { icon: "phone", title: "เล่นบนมือถือได้", text: "Minecraft Bedrock · มือถือ RAM 8 ขึ้นไป หรือคอมพิวเตอร์" },
     ],
@@ -1464,14 +1558,7 @@ const DEFAULT_CONTENT = {
 - กางเกง → เป็นหัว
 
 # บทบาทที่รับ
-- นักเรียน จำนวน 40 คน
-
-# อาวุธที่มีให้ในโรล
-- อาวุธขวาน
-- ดาบคาตานะ
-- อาวุธมีดสั้นคู่
-(ทุกอาวุธมีสกิล มีอนิเมชัน)
-* และสามารถสั่งทำอาวุธของตัวเองได้ แต่ต้องเป็นร้านของโปรเจกต์ของเราเท่านั้น`,
+- นักเรียน (จำนวนดูในประกาศ)`,
         fields: [
           { key: "ackRead", type: "check", label: "ฉันอ่านเนื้อเรื่องและเงื่อนไขทั้งหมดครบทุกบรรทัดแล้ว", required: true },
         ],
@@ -1514,7 +1601,7 @@ const DEFAULT_CONTENT = {
           { key: "noLeave", type: "radio", required: true, options: ["โอเค", "ไม่โอเค"], label: "หากคุณไม่มีการแจ้งลาจนเกินกำหนด จะทำการปลดไวรัส คุณโอเคไหม" },
           { key: "swearing", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "มีการใช้คำหยาบ ด่า 80% คุณรับได้ไหม" },
           { key: "headChange", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "หากต้องการเปลี่ยนหัว (ตัวละครใหม่) จำเป็นต้องมีสตอรี่รองรับ หากเปลี่ยนเพราะเบื่อและไม่มีสตอรี่ จะไม่ให้เปลี่ยน คุณรับได้ไหม" },
-          { key: "addons", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "ภายในเซิร์ฟมีแอดออนเยอะ (แอดออนตกแต่ง, แอดออนอาหาร, แอดออน EMOTES ท่าทาง, พลังและอาวุธ, อื่นๆ)" },
+          { key: "addons", type: "radio", required: true, options: ["รับได้", "รับไม่ได้"], label: "ภายในเซิร์ฟมีแอดออนเยอะ (แอดออนตกแต่ง, แอดออนอาหาร, แอดออน EMOTES ท่าทาง, อื่นๆ)" },
           { key: "spec", type: "text", label: "สเปกมือถือและคอม", required: true },
         ],
       },
@@ -2157,7 +2244,7 @@ function renderInfoAdmin() {
   const add = el("button", "btn-main", "+ เพิ่มหมวดใหม่"); add.type = "button";
   add.onclick = () => { IE = { id: infoId("c"), title: "", desc: "", thumb: "", blocks: [{ t: "text", v: "" }], order: Math.max(0, ...INFO.map((c) => c.order || 0)) + 1, _new: true, _orig: [] }; IE_DIRTY = false; renderInfoAdmin(); scrollTo(0, 0); };
   box.append(add);
-  if (!INFO.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีหมวด"), el("span", null, "กด “+ เพิ่มหมวดใหม่” เช่น เนื้อเรื่อง ตัวละคร อาวุธ สถานที่")); box.append(e); return; }
+  if (!INFO.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีหมวด"), el("span", null, "กด “+ เพิ่มหมวดใหม่” เช่น เนื้อเรื่อง ตัวละคร สถานที่ กฎของโลก")); box.append(e); return; }
   INFO.forEach((cat, i) => {
     const row = el("article", "ia-row");
     const th = el("div", "ia-thumb"); if (cat.thumb) { const im = el("img"); im.src = cat.thumb; im.alt = ""; th.append(im); } else th.append(el("span", null, "ไม่มีปก"));
@@ -2285,6 +2372,116 @@ async function saveInfo(btn) {
   } catch (e) { console.error(e); toast(errText(e)); }
   btn.disabled = false; btn.textContent = old;
 }
+
+
+/* =========================================================
+   👥 สมาชิกในโปรเจกต์ (หน้าแอดมิน)
+   - ตั้งค่า: หัวข้อ · จำนวนที่รับ (20/30/...) · แสดงบนหน้าเว็บ  → site/members
+   - รายชื่อ: ชื่อ · คำอธิบายสั้น (เช่น บทบาท) · รูปปก          → members/<id>
+   - ใบสมัครที่ "ผ่าน" กดเพิ่มเข้ารายชื่อได้ทันที (id = app_<uid> กันเพิ่มซ้ำ)
+   ========================================================= */
+const MSET_DEF = { title: "👥 สมาชิกในโปรเจกต์", capacity: 20, show: true };
+let ME = null; // สมาชิกที่กำลังเพิ่ม/แก้ {id, name, note, img, order, addedAt, _new}
+
+function renderMembersAdmin() {
+  const box = $("memAdm"); if (!box) return;
+  const set = { ...MSET_DEF, ...(A.mset || {}) }, n = A.members.length;
+  $("memAdmCount").textContent = `${n} / ${set.capacity}`;
+  $("memAdmCount").classList.toggle("over", n > set.capacity);
+  box.textContent = "";
+
+  // ---- ตั้งค่า ----
+  const st = el("div", "form mem-set");
+  const t = el("input"); t.id = "memTitle"; t.maxLength = 60; t.value = set.title;
+  const capIn = el("input"); capIn.id = "memCap"; capIn.type = "number"; capIn.min = 1; capIn.max = 500; capIn.inputMode = "numeric"; capIn.value = set.capacity;
+  const chips = el("div", "th-row"); [10, 20, 30, 40, 50].forEach((v) => { const c = el("button", "act", String(v)); c.type = "button"; c.onclick = () => { capIn.value = v; }; chips.append(c); });
+  const sh = el("input"); sh.type = "checkbox"; sh.id = "memShow"; sh.checked = set.show;
+  const lt = el("label"); lt.htmlFor = "memTitle"; lt.textContent = "หัวข้อบนหน้าเว็บ";
+  const lc = el("label"); lc.htmlFor = "memCap"; lc.textContent = "จำนวนที่รับ (คน)";
+  const ls = el("label", "mem-chk"); ls.append(sh, el("span", null, "แสดงรายชื่อบนหน้าเว็บ"));
+  const save = el("button", "btn-main", "💾 บันทึกการตั้งค่า"); save.type = "button";
+  save.onclick = async () => {
+    const cap = Math.round(+capIn.value);
+    if (!(cap >= 1 && cap <= 500)) return toast("จำนวนที่รับต้องอยู่ระหว่าง 1–500");
+    save.disabled = true;
+    try { await Data.set("site", "members", { title: t.value.trim().slice(0, 60) || MSET_DEF.title, capacity: cap, show: sh.checked }); toast(`บันทึกแล้ว · รับ ${cap} คน`); }
+    catch (e) { toast(errText(e)); }
+    save.disabled = false;
+  };
+  st.append(el("b", null, "⚙️ ตั้งค่า"), lt, t, lc, capIn, el("small", "f-hint", "กดเลขลัดได้:"), chips, ls, save);
+  if (n > set.capacity) st.append(el("p", "hint warn", `⚠️ ตอนนี้มีสมาชิก ${n} คน เกินจำนวนที่รับ (${set.capacity})`));
+  box.append(st);
+
+  // ---- ฟอร์มเพิ่ม/แก้ ----
+  if (ME) { box.append(memberForm()); }
+  else {
+    const add = el("button", "btn-main", "+ เพิ่มสมาชิก"); add.type = "button";
+    add.onclick = () => { ME = { id: infoId("m"), name: "", note: "", img: "", order: Math.max(0, ...A.members.map((m) => m.order || 0)) + 1, addedAt: Date.now(), _new: true }; renderMembersAdmin(); $("meName")?.focus(); };
+    box.append(add);
+  }
+
+  // ---- รายชื่อ ----
+  if (!n) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีรายชื่อ"), el("span", null, "กด “+ เพิ่มสมาชิก” หรือไปที่ 📝 ใบสมัคร แล้วกด “👥 เพิ่มเข้ารายชื่อสมาชิก” ในใบที่ผ่านแล้ว")); box.append(e); return; }
+  const list = el("div", "mem-list");
+  A.members.forEach((m, i) => {
+    const row = el("article", "ia-row mem-row");
+    const th = el("div", "ia-thumb mem-thumb"); if (m.img) { const im = el("img"); im.src = m.img; im.alt = ""; th.append(im); } else th.append(el("span", null, "ไม่มีรูป"));
+    const tx = el("div", "ia-txt"); tx.append(el("b", null, `${i + 1}. ${m.name}`), el("small", null, m.note || "—"));
+    const act = el("div", "ia-act");
+    const mk = (tt, title, fn, dis) => { const b = el("button", "act", tt); b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.disabled = !!dis; b.onclick = fn; return b; };
+    const swap = async (j) => { const l = A.members.map((x) => ({ id: x.id, order: x.order })); [l[i], l[j]] = [l[j], l[i]];
+      try { for (const [k, x] of l.entries()) if (x.order !== k + 1) await Data.update("members", x.id, { order: k + 1 }); } catch (e) { toast(errText(e)); } };
+    const ed = el("button", "btn-ghost", "แก้ไข"); ed.type = "button"; ed.onclick = () => { ME = { ...m }; renderMembersAdmin(); scrollTo(0, 0); };
+    const del = el("button", "btn-ghost danger"); del.type = "button";
+    armDelete(del, () => Data.del("members", m.id).then(() => toast("ลบ " + m.name + " ออกจากรายชื่อแล้ว"), (e) => toast(errText(e))), "ลบ");
+    act.append(mk("↑", "เลื่อนขึ้น", () => swap(i - 1), i === 0), mk("↓", "เลื่อนลง", () => swap(i + 1), i === n - 1), ed, del);
+    row.append(th, tx, act); list.append(row);
+  });
+  box.append(list);
+}
+
+function memberForm() {
+  const m = ME, f = el("div", "form mem-form");
+  const name = el("input"); name.id = "meName"; name.maxLength = 60; name.value = m.name; name.placeholder = "ชื่อตัวละคร / ชื่อผู้เล่น"; name.oninput = () => (m.name = name.value);
+  const note = el("input"); note.id = "meNote"; note.maxLength = 80; note.value = m.note; note.placeholder = "เช่น นักเรียน / บทบาทพิเศษ (ไม่ใส่ก็ได้)"; note.oninput = () => (m.note = note.value);
+  const ln = el("label"); ln.htmlFor = "meName"; ln.textContent = "ชื่อ";
+  const lno = el("label"); lno.htmlFor = "meNote"; lno.textContent = "คำอธิบายสั้นๆ";
+  const pv = el("div", "ia-thumb mem-thumb big");
+  const draw = () => { pv.textContent = ""; if (m.img) { const im = el("img"); im.src = m.img; im.alt = "รูปปก"; pv.append(im); } else pv.append(el("span", null, "ยังไม่มีรูป")); };
+  draw();
+  const fi = el("input"); fi.type = "file"; fi.accept = "image/*"; fi.hidden = true;
+  const pick = el("button", "btn-ghost", "🖼 เลือกรูปปก"); pick.type = "button"; pick.onclick = () => fi.click();
+  const rm = el("button", "btn-ghost", "เอารูปออก"); rm.type = "button"; rm.onclick = () => { m.img = ""; draw(); };
+  fi.onchange = async () => { const file = fi.files[0]; fi.value = ""; if (!file) return; pick.disabled = true; pick.textContent = "กำลังย่อรูป…";
+    try { m.img = await shrinkImage(file, 480, 85000); draw(); } catch (e) { toast(e.message); } pick.disabled = false; pick.textContent = "🖼 เลือกรูปปก"; };
+  const row = el("div", "th-row"); row.append(pick, rm, fi);
+  const cancel = el("button", "btn-ghost", "ยกเลิก"); cancel.type = "button"; cancel.onclick = () => { ME = null; renderMembersAdmin(); };
+  const save = el("button", "btn-main", m._new ? "+ เพิ่มเข้ารายชื่อ" : "💾 บันทึก"); save.type = "button";
+  save.onclick = async () => {
+    if (!m.name.trim()) { toast("ใส่ชื่อก่อน"); name.focus(); return; }
+    save.disabled = true;
+    try { await Data.set("members", m.id, { name: m.name.trim().slice(0, 60), note: (m.note || "").trim().slice(0, 80), img: m.img || "", order: m.order || 0, addedAt: m.addedAt || Date.now() });
+      toast((m._new ? "เพิ่ม " : "บันทึก ") + m.name.trim() + " แล้ว"); ME = null; renderMembersAdmin(); }
+    catch (e) { toast(errText(e)); save.disabled = false; }
+  };
+  const btns = el("div", "th-row"); btns.append(cancel, save);
+  f.append(el("b", null, m._new ? "➕ เพิ่มสมาชิก" : "✏️ แก้ไข " + m.name), ln, name, lno, note, el("b", null, "รูปปก (แนวตั้งสวยสุด เช่น รูปตัวละคร)"), pv, row, btns);
+  return f;
+}
+
+/* เพิ่มจากใบสมัครที่ผ่านแล้ว: ย่อรูปตัวละครจากใบสมัครให้เล็กลงเป็นรูปปก */
+async function addMemberFromApp(a, btn) {
+  btn.disabled = true; btn.textContent = "กำลังเพิ่ม…";
+  try {
+    let img = "";
+    if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) {
+      try { img = await shrinkImage(await (await fetch(a.charImg)).blob(), 480, 85000); } catch {}
+    }
+    await Data.set("members", "app_" + a.id, { name: (a.charName || a.name || "สมาชิก").slice(0, 60), note: (a.role || "").slice(0, 80), img,
+      order: Math.max(0, ...A.members.map((m) => m.order || 0)) + 1, addedAt: Date.now() });
+    toast("เพิ่ม " + (a.charName || a.name) + " เข้ารายชื่อสมาชิกแล้ว");
+  } catch (e) { toast(errText(e)); btn.disabled = false; btn.textContent = "👥 เพิ่มเข้ารายชื่อสมาชิก"; }
+}
 </script>
 <script>
 /* =========================================================
@@ -2292,7 +2489,7 @@ async function saveInfo(btn) {
    ความปลอดภัยจริงอยู่ที่ firestore.rules (คนที่ไม่ใช่แอดมินอ่านใบสมัครคนอื่นไม่ได้
    ต่อให้เปิดหน้านี้ก็ตาม)
    ========================================================= */
-const A = { apps: [], news: [], admins: [], blocked: [], tab: "pending", notes: {} };
+const A = { apps: [], news: [], admins: [], blocked: [], members: [], mset: null, tab: "pending", notes: {} };
 let SITE_PRIVATE = structuredClone(DEFAULT_PRIVATE); // คำตอบที่ถูกของคำถามทดสอบ
 let me = null, unsubs = [];
 
@@ -2373,6 +2570,11 @@ function renderApps() {
     const del = el("button", "act del"); del.type = "button";
     armDelete(del, () => Data.del("applications", a.id).then(() => toast("ลบใบสมัครแล้ว (คนนี้สมัครใหม่ได้)"), (e) => toast(errText(e))), "ลบ");
     act.append(note, ok, no, del);
+    if (a.status === "approved") { // เพิ่มเข้ารายชื่อสมาชิก (ใช้ชื่อตัวละคร + รูปจากใบสมัคร)
+      const inList = A.members.some((m) => m.id === "app_" + a.id);
+      const add = el("button", inList ? "act" : "btn-ok", inList ? "✓ อยู่ในรายชื่อสมาชิกแล้ว" : "👥 เพิ่มเข้ารายชื่อสมาชิก"); add.type = "button"; add.disabled = inList;
+      add.onclick = () => addMemberFromApp(a, add); act.append(add);
+    }
     if (a.status !== "pending") { const back = el("button", "act", "↺ กลับเป็นรอตรวจ"); back.type = "button"; back.onclick = () => decide(a, "pending", note.value); act.append(back); }
     c.append(head, kv, renderAnswers(a, SITE_PRIVATE.answers || {}), act); box.append(c);
   }
@@ -2506,7 +2708,7 @@ renderMe($("me"), null, false); renderGate("loading");
     const info = await readOnce("info", { orderBy: "order", dir: "asc", limit: 60 });
     const infoImg = []; for (const c of info) for (const b of c.blocks || []) if (b.t === "img") { const d = await Data.get("infoImg", b.id).catch(() => null); if (d) infoImg.push({ id: b.id, ...d }); }
     const data = { app: "Snowcraft", kind: "backup", version: 1, exportedAt: new Date().toISOString(), exportedBy: me.email || me.uid,
-      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, info, infoImg, applications, news, posts, comments };
+      content: CONTENT, private: SITE_PRIVATE, admins: A.admins, blocked: A.blocked, info, infoImg, members: A.members, membersSettings: A.mset, applications, news, posts, comments };
     saveFile(`Snowcraft_backup_${stamp()}.json`, JSON.stringify(data, null, 1), "application/json");
     toast(`ดาวน์โหลดแล้ว · ใบสมัคร ${applications.length} · ประกาศ ${news.length} · โพสต์ ${posts.length}`);
   });
@@ -2557,6 +2759,8 @@ renderMe($("me"), null, false); renderGate("loading");
       if (d?.updatedAt) $("edState").textContent = edDirty ? $("edState").textContent : "แก้ล่าสุด " + ago(d.updatedAt) + (d.updatedBy ? " โดย " + d.updatedBy : ""); }, oops));
     unsubs.push(Data.watchDoc("site", "private", (d) => { SITE_PRIVATE = d || structuredClone(DEFAULT_PRIVATE); SITE_PRIVATE.answers ||= {}; renderApps(); if (!edDirty) edLoad(CONTENT, SITE_PRIVATE); }, oops));
     unsubs.push(Data.watch("admins", { orderBy: "addedAt", dir: "asc", limit: 100 }, (r) => { A.admins = r; renderAdmins(); }, oops));
+    unsubs.push(Data.watch("members", { orderBy: "order", dir: "asc", limit: 500 }, (r) => { A.members = r; if (!ME) renderMembersAdmin(); renderApps(); }, oops));
+    unsubs.push(Data.watchDoc("site", "members", (d) => { A.mset = d; if (!ME) renderMembersAdmin(); }, oops));
     unsubs.push(Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => { INFO = r; if (!IE) renderInfoAdmin(); }, oops));
     unsubs.push(Data.watch("blocked", { orderBy: "at", dir: "desc", limit: 500 }, (r) => { A.blocked = r; renderBlockedList(); }, oops));
   });
