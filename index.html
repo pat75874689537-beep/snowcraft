@@ -2043,7 +2043,7 @@ function renderContent() {
   $("heroEyebrow").textContent = c.hero.eyebrow; $("heroText").textContent = c.hero.text;
   $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL; $("footDiscord").href = DISCORD_URL;
   drawNavIcons(); renderInfoBanner(); if (inInfo) route();
-  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft";
+  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 28"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
   // ป้ายสถานะรับสมัคร (จุดกะพริบ)
   const bd = $("heroBadge"); bd.classList.toggle("off", !c.apply.open);
   bd.querySelector("span").textContent = c.apply.open ? c.badge.open : c.badge.closed;
