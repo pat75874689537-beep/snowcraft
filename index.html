@@ -525,7 +525,7 @@ main.home .col-main > * { order: 4; }
   .wrap { max-width: 1180px; }
   body:has(.admin-menu) .wrap { max-width: 1040px; } /* หน้าแอดมิน: ไม่กว้างเกิน อ่านง่าย */
   main.home { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 32px; align-items: start; }
-  main.home > .feats, main.home > .info-banner, main.home > .sched, main.home > .recaps { grid-column: 1 / -1; } /* ส่วนเต็มความกว้างด้านบน */
+  main.home > .feats, main.home > .info-banner, main.home > .sched, main.home > .recaps, main.home > .role-zone, main.home > .gallery { grid-column: 1 / -1; } /* ส่วนเต็มความกว้างด้านบน */
   main.home > .col-main { display: grid; gap: 28px; grid-column: 1; min-width: 0; } /* ไม่ล็อกแถว: ต่อจากส่วนบนเอง */
   main.home > .col-main, main.home > .side { order: 2; } /* ต้องอยู่หลัง "ทำไมต้อง Snowcraft" (order 1 ที่ตั้งไว้สำหรับมือถือ) */
   main.home > .side { display: grid; gap: 28px; grid-column: 2; align-self: start; position: sticky; top: 76px;
@@ -803,7 +803,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 /* =========================================================
    v29: ตารางโรล · สรุป EP · โปรไฟล์ตัวละคร · แจ้งเตือน
    ========================================================= */
-.sched, .recaps { display: grid; gap: 12px; }
+.sched, .recaps, .gallery { display: grid; gap: 12px; }
 .sc-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .sc-head h2.sec { margin: 0; }
 .sc-prog { font: 700 13.5px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -933,6 +933,78 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .rc-card.myst, .iv-card.myst { animation: mystFlicker 6.5s steps(1) infinite; }
 @keyframes mystFlicker { 0%, 94%, 100% { border-color: rgba(255,46,70,.45); } 95% { border-color: rgba(61,184,255,.7); } 97% { border-color: rgba(255,46,70,.95); } }
 @media (prefers-reduced-motion: reduce) { .tglx, .sc-next::after, .rc-card.myst, .iv-card.myst { animation: none; } }
+
+/* ===== v31: โซนโรล (ภาพพื้นหลัง + ทีเซอร์ + ตารางโรล) ===== */
+.role-zone { --rbg: none; --rdim: 0; position: relative; display: grid; gap: 18px; isolation: isolate; }
+.role-zone.has-bg { padding: 18px 14px 20px; border-radius: 18px; border: 1px solid rgba(var(--ice-rgb), .3); overflow: hidden; }
+.role-zone.has-bg::before { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--rbg) center / cover no-repeat; filter: saturate(1.05); }
+.role-zone.has-bg::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(var(--bg-rgb), calc(var(--rdim) * .85)), rgba(var(--bg-rgb), var(--rdim)) 55%, rgba(var(--bg-rgb), calc(var(--rdim) + .08))),
+              repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px); }
+.role-zone.has-bg .sc-next { background: radial-gradient(80% 120% at 50% 0%, rgba(var(--ice-rgb), .2), transparent 70%), rgba(var(--bg-rgb), .55); backdrop-filter: blur(3px); }
+@media (min-width: 900px) { .role-zone.has-bg { padding: 26px 26px 28px; } }
+
+/* ทีเซอร์กลิตช์ */
+.teaser { display: grid; gap: 6px; padding: 12px 14px; border-radius: 12px; border: 1px dashed rgba(255,46,70,.55);
+  background: linear-gradient(90deg, rgba(255,46,70,.10), rgba(var(--bg-rgb), .65) 60%); position: relative; overflow: hidden; }
+.teaser::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 3px); }
+.tz-label { display: flex; align-items: center; gap: 8px; font: 700 11.5px var(--f-mono); letter-spacing: .14em; color: #ff6b7d; }
+.tz-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff2e46; box-shadow: 0 0 10px #ff2e46; animation: tzBlink 1.2s steps(1) infinite; }
+@keyframes tzBlink { 50% { opacity: .2; } }
+.tz-line { margin: 0; min-height: 1.6em; font: 700 clamp(15px, 3.8vw, 19px)/1.5 var(--f-mono); color: var(--fg); overflow-wrap: anywhere;
+  text-shadow: 1px 0 rgba(61,184,255,.55), -1px 0 rgba(255,46,70,.55); }
+@media (prefers-reduced-motion: reduce) { .tz-dot { animation: none; } }
+
+/* เช็กชื่อมาโรล */
+.rsvp { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 14px 12px; border-radius: 14px; background: rgba(var(--bg-rgb), .55); border: 1px solid var(--line); }
+.rv-q { font-size: 15.5px; }
+.rv-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.rv-b { min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font: 600 14px var(--f-body, inherit); cursor: pointer; }
+.rv-b:hover { border-color: rgba(var(--ice-rgb), .6); }
+.rv-b[aria-pressed="true"] { border-color: var(--ice); background: rgba(var(--ice-rgb), .2); box-shadow: 0 0 0 2px rgba(var(--ice-rgb), .25) inset; }
+.rv-b[data-rv="yes"][aria-pressed="true"] { border-color: #3ddc84; background: rgba(61,220,132,.18); }
+.rv-b:disabled { opacity: .6; cursor: wait; }
+.rv-count { color: var(--muted); font-size: 12.5px; }
+.rv-who { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 10px; max-width: 100%; }
+.rv-p { display: inline-flex; align-items: center; gap: 5px; max-width: 140px; padding: 2px 8px 2px 2px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); }
+.rv-p small { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* แกลเลอรี */
+.gl-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.gl-grid.big { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .gl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gl-grid.big { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gl-item { position: relative; display: block; padding: 0; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--panel-2); cursor: zoom-in; }
+.gl-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s; }
+.gl-item:hover img { transform: scale(1.05); }
+.gl-item.loading { opacity: .6; }
+.gl-ep { position: absolute; left: 6px; bottom: 6px; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,.65); color: #fff; font: 700 11px var(--f-mono); letter-spacing: .05em; }
+.gl-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.gl-chips a { text-decoration: none; color: var(--soft, var(--fg)); padding: 6px 12px; }
+.gl-chips a[aria-current="true"] { border-color: var(--ice); background: rgba(var(--ice-rgb), .2); color: var(--fg); }
+/* แอดมิน: โซนโรล + แกลเลอรี + เช็กชื่อ */
+.rz-prev { --rbg: none; --rdim: .5; position: relative; display: grid; place-items: center; aspect-ratio: 16 / 7; border-radius: 12px; overflow: hidden; border: 1px solid var(--line);
+  background: linear-gradient(rgba(var(--bg-rgb), var(--rdim)), rgba(var(--bg-rgb), var(--rdim))), var(--rbg) center / cover no-repeat, var(--panel-2); color: var(--muted); }
+.rz-prev span { font-weight: 700; color: var(--fg); }
+.gal-adm { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.gal-a { display: grid; gap: 6px; min-width: 0; padding: 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+.gal-a img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+.gal-a > input { width: 100%; min-width: 0; box-sizing: border-box; }
+.gal-a-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 5px; }
+.gal-a-row input { width: 100%; min-width: 0; box-sizing: border-box; padding-inline: 6px; }
+.gal-a-row .act { padding-inline: 7px; }
+@media (max-width: 640px) { .gal-adm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rv-adm { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+.rv-allow { display: grid; gap: 8px; padding: 10px; border-radius: 10px; border: 1px dashed var(--line); }
+.rv-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rv-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 2px 2px 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13.5px; }
+.rv-chip .act { padding: 2px 8px; border-radius: 999px; }
+.rv-res { display: grid; gap: 4px; }
+.rv-hit { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 6px; border-radius: 8px; background: var(--panel-2); }
+.rv-mine { display: grid; gap: 4px; justify-items: center; padding: 10px 12px; border-radius: 10px; background: rgba(var(--ice-rgb), .08); border: 1px solid rgba(var(--ice-rgb), .35); max-width: 100%; }
+.rv-mine p { margin: 0; color: var(--soft, var(--fg)); overflow-wrap: anywhere; }
+.rv-form { display: grid; gap: 6px; width: min(100%, 440px); text-align: left; }
+.rv-form textarea { width: 100%; box-sizing: border-box; resize: vertical; }
+.rv-adm-h { display: block; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -1076,7 +1148,13 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     <span class="ib-go">เปิดดูข้อมูลทั้งหมด →</span>
   </a>
 
-  <!-- ===== ตารางโรล: EP ถัดไป + นับถอยหลัง (แก้ที่หน้าแอดมิน → 📅 ตารางโรล) ===== -->
+  <!-- ===== โซนโรล: ภาพพื้นหลังของโรล + ทีเซอร์กลิตช์ + ตารางโรล (แก้ที่หน้าแอดมิน → 🎬 โซนโรล / 📅 ตารางโรล) ===== -->
+  <div class="role-zone" id="roleZone">
+  <section class="teaser" id="teaserSec" hidden aria-label="สัญญาณลับ">
+    <span class="tz-label"><i class="tz-dot"></i> สัญญาณลับ · SIGNAL</span>
+    <p class="tz-line" id="tzLine" aria-live="off"></p>
+  </section>
+
   <section class="sched" id="schedSec" aria-labelledby="schedTitle" hidden>
     <div class="sc-head">
       <h2 class="sec" id="schedTitle">📅 ตารางโรล</h2>
@@ -1085,7 +1163,26 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     <div class="sc-next" id="scNext"></div>
     <ol class="sc-list" id="scList"></ol>
     <button class="btn-ghost sc-all" type="button" id="scAll"></button>
+    <!-- เช็กชื่อมาโรล EP ถัดไป -->
+    <div class="rsvp" id="rsvpBox" hidden>
+      <b class="rv-q" id="rvQ"></b>
+      <small class="rv-count" id="rvCount">มาตามปกติไม่ต้องกดอะไร · ถ้าลาหรือเข้าสาย แจ้งพร้อมเหตุผลได้ที่นี่</small>
+      <div class="rv-mine" id="rvMine" hidden></div>
+      <div class="rv-btns" id="rvBtns" role="group" aria-label="แจ้งลาหรือเลท">
+        <button type="button" class="rv-b" data-rv="leave">🙏 ลา</button>
+        <button type="button" class="rv-b" data-rv="late">⏰ เลท</button>
+      </div>
+      <form class="rv-form" id="rvForm" hidden>
+        <label for="rvReason" id="rvReasonLab">เหตุผล</label>
+        <textarea id="rvReason" rows="2" maxlength="200" required placeholder="เช่น ติดสอบ / เข้าได้ประมาณ 2 ทุ่มครึ่ง"></textarea>
+        <div class="rv-btns">
+          <button type="submit" class="btn-main" id="rvSend">ส่ง</button>
+          <button type="button" class="btn-ghost" id="rvCancel">ยกเลิก</button>
+        </div>
+      </form>
+    </div>
   </section>
+  </div>
 
   <!-- ===== สรุปแต่ละ EP: ตอนล่าสุด (กดเข้าไปอ่าน / ดูทั้งหมดที่ #ep) ===== -->
   <section class="recaps" id="recapSec" aria-labelledby="recapTitle" hidden>
@@ -1094,6 +1191,15 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
       <a class="rc-all" href="#ep">ดูทั้งหมด →</a>
     </div>
     <div class="rc-row" id="rcRow"></div>
+  </section>
+
+  <!-- ===== แกลเลอรีภาพจากโรล (ล่าสุด · ดูทั้งหมดที่ #gallery) ===== -->
+  <section class="gallery" id="gallerySec" aria-labelledby="galTitle" hidden>
+    <div class="sc-head">
+      <h2 class="sec" id="galTitle">🖼 แกลเลอรีจากโรล</h2>
+      <a class="rc-all" href="#gallery">ดูทั้งหมด →</a>
+    </div>
+    <div class="gl-grid" id="galRow"></div>
   </section>
 
   <!-- ===== จุดเด่น (แก้ได้ในเมนูแก้เว็บ) ===== -->
@@ -1646,6 +1752,7 @@ function initDemo() {
       blocks: [{ t: "text", v: "# เกิดอะไรขึ้นบ้าง\n- เหตุการณ์ที่ 1 (ตัวอย่าง)\n- เหตุการณ์ที่ 2\n! เบาะแสสำคัญ: ประตูห้องใต้ดินถูกล็อก" }, ...(n === 1 ? [{ t: "img", id: "di1", cap: "ภาพจากโรล (ตัวอย่าง)" }] : [])] })),
     ],
     infoImg: [
+      ...[["#2a0a10", "#ff2e46", "ทางเดินมืด"], ["#14102a", "#7b8cff", "ห้องสมุด"], ["#0a2a1a", "#3dff8a", "สวนหลังตึก"], ["#2a1a08", "#ffb43d", "ไฟฉาย"]].map(([a, b, t], i) => ({ id: "gi" + i, src: demoImg(1200, 900, a, b, t), at: now })),
       { id: "di1", src: demoImg(1200, 680, "#1a0508", "#8c0a1e", "เมืองร้าง"), at: now },
       { id: "di2", src: demoImg(900, 900, "#120820", "#b45cff", "ตัวละคร"), at: now },
     ],
@@ -1666,11 +1773,19 @@ function initDemo() {
         discord: "@rednight", xbox: "RedNight99", role: "นักเรียน", charName: "เรย์ / 18", continent: "แอนตาร์กติกา (จำนวน 2 คน)",
         answers: { ocName: "ไนท์ / 18", icName: "เรย์ / 18", gender: "ชาย", continent: "แอนตาร์กติกา (จำนวน 2 คน)", history: "(ตัวอย่าง)", qStory: "เป๊ป", message: "-" } },
     ],
+    // แกลเลอรีตัวอย่าง (รูปย่อ + รูปเต็มใน infoImg) · เช็กชื่อตัวอย่างของ EP 1
+    gallery: [["#2a0a10", "#ff2e46", "ทางเดินมืด", 1], ["#14102a", "#7b8cff", "ห้องสมุด", 1], ["#0a2a1a", "#3dff8a", "สวนหลังตึก", 0], ["#2a1a08", "#ffb43d", "ไฟฉาย", 0]]
+      .map(([a, b, t, e], i) => ({ id: "g" + i, ep: e, cap: e ? t : "", thumb: demoImg(320, 240, a, b, t), img: "gi" + i, at: now - i * H })),
+    rsvp: [["u3", "มินท์", "late", "ติดเรียนพิเศษ เข้าได้ประมาณ 2 ทุ่ม"], ["u5", "ฮารุ", "leave", "ไปต่างจังหวัดกับครอบครัว"]]
+      .map(([id, name, status, reason], i) => ({ id, ep: 1, status, reason, name, photo: "", at: now - i * H })),
+    // คนที่แอดมินให้เช็กชื่อได้ (คนใน) · "demo" = บัญชีตัวอย่างตอนกดล็อกอิน
+    rsvpAllow: [["demo", "ภัทร"], ["u1", "ไอริน"], ["u2", "คาเซะ"], ["u3", "มินท์"], ["u4", "เรย์"], ["u5", "ฮารุ"]].map(([id, name], i) => ({ id, name, at: now - i })),
+    profiles: [["u1", "ไอริน"], ["u2", "คาเซะ"], ["u3", "มินท์"], ["u4", "เรย์"], ["u5", "ฮารุ"], ["u6", "คนนอกตัวอย่าง"], ["x4", "ผู้สมัครตัวอย่าง B"]].map(([id, name]) => ({ id, name, updatedAt: now })),
     blocked: [{ id: "x9", uid: "x9", name: "คนป่วนตัวอย่าง", reason: "สแปมโพสต์", by: "demo", at: now - 5 * H }],
     admins: [{ id: "admin2@example.com", email: "admin2@example.com", label: "แอดมินตัวอย่าง ดูแลใบสมัคร", addedAt: now - 48 * H }],
   };
   // เนื้อหาเว็บ (site) ในโหมดตัวอย่างจำไว้ในเครื่อง จะได้ลองแก้ในหน้าแอดมินแล้วเปิดหน้าเว็บดูผลได้
-  const SITE_KEY = "snowcraft-demo-site-v30b"; // เปลี่ยนชื่อเมื่อข้อมูลตัวอย่างเปลี่ยน (ของเก่าในเครื่องจะได้ไม่ค้าง)
+  const SITE_KEY = "snowcraft-demo-site-v31b"; // เปลี่ยนชื่อเมื่อข้อมูลตัวอย่างเปลี่ยน (ของเก่าในเครื่องจะได้ไม่ค้าง)
   try { store.site = JSON.parse(localStorage.getItem(SITE_KEY) || "[]"); } catch { store.site = []; }
   // ตารางโรลตัวอย่าง: 16 EP · จันทร์ พุธ ศุกร์ เสาร์ 19:30 · ยังไม่เริ่ม (EP ถัดไป = EP 1 นับถอยหลังอยู่)
   // ตารางเต็มอยู่ schedulePriv (แอดมิน) · หน้าเว็บได้แค่รอบที่ผ่านไปแล้ว + รอบถัดไป 1 รอบ (schedule)
@@ -1681,6 +1796,8 @@ function initDemo() {
     store.site = store.site.filter((x) => x.id !== "schedule");
     store.site.push({ id: "schedulePriv", ...priv }, { id: "schedule", ...schedPublic(priv, now) });
   }
+  if (!store.site.some((d) => d.id === "teaser")) store.site.push({ id: "teaser", show: true, lines: ["มีบางอย่างตื่นขึ้นใต้โรงเรียน…", "อย่าเชื่อเสียงที่เรียกชื่อคุณตอนเที่ยงคืน", "EP 1 · ประตูจะเปิดเร็วๆ นี้"] });
+  if (!store.site.some((d) => d.id === "rolebg")) store.site.push({ id: "rolebg", show: true, dim: 55, src: demoImg(1280, 640, "#1a0508", "#8c0a1e", "") });
   const saveSite = () => { try { localStorage.setItem(SITE_KEY, JSON.stringify(store.site)); } catch {} };
   addEventListener("storage", (e) => { if (e.key === SITE_KEY) { try { store.site = JSON.parse(e.newValue || "[]"); emit(); } catch {} } });
   const subs = new Set();
@@ -2250,7 +2367,7 @@ function renderContent() {
   $("heroEyebrow").textContent = c.hero.eyebrow; $("heroText").textContent = c.hero.text;
   $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL; $("footDiscord").href = DISCORD_URL;
   drawNavIcons(); renderInfoBanner(); renderRecapRow(); if (inInfo) route();
-  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 30"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
+  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 31"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
   // ป้ายสถานะรับสมัคร (จุดกะพริบ)
   const bd = $("heroBadge"); bd.classList.toggle("off", !c.apply.open);
   bd.querySelector("span").textContent = c.apply.open ? c.badge.open : c.badge.closed;
@@ -2862,6 +2979,142 @@ function miniGlitch() {
 }
 (function miniLoop() { miniGlitch(); setTimeout(miniLoop, 2500 + Math.random() * 3500); })();
 
+/* =========================================================
+   v31 โซนโรล: ภาพพื้นหลัง · ทีเซอร์กลิตช์ · เช็กชื่อมาโรล · แกลเลอรี
+   ========================================================= */
+Object.assign(S, { teaser: null, rolebg: null, rsvp: null, gallery: [], galReady: false, rvBusy: false, rvAllowed: false, rvPick: "" });
+let unRvAllow = null, unRv = null;
+// เช็กชื่อ: โชว์เฉพาะคนที่แอดมินเลือกไว้ (rsvpAllow/<uid>) · คนอื่นไม่เห็นกล่องนี้ และอ่านรายชื่อไม่ได้
+function watchRsvpAccess() {
+  if (unRvAllow) { unRvAllow(); unRvAllow = null; } if (unRv) { unRv(); unRv = null; }
+  S.rvAllowed = false; S.rsvp = null; S.rvPick = ""; renderRsvp();
+  if (!me) return;
+  unRvAllow = Data.watchDoc("rsvpAllow", me.uid, (d) => {
+    // อ่านได้แค่ใบของตัวเอง (rsvp/<uid ตัวเอง>)
+    if (d && !unRv) unRv = Data.watchDoc("rsvp", me.uid, (r) => { S.rsvp = r; renderRsvp(); }, () => {});
+    if (!d && unRv) { unRv(); unRv = null; S.rsvp = null; }
+    S.rvAllowed = !!d; renderRsvp();
+  }, () => { S.rvAllowed = false; renderRsvp(); });
+}
+
+// ---------- ภาพพื้นหลังของโรล (site/rolebg) ----------
+function renderRoleBg() {
+  const z = $("roleZone"), b = S.rolebg;
+  const on = !!(b && b.show && okImg(b.src) && !/["\\)(]/.test(b.src)); // กันข้อความแปลกๆ หลุดเข้า CSS
+  z.classList.toggle("has-bg", on);
+  z.style.setProperty("--rbg", on ? `url("${b.src}")` : "none");
+  z.style.setProperty("--rdim", on ? String(Math.min(90, Math.max(0, b.dim | 0)) / 100) : "0");
+}
+
+// ---------- ทีเซอร์กลิตช์ (site/teaser): ถอดรหัสทีละตัว → ค้างไว้ → กระตุกหาย → บรรทัดถัดไป ----------
+let tzI = 0, tzTimer = null, tzKey = "";
+function teaserLines() { const t = S.teaser; return (t && t.show && Array.isArray(t.lines) ? t.lines : []).map((x) => String(x ?? "").trim().slice(0, 120)).filter(Boolean); }
+function renderTeaser() {
+  const lines = teaserLines(), key = JSON.stringify(lines);
+  $("teaserSec").hidden = !lines.length;
+  if (key === tzKey) return; // ข้อความเดิม ไม่ต้องเริ่มใหม่
+  tzKey = key; clearTimeout(tzTimer); tzI = 0;
+  if (lines.length) tzPlay();
+}
+function tzPlay() {
+  const lines = teaserLines(); if (!lines.length) return;
+  const line = $("tzLine"), txt = lines[tzI++ % lines.length], arr = [...txt], n = arr.length;
+  if (glxNoMotion.matches) { line.textContent = txt; tzTimer = setTimeout(tzPlay, 5000); return; }
+  let k = 0;
+  const step = () => {
+    line.textContent = arr.map((c, i) => (i < k || c === " " ? c : GLX_CH[(Math.random() * GLX_CH.length) | 0])).join("");
+    if (k < n) { k += Math.max(1, Math.ceil(n / 26)); tzTimer = setTimeout(step, 45); }
+    else { line.textContent = txt; tzTimer = setTimeout(tzOut, 3800); }
+  };
+  step();
+}
+function tzOut() {
+  const line = $("tzLine"), real = line.textContent; let f = 0; line.classList.add("tglx");
+  const st = () => { line.textContent = glxRand(real); if (++f < 5) tzTimer = setTimeout(st, 60); else { line.classList.remove("tglx"); tzPlay(); } };
+  st();
+}
+
+// ---------- เช็กชื่อมาโรล (rsvp/<uid>) ของ EP ถัดไป ----------
+function rsvpTarget() { // EP ที่กำลังเปิดให้เช็กชื่อ (0 = ไม่มี)
+  const sc = S.sched; if (!sc || !sc.show || sc.ended) return 0;
+  if (sc.hideTime) return Math.max(0, sc.done | 0) + 1;
+  const ses = (Array.isArray(sc.sessions) ? sc.sessions : []).filter((x) => x && Number.isFinite(x.at));
+  return ses.length ? ses.filter((x) => x.at <= Date.now()).length + 1 : 0;
+}
+const RV_LAB = { leave: "🙏 ลา", late: "⏰ เลท" };
+function renderRsvp() {
+  const box = $("rsvpBox"), ep = rsvpTarget();
+  box.hidden = !ep || $("schedSec").hidden || !me || !S.rvAllowed; if (box.hidden) return;
+  $("rvQ").textContent = `แจ้งลา / เลท · EP ${ep}`;
+  const mine = S.rsvp && S.rsvp.ep === ep ? S.rsvp : null; // ใบเก่าของ EP ก่อน ไม่นับ
+  const mb = $("rvMine"); mb.textContent = "";
+  mb.hidden = !mine || !!S.rvPick;
+  if (mine) {
+    mb.append(el("b", null, `คุณแจ้ง ${RV_LAB[mine.status] || mine.status} แล้ว`), el("p", null, "เหตุผล: " + (mine.reason || "-")));
+    const ed = el("button", "act", "แก้ไข"); ed.type = "button"; ed.onclick = () => openRvForm(mine.status, mine.reason);
+    const cc = el("button", "act danger", "ยกเลิกการแจ้ง (มาตามปกติ)"); cc.type = "button";
+    cc.onclick = async () => { if (S.rvBusy) return; S.rvBusy = true; cc.disabled = true;
+      try { await Data.del("rsvp", me.uid); toast("ยกเลิกการแจ้งแล้ว"); } catch (e) { toast(errText(e)); } S.rvBusy = false; };
+    const row = el("div", "rv-btns"); row.append(ed, cc); mb.append(row);
+  }
+  $("rvBtns").hidden = !!mine || !!S.rvPick;
+  $("rvForm").hidden = !S.rvPick;
+  $("rvSend").disabled = S.rvBusy;
+}
+function openRvForm(st, reason = "") {
+  if (!me || !S.rvAllowed) return;
+  if (S.blockedMe) return toast("บัญชีนี้ถูกระงับ");
+  if (!me.name) return openProfile(true);
+  S.rvPick = st; $("rvReasonLab").textContent = `เหตุผลที่${st === "late" ? "เลท (เข้าได้ประมาณกี่โมงด้วยก็ดี)" : "ลา"}`;
+  $("rvReason").value = reason; renderRsvp(); $("rvReason").focus();
+}
+$("rvBtns").querySelectorAll(".rv-b").forEach((b) => (b.onclick = () => openRvForm(b.dataset.rv)));
+$("rvCancel").onclick = () => { S.rvPick = ""; renderRsvp(); };
+$("rvForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const ep = rsvpTarget(), reason = $("rvReason").value.trim().slice(0, 200);
+  if (!ep || !S.rvPick || S.rvBusy) return;
+  if (reason.length < 3) { toast("ใส่เหตุผลด้วยนะ (อย่างน้อย 3 ตัวอักษร)"); return $("rvReason").focus(); }
+  S.rvBusy = true; renderRsvp();
+  try {
+    await Data.set("rsvp", me.uid, { ep, status: S.rvPick, reason, name: me.name, photo: me.photo || "", at: Date.now() });
+    toast(`แจ้ง${S.rvPick === "late" ? "เลท" : "ลา"} EP ${ep} แล้ว แอดมินเห็นแล้ว`); S.rvPick = "";
+  } catch (er) { toast(errText(er)); }
+  S.rvBusy = false; renderRsvp();
+};
+setInterval(() => { if (!document.hidden) renderRsvp(); }, 60000);
+
+// ---------- แกลเลอรี (gallery/<id>: รูปย่อ · รูปเต็มอยู่ infoImg) ----------
+function galItem(g) {
+  const b = el("button", "gl-item"); b.type = "button";
+  const cap = (g.ep ? `EP ${g.ep}` : "") + (g.ep && g.cap ? " · " : "") + (g.cap || "");
+  b.setAttribute("aria-label", "ดูรูปเต็ม" + (cap ? ": " + cap : ""));
+  const im = el("img"); im.alt = ""; im.loading = "lazy"; if (okImg(g.thumb)) im.src = g.thumb; b.append(im);
+  if (g.ep) b.append(el("span", "gl-ep", "EP " + g.ep));
+  b.onclick = async () => { b.classList.add("loading"); const src = await loadImg(g.img); b.classList.remove("loading"); openLightbox(src || g.thumb, cap); };
+  return b;
+}
+function renderGalleryRow() {
+  const sec = $("gallerySec"); sec.hidden = !S.gallery.length; if (sec.hidden) return;
+  const row = $("galRow"); row.textContent = "";
+  S.gallery.slice(0, 8).forEach((g) => row.append(galItem(g)));
+}
+function renderGalleryView(f) {
+  const v = $("infoView"); v.textContent = "";
+  const head = el("header", "iv-head"), back = el("a", "iv-back", "← หน้าแรก"); back.href = "#home";
+  head.append(back, el("h1", null, "🖼 แกลเลอรีจากโรล"), el("p", null, "ภาพบรรยากาศจากแต่ละ EP กดที่รูปเพื่อดูเต็มจอ"));
+  v.append(head);
+  if (!S.galReady) { v.append(el("p", "hint", "กำลังโหลด…")); return; }
+  if (!S.gallery.length) { const e = el("div", "empty"); e.append(el("strong", null, "ยังไม่มีรูป"), el("span", null, "กลับมาดูใหม่หลังโรลนะ ❄")); v.append(e); return; }
+  const eps = [...new Set(S.gallery.map((g) => g.ep | 0))].sort((a, b) => a - b), cur = f === "" ? null : +f;
+  const chips = el("nav", "gl-chips"); chips.setAttribute("aria-label", "เลือก EP");
+  const chip = (label, val) => { const a = el("a", "act", label); a.href = val == null ? "#gallery" : "#gallery/" + val; if (cur === val || (cur == null && val == null)) a.setAttribute("aria-current", "true"); chips.append(a); };
+  chip("ทั้งหมด", null); eps.forEach((e) => chip(e ? "EP " + e : "อื่นๆ", e));
+  const g = el("div", "gl-grid big");
+  S.gallery.filter((x) => cur == null || (x.ep | 0) === cur).forEach((x) => g.append(galItem(x)));
+  v.append(chips, g);
+}
+
 /* ---------- สรุป EP บนหน้าแรก: 3 ตอนล่าสุด ---------- */
 function renderRecapRow() {
   const c = CONTENT.recap, sec = $("recapSec");
@@ -2931,10 +3184,10 @@ function openPost(pid) { // เลื่อนไปที่โพสต์ แ
 /* ---------- เปลี่ยนหน้าด้วยลิงก์ (#info, #info/<id>) ปุ่มย้อนกลับของมือถือใช้ได้ ---------- */
 function route() {
   let h = location.hash || ""; try { h = decodeURIComponent(h); } catch {} // ลิงก์เพี้ยนก็ไม่พัง
-  const m = h.match(/^#(info|ep)(?:\/(.+))?$/);
+  const m = h.match(/^#(info|ep|gallery)(?:\/(.+))?$/);
   if (m) {
     const was = inInfo; inInfo = true; document.body.classList.add("in-info"); $("infoView").hidden = false;
-    renderHubView(m[1], m[2] || ""); markNav(m[1] === "info" ? "info" : ""); scrollTo({ top: 0, behavior: was ? "smooth" : "auto" }); return;
+    if (m[1] === "gallery") renderGalleryView(m[2] || ""); else renderHubView(m[1], m[2] || ""); markNav(m[1] === "info" ? "info" : ""); scrollTo({ top: 0, behavior: was ? "smooth" : "auto" }); return;
   }
   if (inInfo) { // ออกจากหน้าข้อมูล → กลับหน้าหลัก แล้วเลื่อนไปส่วนที่กด
     inInfo = false; document.body.classList.remove("in-info"); $("infoView").hidden = true;
@@ -2982,7 +3235,10 @@ renderMe($("me"), null, false); renderNews(); renderApply(); renderFeed();
   Data.watch("info", { orderBy: "order", dir: "asc", limit: 60 }, (r) => {
     S.info = r; S.infoReady = true; imgCache.clear(); renderInfoBanner(); if (inInfo) route();
   }, (e) => { console.error(e); S.infoReady = true; if (inInfo) route(); });
-  Data.watchDoc("site", "schedule", (d) => { S.sched = d; renderSchedule(); renderRecapRow(); }, () => {});
+  Data.watchDoc("site", "schedule", (d) => { S.sched = d; renderSchedule(); renderRecapRow(); renderRsvp(); }, () => {});
+  Data.watchDoc("site", "teaser", (d) => { S.teaser = d; renderTeaser(); }, () => {});
+  Data.watchDoc("site", "rolebg", (d) => { S.rolebg = d; renderRoleBg(); }, () => {});
+  Data.watch("gallery", { orderBy: "at", dir: "desc", limit: 300 }, (r) => { S.gallery = r; S.galReady = true; renderGalleryRow(); if (inInfo && /^#gallery/.test(location.hash)) route(); }, () => { S.galReady = true; });
   Data.watch("recaps", { orderBy: "order", dir: "asc", limit: 200 }, (r) => {
     S.recaps = r; S.recapsReady = true; renderRecapRow(); if (inInfo) route();
   }, (e) => { console.error(e); S.recapsReady = true; if (inInfo) route(); });
@@ -3012,7 +3268,7 @@ renderMe($("me"), null, false); renderNews(); renderApply(); renderFeed();
     S.app = undefined; S.blockedMe = null; renderBlocked();
     if (me) unApp = Data.watchDoc("applications", me.uid, (a) => { S.app = a; renderApply(); renderBell(); }, oops);
     if (me && !isAdmin) unBlk = Data.watchDoc("blocked", me.uid, (b) => { S.blockedMe = b; renderBlocked(); renderApply(); renderFeed(); }, () => {});
-    renderApply(); renderFeed();
+    renderApply(); renderFeed(); watchRsvpAccess();
   });
 })();
 setInterval(() => cards.forEach((c, id) => { const p = S.posts.find((x) => x.id === id); if (p) c._r.when.textContent = ago(p.createdAt); }), 60000);
