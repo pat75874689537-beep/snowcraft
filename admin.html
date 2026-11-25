@@ -999,6 +999,23 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .rv-form { display: grid; gap: 6px; width: min(100%, 440px); text-align: left; }
 .rv-form textarea { width: 100%; box-sizing: border-box; resize: vertical; }
 .rv-adm-h { display: block; margin-top: 4px; }
+
+/* ===== v32: ความเห็นจากทีมงาน (ใบสมัคร) ===== */
+.f-fb { color: #ff8a98; font-size: 13.5px; background: rgba(255,46,70,.08); border-left: 3px solid #ff2e46; border-radius: 6px; padding: 6px 10px; margin-top: 4px; overflow-wrap: anywhere; }
+.status-box .pill.approved ~ .f-answers .f-fb, .app-card.approved .f-fb { color: #8dffbf; background: rgba(61,220,132,.08); border-left-color: #3ddc84; }
+.f-fb-edit { display: grid; gap: 4px; margin-top: 2px; }
+.f-fb-edit textarea { width: 100%; box-sizing: border-box; font-size: 13.5px; border-color: rgba(255,46,70,.5); }
+.f-fb-btn { justify-self: start; font-size: 12.5px; padding: 3px 10px; }
+.fb-note { display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: rgba(var(--ice-rgb), .08); border: 1px solid rgba(var(--ice-rgb), .35); text-align: left; }
+.fb-note p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.status-box .f-answers { width: 100%; text-align: left; }
+.app-actions textarea { flex: 1 1 100%; min-width: 0; }
+.fb-list { gap: 8px; }
+.fb-item { display: grid; gap: 3px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: rgba(var(--bg-rgb), .4); text-align: left; }
+.fb-ans { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.status-box .pill.approved ~ .fb-list .f-fb { color: #8dffbf; background: rgba(61,220,132,.08); border-left-color: #3ddc84; }
+.f-field.has-fb { border-left: 3px solid #ff2e46; padding-left: 10px; }
+.f-field .f-fb { margin: 2px 0 6px; }
 </style>
 </head>
 <body>
@@ -1158,7 +1175,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
     </section>
   </div>
 
-  <footer>หน้าแอดมิน Snowcraft · เห็นข้อมูลได้เฉพาะบัญชีที่อยู่ในรายชื่อแอดมิน · เวอร์ชันเว็บ 31</footer>
+  <footer>หน้าแอดมิน Snowcraft · เห็นข้อมูลได้เฉพาะบัญชีที่อยู่ในรายชื่อแอดมิน · เวอร์ชันเว็บ 32</footer>
 </main>
 
 <div class="toast" id="toast" hidden></div>
@@ -2027,11 +2044,16 @@ function shrinkImage(file, maxSide = 640, limit = 380000) { // limit = ควา
    ========================================================= */
 const DRAFT_KEY = "snowcraft-form-draft";
 function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"); } catch { return {}; } }
-function saveDraft(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch {} }
-function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+function saveDraftLS(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch {} }
+function clearDraftLS() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
 
-function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
-  const st = { step: 0, ans: loadDraft() };
+// prefill = คำตอบเดิม (โหมด "แก้แล้วส่งใหม่": ไม่ยุ่งกับร่างในเครื่อง) · fb = ความเห็นทีมงานรายข้อ (โชว์ใต้หัวข้อ)
+function buildWizard({ onSubmit, isLoggedIn, onLogin, prefill = null, fb = null, submitText = "ส่งใบสมัคร" }) {
+  const redo = !!prefill;
+  const st = { step: 0, ans: redo ? { ...prefill } : loadDraft() };
+  const saveDraft = redo ? () => {} : saveDraftLS, clearDraft = redo ? () => {} : clearDraftLS;
+  const sections0 = FORM.sections;
+  if (fb) { const i = sections0.findIndex((sec) => (sec.fields || []).some((f) => fb[f.key])); if (i > 0) st.step = i; } // เปิดที่หน้าแรกที่มีจุดต้องแก้
   const wrap = el("div", "wizard");
   const sections = FORM.sections, last = sections.length - 1;
 
@@ -2040,6 +2062,7 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
     const lab = el("div", "f-label"); lab.append(f.label); if (f.required) lab.append(el("span", "req", " *"));
     box.append(lab);
     if (f.hint) box.append(el("div", "f-hint", f.hint));
+    if (fb && fb[f.key]) { box.classList.add("has-fb"); box.append(el("div", "f-fb", "💬 ทีมงาน: " + fb[f.key])); }
     const id = "fq-" + f.key, v = st.ans[f.key];
     if (f.type === "text" || f.type === "textarea") {
       const inp = el(f.type === "text" ? "input" : "textarea"); inp.id = id; inp.maxLength = fieldMax(f);
@@ -2092,14 +2115,15 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
     const bar = el("div", "f-progress");
     sections.forEach((s, i) => { const d = el("span", i < st.step ? "done" : i === st.step ? "now" : ""); d.title = s.title; bar.append(d); });
     const head = el("div", "f-head");
-    head.append(el("small", null, `ส่วนที่ ${st.step + 1} / ${sections.length}`), el("h3", null, sec.title));
+    const nFbSec = fb ? (sec.fields || []).filter((f) => fb[f.key]).length : 0;
+    head.append(el("small", null, `ส่วนที่ ${st.step + 1} / ${sections.length}` + (nFbSec ? ` · มีจุดต้องแก้ ${nFbSec} ข้อ` : "")), el("h3", null, sec.title));
     const card = el("div", "form f-card"); card.append(bar, head);
     if (sec.info && String(sec.info).trim()) card.append(renderInfo(sec.info));
     (sec.fields || []).forEach((f) => card.append(fieldEl(f)));
 
     const nav = el("div", "actions f-nav");
     if (st.step > 0) { const b = el("button", "btn-ghost", "← กลับ"); b.type = "button"; b.onclick = () => go(st.step - 1); nav.append(b); }
-    const next = el("button", "btn-main", st.step === last ? (isLoggedIn() ? "ส่งใบสมัคร" : "ล็อกอินแล้วส่งใบสมัคร") : "ถัดไป →"); next.type = "button";
+    const next = el("button", "btn-main", st.step === last ? (isLoggedIn() ? submitText : "ล็อกอินแล้ว" + submitText) : "ถัดไป →"); next.type = "button";
     next.onclick = async () => {
       const miss = missing(sec);
       if (miss.length) {
@@ -2111,7 +2135,7 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
       if (!isLoggedIn()) return onLogin();
       next.disabled = true; next.textContent = "กำลังส่ง…";
       try { await onSubmit({ ...st.ans }); clearDraft(); }
-      catch (e) { toast(errText(e)); next.disabled = false; next.textContent = "ส่งใบสมัคร"; }
+      catch (e) { toast(errText(e)); next.disabled = false; next.textContent = submitText; }
     };
     nav.append(next);
     card.append(nav);
@@ -2127,6 +2151,15 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
   return wrap;
 }
 
+/* ใบสมัครเดิม → คำตอบสำหรับเติมในฟอร์ม (โหมดแก้แล้วส่งใหม่) */
+function unpackApplication(a) {
+  const ans = {};
+  for (const f of FORM_FIELDS) {
+    if (f.type === "image") { if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) ans[f.key] = a.charImg; continue; }
+    const v = a.answers?.[f.key]; if (v !== undefined && v !== "") ans[f.key] = v;
+  }
+  return ans;
+}
 /* แปลงคำตอบเป็นข้อมูลที่ส่งเข้าฐานข้อมูล */
 function packApplication(me, ans) {
   const doc = { uid: me.uid, name: me.name, photo: me.photo || "", status: "pending", note: "", createdAt: Date.now(), answers: {}, charImg: "" };
@@ -2144,26 +2177,39 @@ function packApplication(me, ans) {
 /* ---------- แสดงคำตอบทั้งหมด (หน้าแอดมิน) ----------
    keys = คำตอบที่ถูกของคำถามทดสอบ (จาก site/private)
    คำตอบของคำถามที่ถูกลบออกจากฟอร์มไปแล้ว จะแสดงในหมวด "คำตอบจากฟอร์มรุ่นเก่า" */
-function renderAnswers(a, keys = {}) {
+// fb = ความเห็นรายข้อจากแอดมิน {key: ข้อความ} · onFb(key, ข้อความ) = โหมดแอดมิน (มีช่องพิมพ์ความเห็นทุกข้อ)
+function renderAnswers(a, keys = {}, fb = null, onFb = null) {
   const box = el("div", "f-answers"), used = new Set();
+  const addFb = (dl, key) => { // ความเห็นของข้อนี้
+    if (!key) return;
+    if (onFb) {
+      const wrap = el("dd", "f-fb-edit"), t = el("button", "act f-fb-btn", fb?.[key] ? "💬 แก้ความเห็น" : "💬 ใส่ความเห็นข้อนี้"); t.type = "button";
+      const inp = el("textarea"); inp.rows = 2; inp.maxLength = 300; inp.placeholder = "ผิดตรงไหน / ควรแก้อย่างไร (ผู้สมัครจะเห็นหลังตรวจเสร็จ)"; inp.value = fb?.[key] || "";
+      inp.hidden = !fb?.[key]; inp.setAttribute("aria-label", "ความเห็นข้อนี้");
+      inp.oninput = () => onFb(key, inp.value);
+      t.onclick = () => { inp.hidden = false; inp.focus(); t.hidden = true; };
+      if (fb?.[key]) t.hidden = true;
+      wrap.append(t, inp); dl.append(wrap);
+    } else if (fb?.[key]) dl.append(el("dd", "f-fb", "💬 " + fb[key]));
+  };
   const addRow = (dl, label, value, key) => {
     dl.append(el("dt", null, label));
     const dd = el("dd"); dd.textContent = value === true ? "✓" : value || "—";
     if (key && keys[key]) dd.append(el("span", "f-key", " · คำตอบที่ถูก: " + keys[key]));
-    dl.append(dd);
+    dl.append(dd); addFb(dl, key);
   };
   for (const sec of FORM.sections) {
     const fields = (sec.fields || []).filter((f) => f.type !== "check");
     (sec.fields || []).forEach((f) => used.add(f.key));
     if (!fields.length) continue;
-    const det = el("details"); if (sec.id === "char") det.open = true;
+    const det = el("details"); if (sec.id === "char" || (fb && fields.some((f) => fb[f.key]))) det.open = true;
     det.append(el("summary", null, sec.title));
     const dl = el("dl", "kv");
     for (const f of fields) {
       if (f.type === "image") {
         dl.append(el("dt", null, f.label)); const dd = el("dd");
         if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) { const im = el("img", "f-img"); im.src = a.charImg; im.alt = "รูปตัวละคร"; dd.append(im); } else dd.textContent = "— ไม่ได้แนบรูป —";
-        dl.append(dd);
+        dl.append(dd); addFb(dl, f.key);
       } else addRow(dl, f.label, a.answers?.[f.key], f.key);
     }
     det.append(dl); box.append(det);
@@ -3130,7 +3176,7 @@ function renderRsvpAdmin() {
    ความปลอดภัยจริงอยู่ที่ firestore.rules (คนที่ไม่ใช่แอดมินอ่านใบสมัครคนอื่นไม่ได้
    ต่อให้เปิดหน้านี้ก็ตาม)
    ========================================================= */
-const A = { apps: [], news: [], admins: [], blocked: [], members: [], mset: null, sched: null, tab: "pending", notes: {}, teaser: null, rolebg: null, gallery: [], rsvp: [], allow: [], profiles: [] };
+const A = { apps: [], news: [], admins: [], blocked: [], members: [], mset: null, sched: null, tab: "pending", notes: {}, teaser: null, rolebg: null, gallery: [], rsvp: [], allow: [], profiles: [], fbDraft: {} };
 let SITE_PRIVATE = structuredClone(DEFAULT_PRIVATE); // คำตอบที่ถูกของคำถามทดสอบ
 let me = null, unsubs = [];
 
@@ -3185,9 +3231,13 @@ function renderQuota() {
   }
 }
 
+let APPS_PENDING = false; // มีข้อมูลใหม่ระหว่างพิมพ์ความเห็น → รอวาดใหม่ตอนออกจากช่อง
+document.addEventListener("focusout", (e) => { if (APPS_PENDING && e.target.closest?.("#appList")) setTimeout(() => { const ae = document.activeElement; if (!(ae && /^(TEXTAREA|INPUT)$/.test(ae.tagName) && ae.closest("#appList"))) renderApps(); }, 0); });
 function renderApps() {
   renderTabs(); renderQuota();
-  const box = $("appList"); box.textContent = "";
+  const box = $("appList"), ae = document.activeElement;
+  if (ae && /^(TEXTAREA|INPUT)$/.test(ae.tagName) && box.contains(ae)) { APPS_PENDING = true; return; } // กำลังพิมพ์อยู่ อย่าวาดทับ
+  APPS_PENDING = false; box.textContent = "";
   const list = A.apps.filter((a) => A.tab === "all" || a.status === A.tab);
   if (!list.length) {
     const e = el("div", "empty"); e.append(el("strong", null, A.tab === "pending" ? "ไม่มีใบสมัครรอตรวจ" : "ไม่มีใบสมัครในแท็บนี้"), el("span", null, "ใบสมัครใหม่จะขึ้นที่นี่ทันทีที่มีคนส่ง"));
@@ -3201,10 +3251,13 @@ function renderApps() {
     const row = (k, v) => { if (v) kv.append(el("dt", null, k), el("dd", null, v)); };
     row("บัญชี Google", a.name); row("ดิสคอร์ด", a.discord); row("ID XBOX", a.xbox); row("ทวีป", a.continent);
     row("ส่งเมื่อ", ago(a.createdAt)); row("ข้อความถึงผู้สมัคร", a.note);
+    if (a.resubmits) row("ส่งใหม่", `ครั้งที่ ${a.resubmits} (แก้ตามความเห็นรอบก่อน · ความเห็นเดิมยังอยู่ใต้คำตอบ)`);
 
     // ปุ่มตัดสิน + ช่องข้อความถึงผู้สมัคร (ผู้สมัครจะเห็นข้อความนี้ที่หน้าเว็บ)
     const act = el("div", "app-actions");
-    const note = el("input"); note.id = "note-" + a.id; note.maxLength = 300; note.placeholder = "ข้อความถึงผู้สมัคร (ไม่บังคับ)";
+    // ความเห็นรวม (ผู้สมัครเห็นหลังตรวจเสร็จ ทั้งผ่านและไม่ผ่าน) · ความเห็นรายข้ออยู่ใต้คำตอบแต่ละข้อ
+    const note = el("textarea"); note.id = "note-" + a.id; note.rows = 2; note.maxLength = 500; note.placeholder = "ความเห็นรวมถึงผู้สมัคร (เห็นหลังกด ผ่าน/ไม่ผ่าน)";
+    note.setAttribute("aria-label", "ความเห็นรวมถึงผู้สมัคร");
     note.value = A.notes[a.id] ?? a.note ?? ""; note.oninput = () => (A.notes[a.id] = note.value);
     const ok = el("button", "btn-ok", "✓ ผ่าน"); ok.type = "button"; ok.onclick = () => decide(a, "approved", note.value);
     const no = el("button", "btn-no", "✕ ไม่ผ่าน"); no.type = "button"; no.onclick = () => decide(a, "rejected", note.value);
@@ -3221,12 +3274,19 @@ function renderApps() {
       rv.onclick = () => setRsvpAllow(a.id, a.name || a.charName || "สมาชิก", !can, rv); act.append(rv);
     }
     if (a.status !== "pending") { const back = el("button", "act", "↺ กลับเป็นรอตรวจ"); back.type = "button"; back.onclick = () => decide(a, "pending", note.value); act.append(back); }
-    c.append(head, kv, renderAnswers(a, SITE_PRIVATE.answers || {}), act); box.append(c);
+    // ความเห็นรายข้อ: ร่างไว้ใน A.fbDraft จนกว่าจะกด ผ่าน/ไม่ผ่าน (ระหว่างรอตรวจ ผู้สมัครจะยังไม่เห็น)
+    const fbNow = A.fbDraft[a.id] || (A.fbDraft[a.id] = { ...(a.fb || {}) });
+    const nFb = () => Object.values(fbNow).filter((x) => String(x).trim()).length;
+    const fbInfo = el("small", "f-hint", ""); const upd = () => (fbInfo.textContent = nFb() ? `💬 ความเห็นรายข้อ ${nFb()} ข้อ — จะส่งถึงผู้สมัครตอนกด ผ่าน/ไม่ผ่าน` : "💬 กด “ใส่ความเห็นข้อนี้” ใต้คำตอบ เพื่อบอกว่าผิดตรงไหน");
+    upd();
+    c.append(head, kv, renderAnswers(a, SITE_PRIVATE.answers || {}, fbNow, (k, v) => { fbNow[k] = v; upd(); }), fbInfo, act); box.append(c);
   }
 }
 
 async function decide(a, status, note) {
-  try { await Data.update("applications", a.id, { status, note: note.trim(), reviewedBy: me.uid, reviewedAt: Date.now() }); delete A.notes[a.id]; toast("บันทึกแล้ว: " + STATUS[status]); }
+  // เก็บเฉพาะความเห็นที่มีข้อความ (สูงสุด 60 ข้อ ข้อละ 300 ตัว)
+  const fb = Object.fromEntries(Object.entries(A.fbDraft[a.id] || a.fb || {}).map(([k, v]) => [k, String(v).trim().slice(0, 300)]).filter(([, v]) => v).slice(0, 60));
+  try { await Data.update("applications", a.id, { status, note: note.trim().slice(0, 500), fb, reviewedBy: me.uid, reviewedAt: Date.now() }); delete A.notes[a.id]; delete A.fbDraft[a.id]; toast("บันทึกแล้ว: " + STATUS[status] + (Object.keys(fb).length ? ` · ความเห็น ${Object.keys(fb).length} ข้อ` : "")); }
   catch (e) { toast(errText(e)); }
 }
 

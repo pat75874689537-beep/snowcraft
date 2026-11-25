@@ -1005,6 +1005,23 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 .rv-form { display: grid; gap: 6px; width: min(100%, 440px); text-align: left; }
 .rv-form textarea { width: 100%; box-sizing: border-box; resize: vertical; }
 .rv-adm-h { display: block; margin-top: 4px; }
+
+/* ===== v32: ความเห็นจากทีมงาน (ใบสมัคร) ===== */
+.f-fb { color: #ff8a98; font-size: 13.5px; background: rgba(255,46,70,.08); border-left: 3px solid #ff2e46; border-radius: 6px; padding: 6px 10px; margin-top: 4px; overflow-wrap: anywhere; }
+.status-box .pill.approved ~ .f-answers .f-fb, .app-card.approved .f-fb { color: #8dffbf; background: rgba(61,220,132,.08); border-left-color: #3ddc84; }
+.f-fb-edit { display: grid; gap: 4px; margin-top: 2px; }
+.f-fb-edit textarea { width: 100%; box-sizing: border-box; font-size: 13.5px; border-color: rgba(255,46,70,.5); }
+.f-fb-btn { justify-self: start; font-size: 12.5px; padding: 3px 10px; }
+.fb-note { display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: rgba(var(--ice-rgb), .08); border: 1px solid rgba(var(--ice-rgb), .35); text-align: left; }
+.fb-note p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.status-box .f-answers { width: 100%; text-align: left; }
+.app-actions textarea { flex: 1 1 100%; min-width: 0; }
+.fb-list { gap: 8px; }
+.fb-item { display: grid; gap: 3px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: rgba(var(--bg-rgb), .4); text-align: left; }
+.fb-ans { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.status-box .pill.approved ~ .fb-list .f-fb { color: #8dffbf; background: rgba(61,220,132,.08); border-left-color: #3ddc84; }
+.f-field.has-fb { border-left: 3px solid #ff2e46; padding-left: 10px; }
+.f-field .f-fb { margin: 2px 0 6px; }
 </style>
 </head>
 <body>
@@ -1056,7 +1073,7 @@ body.in-info .hero, body.in-info main.home, body.in-info .ticker, body.in-info .
 <dialog class="apply-dlg" id="applyDlg" aria-labelledby="applyDlgTitle">
   <div class="ad-head">
     <b id="applyDlgTitle">ใบสมัคร</b>
-    <small>บันทึกร่างอัตโนมัติ · ปิดแล้วกลับมากรอกต่อได้</small>
+    <small id="applyDlgSub">บันทึกร่างอัตโนมัติ · ปิดแล้วกลับมากรอกต่อได้</small>
     <button class="btn-ghost ad-x" type="button" id="applyDlgClose" aria-label="ปิดหน้าต่างใบสมัคร">✕</button>
   </div>
   <div class="ad-body" id="applyDlgBody"></div>
@@ -2160,11 +2177,16 @@ function shrinkImage(file, maxSide = 640, limit = 380000) { // limit = ควา
    ========================================================= */
 const DRAFT_KEY = "snowcraft-form-draft";
 function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"); } catch { return {}; } }
-function saveDraft(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch {} }
-function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+function saveDraftLS(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch {} }
+function clearDraftLS() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
 
-function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
-  const st = { step: 0, ans: loadDraft() };
+// prefill = คำตอบเดิม (โหมด "แก้แล้วส่งใหม่": ไม่ยุ่งกับร่างในเครื่อง) · fb = ความเห็นทีมงานรายข้อ (โชว์ใต้หัวข้อ)
+function buildWizard({ onSubmit, isLoggedIn, onLogin, prefill = null, fb = null, submitText = "ส่งใบสมัคร" }) {
+  const redo = !!prefill;
+  const st = { step: 0, ans: redo ? { ...prefill } : loadDraft() };
+  const saveDraft = redo ? () => {} : saveDraftLS, clearDraft = redo ? () => {} : clearDraftLS;
+  const sections0 = FORM.sections;
+  if (fb) { const i = sections0.findIndex((sec) => (sec.fields || []).some((f) => fb[f.key])); if (i > 0) st.step = i; } // เปิดที่หน้าแรกที่มีจุดต้องแก้
   const wrap = el("div", "wizard");
   const sections = FORM.sections, last = sections.length - 1;
 
@@ -2173,6 +2195,7 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
     const lab = el("div", "f-label"); lab.append(f.label); if (f.required) lab.append(el("span", "req", " *"));
     box.append(lab);
     if (f.hint) box.append(el("div", "f-hint", f.hint));
+    if (fb && fb[f.key]) { box.classList.add("has-fb"); box.append(el("div", "f-fb", "💬 ทีมงาน: " + fb[f.key])); }
     const id = "fq-" + f.key, v = st.ans[f.key];
     if (f.type === "text" || f.type === "textarea") {
       const inp = el(f.type === "text" ? "input" : "textarea"); inp.id = id; inp.maxLength = fieldMax(f);
@@ -2225,14 +2248,15 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
     const bar = el("div", "f-progress");
     sections.forEach((s, i) => { const d = el("span", i < st.step ? "done" : i === st.step ? "now" : ""); d.title = s.title; bar.append(d); });
     const head = el("div", "f-head");
-    head.append(el("small", null, `ส่วนที่ ${st.step + 1} / ${sections.length}`), el("h3", null, sec.title));
+    const nFbSec = fb ? (sec.fields || []).filter((f) => fb[f.key]).length : 0;
+    head.append(el("small", null, `ส่วนที่ ${st.step + 1} / ${sections.length}` + (nFbSec ? ` · มีจุดต้องแก้ ${nFbSec} ข้อ` : "")), el("h3", null, sec.title));
     const card = el("div", "form f-card"); card.append(bar, head);
     if (sec.info && String(sec.info).trim()) card.append(renderInfo(sec.info));
     (sec.fields || []).forEach((f) => card.append(fieldEl(f)));
 
     const nav = el("div", "actions f-nav");
     if (st.step > 0) { const b = el("button", "btn-ghost", "← กลับ"); b.type = "button"; b.onclick = () => go(st.step - 1); nav.append(b); }
-    const next = el("button", "btn-main", st.step === last ? (isLoggedIn() ? "ส่งใบสมัคร" : "ล็อกอินแล้วส่งใบสมัคร") : "ถัดไป →"); next.type = "button";
+    const next = el("button", "btn-main", st.step === last ? (isLoggedIn() ? submitText : "ล็อกอินแล้ว" + submitText) : "ถัดไป →"); next.type = "button";
     next.onclick = async () => {
       const miss = missing(sec);
       if (miss.length) {
@@ -2244,7 +2268,7 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
       if (!isLoggedIn()) return onLogin();
       next.disabled = true; next.textContent = "กำลังส่ง…";
       try { await onSubmit({ ...st.ans }); clearDraft(); }
-      catch (e) { toast(errText(e)); next.disabled = false; next.textContent = "ส่งใบสมัคร"; }
+      catch (e) { toast(errText(e)); next.disabled = false; next.textContent = submitText; }
     };
     nav.append(next);
     card.append(nav);
@@ -2260,6 +2284,15 @@ function buildWizard({ onSubmit, isLoggedIn, onLogin }) {
   return wrap;
 }
 
+/* ใบสมัครเดิม → คำตอบสำหรับเติมในฟอร์ม (โหมดแก้แล้วส่งใหม่) */
+function unpackApplication(a) {
+  const ans = {};
+  for (const f of FORM_FIELDS) {
+    if (f.type === "image") { if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) ans[f.key] = a.charImg; continue; }
+    const v = a.answers?.[f.key]; if (v !== undefined && v !== "") ans[f.key] = v;
+  }
+  return ans;
+}
 /* แปลงคำตอบเป็นข้อมูลที่ส่งเข้าฐานข้อมูล */
 function packApplication(me, ans) {
   const doc = { uid: me.uid, name: me.name, photo: me.photo || "", status: "pending", note: "", createdAt: Date.now(), answers: {}, charImg: "" };
@@ -2277,26 +2310,39 @@ function packApplication(me, ans) {
 /* ---------- แสดงคำตอบทั้งหมด (หน้าแอดมิน) ----------
    keys = คำตอบที่ถูกของคำถามทดสอบ (จาก site/private)
    คำตอบของคำถามที่ถูกลบออกจากฟอร์มไปแล้ว จะแสดงในหมวด "คำตอบจากฟอร์มรุ่นเก่า" */
-function renderAnswers(a, keys = {}) {
+// fb = ความเห็นรายข้อจากแอดมิน {key: ข้อความ} · onFb(key, ข้อความ) = โหมดแอดมิน (มีช่องพิมพ์ความเห็นทุกข้อ)
+function renderAnswers(a, keys = {}, fb = null, onFb = null) {
   const box = el("div", "f-answers"), used = new Set();
+  const addFb = (dl, key) => { // ความเห็นของข้อนี้
+    if (!key) return;
+    if (onFb) {
+      const wrap = el("dd", "f-fb-edit"), t = el("button", "act f-fb-btn", fb?.[key] ? "💬 แก้ความเห็น" : "💬 ใส่ความเห็นข้อนี้"); t.type = "button";
+      const inp = el("textarea"); inp.rows = 2; inp.maxLength = 300; inp.placeholder = "ผิดตรงไหน / ควรแก้อย่างไร (ผู้สมัครจะเห็นหลังตรวจเสร็จ)"; inp.value = fb?.[key] || "";
+      inp.hidden = !fb?.[key]; inp.setAttribute("aria-label", "ความเห็นข้อนี้");
+      inp.oninput = () => onFb(key, inp.value);
+      t.onclick = () => { inp.hidden = false; inp.focus(); t.hidden = true; };
+      if (fb?.[key]) t.hidden = true;
+      wrap.append(t, inp); dl.append(wrap);
+    } else if (fb?.[key]) dl.append(el("dd", "f-fb", "💬 " + fb[key]));
+  };
   const addRow = (dl, label, value, key) => {
     dl.append(el("dt", null, label));
     const dd = el("dd"); dd.textContent = value === true ? "✓" : value || "—";
     if (key && keys[key]) dd.append(el("span", "f-key", " · คำตอบที่ถูก: " + keys[key]));
-    dl.append(dd);
+    dl.append(dd); addFb(dl, key);
   };
   for (const sec of FORM.sections) {
     const fields = (sec.fields || []).filter((f) => f.type !== "check");
     (sec.fields || []).forEach((f) => used.add(f.key));
     if (!fields.length) continue;
-    const det = el("details"); if (sec.id === "char") det.open = true;
+    const det = el("details"); if (sec.id === "char" || (fb && fields.some((f) => fb[f.key]))) det.open = true;
     det.append(el("summary", null, sec.title));
     const dl = el("dl", "kv");
     for (const f of fields) {
       if (f.type === "image") {
         dl.append(el("dt", null, f.label)); const dd = el("dd");
         if (typeof a.charImg === "string" && a.charImg.startsWith("data:image/")) { const im = el("img", "f-img"); im.src = a.charImg; im.alt = "รูปตัวละคร"; dd.append(im); } else dd.textContent = "— ไม่ได้แนบรูป —";
-        dl.append(dd);
+        dl.append(dd); addFb(dl, f.key);
       } else addRow(dl, f.label, a.answers?.[f.key], f.key);
     }
     det.append(dl); box.append(det);
@@ -2367,7 +2413,7 @@ function renderContent() {
   $("heroEyebrow").textContent = c.hero.eyebrow; $("heroText").textContent = c.hero.text;
   $("siteFooter").textContent = c.footer; $("heroDiscord").href = DISCORD_URL; $("footDiscord").href = DISCORD_URL;
   drawNavIcons(); renderInfoBanner(); renderRecapRow(); if (inInfo) route();
-  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 31"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
+  $("footYear").textContent = "© " + new Date().getFullYear() + " Snowcraft · เวอร์ชันเว็บ 32"; // เลขเวอร์ชันไว้เช็กว่าอัปไฟล์ใหม่ติดแล้ว
   // ป้ายสถานะรับสมัคร (จุดกะพริบ)
   const bd = $("heroBadge"); bd.classList.toggle("off", !c.apply.open);
   bd.querySelector("span").textContent = c.apply.open ? c.badge.open : c.badge.closed;
@@ -2405,13 +2451,38 @@ function renderApply() {
   if (!contentReady || (me && S.app === undefined)) { box.textContent = ""; box.append(el("p", "hint", "กำลังโหลด…")); return; }
   if (me && S.blockedMe && !S.app) { box.textContent = ""; box.append(el("p", "hint", "🚫 บัญชีนี้ถูกระงับ ส่งใบสมัครไม่ได้ · ติดต่อแอดมินในดิสคอร์ด")); return; }
   if (me && S.app) {
-    closeApply();
+    // กำลังแก้แล้วส่งใหม่อยู่ในหน้าต่าง → อย่าปิดทิ้ง
+    const redoOpen = $("applyDlg").open && wizRedo && $("applyDlgBody").firstChild === wizRedo && S.app.status === "rejected";
+    if (!redoOpen) closeApply();
     box.textContent = "";
     const a = S.app, e = el("div", "status-box");
     e.append(el("span", "pill " + a.status, STATUS[a.status] || a.status),
       el("b", null, "ใบสมัครของคุณ: " + [a.charName, a.role, a.continent].filter(Boolean).join(" · ")),
       el("p", "hint", "ส่งเมื่อ " + ago(a.createdAt)));
-    if (a.note) e.append(el("p", null, "ข้อความจากทีมงาน: " + a.note));
+    // ความเห็นจากทีมงาน: ขึ้นหลังตรวจเสร็จเท่านั้น (ทั้งผ่านและไม่ผ่าน)
+    const fb = a.status !== "pending" && a.fb && typeof a.fb === "object" ? a.fb : null, nFb = fb ? Object.values(fb).filter(Boolean).length : 0;
+    if (a.note && a.status !== "pending") { const n = el("div", "fb-note"); n.append(el("b", null, "💬 ความเห็นจากทีมงาน"), el("p", null, a.note)); e.append(n); }
+    if (nFb) {
+      e.append(el("p", "hint", a.status === "rejected" ? `ทีมงานบอกจุดที่ต้องแก้ไว้ ${nFb} ข้อ ดูด้านล่าง` : `ทีมงานให้ความเห็นไว้ ${nFb} ข้อ`));
+      // แสดงเฉพาะข้อที่มีความเห็น: คำถาม → คำตอบของเรา → ความเห็น
+      const fields = FORM.sections.flatMap((sec) => sec.fields || []), list = el("div", "f-answers fb-list");
+      for (const [k, v] of Object.entries(fb)) {
+        if (!v) continue;
+        const f = fields.find((x) => x.key === k), item = el("div", "fb-item");
+        const ans = f && f.type === "image" ? (a.charImg ? "(รูปตัวละครที่แนบ)" : "— ไม่ได้แนบรูป —") : a.answers?.[k] === true ? "✓" : a.answers?.[k] || "—";
+        item.append(el("b", null, f ? f.label : k), el("span", "fb-ans", "คำตอบของคุณ: " + ans), el("div", "f-fb", "💬 " + v));
+        list.append(item);
+      }
+      e.append(list);
+    }
+    if (a.status === "rejected") { // แก้แล้วส่งใหม่ (เติมคำตอบเดิมให้ ไม่ต้องกรอกใหม่ทั้งหมด)
+      const used = a.resubmits | 0, left = RESUBMIT_MAX - used;
+      if (left > 0 && CONTENT.apply.open) {
+        const re = el("button", "btn-main", "✏️ แก้แล้วส่งใหม่"); re.type = "button"; re.onclick = openRedo;
+        e.append(re, el("p", "hint", `คำตอบเดิมเติมไว้ให้แล้ว แก้เฉพาะข้อที่ทีมงานบอก แล้วกดส่ง · ส่งใหม่ได้อีก ${left} ครั้ง`));
+      } else e.append(el("p", "hint", left > 0 ? "ตอนนี้ปิดรับสมัครอยู่ · รอเปิดรับรอบหน้าแล้วกลับมาแก้ได้" : "ส่งใหม่ครบจำนวนแล้ว · ติดต่อแอดมินในดิสคอร์ด"));
+    }
+    if (a.status === "pending" && a.resubmits) e.append(el("p", "hint", `ส่งใหม่ครั้งที่ ${a.resubmits} แล้ว · รอทีมงานตรวจอีกรอบ`));
     if (a.status === "pending") e.append(el("p", "hint", "แคปภาพหน้าจอนี้ แล้วส่งที่ห้องส่งฟอร์มในดิสคอร์ด · ทีมงานตรวจเป็นรอบ งดเร่งทุกกรณี รอผลที่หน้านี้ได้เลย"));
     box.append(e); return;
   }
@@ -2434,6 +2505,7 @@ function renderApply() {
   const body = $("applyDlgBody"); if (body.firstChild !== wiz) { body.textContent = ""; body.append(wiz); }
   wiz.refresh();
   $("applyDlgTitle").textContent = CONTENT.form.title || "ใบสมัคร";
+  $("applyDlgSub").textContent = "บันทึกร่างอัตโนมัติ · ปิดแล้วกลับมากรอกต่อได้";
   const draft = Object.keys(loadDraft() || {}).length > 0;
   const card = el("div", "apply-card");
   const parts = el("ol", "apply-parts"); FORM.sections.forEach((s) => parts.append(el("li", null, s.title)));
@@ -2443,6 +2515,41 @@ function renderApply() {
   if (!me) card.append(el("p", "hint", "ยังไม่ต้องล็อกอินตอนนี้ · กรอกได้เลย แล้วล็อกอินด้วย Google ตอนกดส่ง"));
   box.textContent = ""; box.append(card);
 }
+/* ---------- แก้แล้วส่งใหม่ (คนที่ไม่ผ่าน) ---------- */
+const RESUBMIT_MAX = 5;
+let wizRedo = null, wizRedoFor = 0;
+function openRedo() {
+  const a = S.app; if (!me || !a || a.status !== "rejected" || (a.resubmits | 0) >= RESUBMIT_MAX) return;
+  if (S.blockedMe) return toast("บัญชีนี้ถูกระงับ");
+  // สร้างฟอร์มใหม่เมื่อเป็นผลตรวจรอบใหม่ (ปิดหน้าต่างแล้วเปิดใหม่ในรอบเดิม ของที่แก้ค้างไว้ยังอยู่)
+  if (!wizRedo || wizRedoFor !== (a.reviewedAt || 1)) {
+    wizRedoFor = a.reviewedAt || 1;
+    wizRedo = buildWizard({
+      prefill: unpackApplication(a), fb: a.fb && typeof a.fb === "object" ? a.fb : null, submitText: "ส่งใบสมัครใหม่",
+      isLoggedIn: () => !!me,
+      onLogin: () => Auth.login().catch((x) => toast(errText(x))),
+      onSubmit: async (ans) => {
+        const old = S.app; if (!old || old.status !== "rejected") throw new Error("สถานะใบสมัครเปลี่ยนไปแล้ว ลองรีเฟรชหน้า");
+        if (needName()) throw new Error("ตั้งชื่อที่จะแสดงบนเว็บก่อน แล้วกดส่งอีกครั้ง");
+        const doc = packApplication(me, ans);
+        // เก็บความเห็น/ผู้ตรวจรอบก่อนไว้ให้แอดมินดูต่อ (กฎไม่ให้แก้ค่าพวกนี้)
+        if (old.fb !== undefined) doc.fb = old.fb;
+        if (old.reviewedBy !== undefined) doc.reviewedBy = old.reviewedBy;
+        if (old.reviewedAt !== undefined) doc.reviewedAt = old.reviewedAt;
+        doc.resubmits = (old.resubmits | 0) + 1;
+        await Data.set("applications", me.uid, doc);
+        wizRedo = null; closeApply();
+        toast("ส่งใบสมัครใหม่แล้ว ❄ รอทีมงานตรวจอีกรอบ");
+      },
+    });
+  }
+  const body = $("applyDlgBody"); body.textContent = ""; body.append(wizRedo); wizRedo.refresh();
+  $("applyDlgTitle").textContent = "แก้ใบสมัครแล้วส่งใหม่";
+  $("applyDlgSub").textContent = "ปิดหน้าต่างแล้วเปิดใหม่ได้ · ถ้ารีเฟรชหน้า ที่แก้ไว้จะหาย";
+  const d = $("applyDlg"); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); }
+  body.scrollTop = 0;
+}
+
 /* เปิด/ปิดหน้าต่างใบสมัคร */
 const canApply = () => contentReady && CONTENT.apply.open && !(me && (S.app || S.blockedMe));
 function openApply() {
